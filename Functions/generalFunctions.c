@@ -11,13 +11,14 @@ void imprimeMatriz(int **map, int size){
   }
 }
 
-void createMap(int **map, int size){
-  printf("tamanho: %d\n", size);
-  *map = (int**)malloc(sizeof(int*)*size);
-  for (int i = 0; i < size; i++){
+int** createMap(int size){
+  int i,x,**map;
+  map = (int**)malloc(sizeof(int*)*size);
+  for (i = 0; i < size; i++){
     map[i] = (int*)malloc(sizeof(int)*size);
-    for (int x=0;x < size; x++){
-      map[i][x] = i + 1;
+    for (x=0;x < size; x++){
+      map[i][x] = 0;
     }
   }
+  return map;
 }

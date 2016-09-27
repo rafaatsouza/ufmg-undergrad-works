@@ -1,2 +1,2 @@
 void imprimeMatriz(int **map, int size);
-void createMap(int **map, int size);
+int** createMap(int size);
