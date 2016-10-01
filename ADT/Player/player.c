@@ -131,4 +131,4 @@ void MovePlayer(Player *p, int **map, int mapsize){
 //
 //   }
 
-}
+//}
