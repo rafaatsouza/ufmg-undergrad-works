@@ -41,5 +41,14 @@ int main(){
 
   fclose(arq);
 
+  for(i=0;i<qtdPlayers;i++){
+    MovePlayer(&players[i],map,mapSize);
+  }
+
+  for(i=0;i<qtdPlayers;i++){
+    printf("player %s: %dpts\n", players[i].name, players[i].score->scoreTotal);
+  }
+  //DefineWinner(players);
+
   return 0;
 }
