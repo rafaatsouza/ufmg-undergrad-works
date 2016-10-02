@@ -44,7 +44,7 @@ int checkCel(Player *p, int x, int y){
 
 int defineNextMove(Player *p, int **map, int mapsize){
   Move *best_move = (Move*)malloc(sizeof(Move));
-  int x,y, best_filled = 0, count = 0;
+  int x,y, best_filled = 0;
   for(x =(p->x)-1;x<=(p->x)+1;x++){
     for(y =(p->y)-1;y<=(p->y)+1;y++){
       if(x >= 0 && y >= 0 && x <= (mapsize-1) && y <= (mapsize-1)){
@@ -114,21 +114,149 @@ void registerPlay(Player *p, int **map){
   //printf("[JOGADA]Player %s foi na posicao %d,%d e ganhou %d pontos. Total:%d\n", p->name, p->x, p->y, map[p->x][p->y], p->score->scoreTotal);
 }
 
-void MovePlayer(Player *p, int **map, int mapsize){
+void andar(Player *p, int **map, int mapsize){
   if(p->score->moveTotal <= (3*mapsize)){
     registerPlay(p, map);
     if(defineNextMove(p,map,mapsize) == 1){
-      MovePlayer(p,map,mapsize);
+      andar(p,map,mapsize);
     }
   }
 }
 
-// void DefineWinner(Player *p, int qtdPlayers){
-//   int i, tie = 1;
-//   Player *winners = (Player*)malloc(tie*sizeof(Player));
-//
-//   for(i=0;i<qtdPlayers;i++){
-//
-//   }
+int* explorar(Player *p, int mapsize, int **map){
+  int x,y, count = 0;
+  for(x =(p->x)-1;x<=(p->x)+1;x++){
+    for(y =(p->y)-1;y<=(p->y)+1;y++){
+      if(x >= 0 && y >= 0 && x <= (mapsize-1) && y <= (mapsize-1)){
+        if(checkCel(p,x,y) == 0){
+          count++;
+        }
+      }
+    }
+  }
+  Move *possiveis = (Move*)malloc(sizeof(Move)*count);
+  count = 0;
+  for(x =(p->x)-1;x<=(p->x)+1;x++){
+    for(y =(p->y)-1;y<=(p->y)+1;y++){
+      if(x >= 0 && y >= 0 && x <= (mapsize-1) && y <= (mapsize-1)){
+        if(checkCel(p,x,y) == 0){
+          possiveis[count].x = x;
+          possiveis[count].y = y;
+          possiveis[count].val = map[x][y];
+        }
+      }
+    }
+  }
+}
 
-//}
+Move* caminho_percorrido(Player *p){
+  return p->score->historic->first;
+}
+
+void printHistoric(Player *p, FILE *arq){
+  Move *m = (Move*)malloc(sizeof(Move));
+  m = caminho_percorrido(p);
+
+  while (m != NULL) {
+    fprintf(arq, " %d,%d", m->x, m->y);
+    m = m->next;
+  }
+  fprintf(arq, "\n");
+}
+
+void ResolveTie(Player *p, int qtdPlayers, FILE *arq){
+  int i, cp = 5, vencedor = -1, *qtd_pokemon = (int*)malloc(sizeof(int)*qtdPlayers);
+  Move *m = (Move*)malloc(sizeof(Move));
+  Player *winner = (Player*)malloc(sizeof(Player));
+  while (cp > 0) {
+    for(i = 0;i<qtdPlayers;i++){
+      qtd_pokemon[i] = 0;
+    }
+    for (i = 0; i < qtdPlayers; i++) {
+        m = p[i].score->historic->first;
+        while (m != NULL) {
+          if(m->val == cp){
+            qtd_pokemon[i]++;
+          }
+          m = m->next;
+        }
+    }
+    for(i=0;i<qtdPlayers;i++){
+      if(i==0){
+        vencedor = i;
+      } else {
+        if(qtd_pokemon[i] > qtd_pokemon[vencedor]){
+          vencedor = i;
+        } else if(qtd_pokemon[i] == qtd_pokemon[vencedor]){
+          vencedor = -1;
+          break;
+        }
+      }
+    }
+    cp--;
+  }
+  if(vencedor >= 0){
+    fprintf(arq, "VENCEDOR %s", p[vencedor].name);
+  } else {
+    vencedor = -1;
+    for(i=0;i<qtdPlayers;i++){
+      if(i==0){
+        vencedor = i;
+      } else {
+        if(p[i].score->moveTotal < p[vencedor].score->moveTotal){
+          vencedor = i;
+        } else if(p[i].score->moveTotal == p[vencedor].score->moveTotal){
+          vencedor = -1;
+          break;
+        }
+      }
+    }
+    if(vencedor >= 0){
+      fprintf(arq, "VENCEDOR %s", p[vencedor].name);
+    } else {
+      fprintf(arq, "VENCEDORES ");
+      for(i=0;i<qtdPlayers;i++){
+        if(i>0){
+          fprintf(arq, ",");
+        }
+        fprintf(arq, "%s", p[i].name);
+      }
+    }
+  }
+}
+
+void DefineWinner(Player *p, int qtdPlayers, FILE *arq){
+  int i, maxScore = 0, tie = 0;
+
+  for (i = 0; i < qtdPlayers; i++) {
+    if (maxScore < p[i].score->scoreTotal) {
+      maxScore = p[i].score->scoreTotal;
+    }
+  }
+
+  for (i = 0; i < qtdPlayers; i++) {
+    if (maxScore == p[i].score->scoreTotal) {
+      tie++;
+    }
+  }
+
+  Player *winners = (Player*)malloc(tie*sizeof(Player));
+  if(tie == 1){
+    for(i=0;i<qtdPlayers;i++){
+      if(p[i].score->scoreTotal == maxScore){
+        winners = &p[i];
+        break;
+      }
+    }
+    fprintf(arq, "VENCEDOR %s", winners->name);
+  } else {
+    int c = 0;
+    for (i = 0; i < qtdPlayers; i++) {
+      if(p[i].score->scoreTotal == maxScore){
+        winners[c] = p[i];
+        c++;
+      }
+    }
+    ResolveTie(winners,tie,arq);
+  }
+}

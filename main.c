@@ -5,7 +5,7 @@
 #include "ADT/Player/player.h"
 
 int main(){
-  int mapSize, qtdPlayers, i, **map;
+  int mapSize, qtdPlayers = 0, i, **map;
   FILE *arq;
 	arq = fopen("entrada.txt","r");
 	if(arq == NULL) {
@@ -29,7 +29,7 @@ int main(){
 
   i = 0;
   while (fgets(buf,100,arq) != NULL) {
-    if (buf[0] != '\n'){
+    if (buf[0] != '\n' && buf[0] != ' ' && buf[0] != ""){
       name = strtok(buf," ");
       coord = strtok(NULL," ");
       x = atoi(strtok(coord,","));
@@ -40,15 +40,19 @@ int main(){
   }
 
   fclose(arq);
-
   for(i=0;i<qtdPlayers;i++){
-    MovePlayer(&players[i],map,mapSize);
+    andar(&players[i],map,mapSize);
   }
 
+  arq = fopen("saida.txt","w");
+  fclose(arq);
+  arq = fopen("saida.txt","a");
   for(i=0;i<qtdPlayers;i++){
-    printf("player %s: %dpts\n", players[i].name, players[i].score->scoreTotal);
+    fprintf(arq, "%s %d ", players[i].name, players[i].score->scoreTotal);
+    printHistoric(&players[i],arq);
   }
-  //DefineWinner(players);
+  DefineWinner(players, qtdPlayers, arq);
+  fclose(arq);
 
   return 0;
 }

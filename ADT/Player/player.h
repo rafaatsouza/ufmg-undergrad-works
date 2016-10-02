@@ -24,4 +24,6 @@ typedef struct {
 } Player;
 
 void createPlayer(Player *p, int x, int y, char *n, int name_count, int mapSize);
-void MovePlayer(Player *p, int **map, int mapsize);
+void andar(Player *p, int **map, int mapsize);
+void printHistoric(Player *p, FILE *arq);
+void DefineWinner(Player *p, int qtdPlayers, FILE *arq);
