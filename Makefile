@@ -1,7 +1,7 @@
 all: tp0.out
 
 tp0.out: Functions/generalFunctions.o ADT/Player/player.o
-	gcc main.c -o tp0.out Functions/generalFunctions.o ADT/Player/player.o
+	gcc -w main.c -o tp0.out Functions/generalFunctions.o ADT/Player/player.o
 
 ADT/Player/player.o: ADT/Player/player.c
 	gcc -c ADT/Player/player.c -o ADT/Player/player.o
