@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "player.h"
 
+//recebe o endereço de memória para a variável Player, e cria um novo registro nesse endereço.
 void createPlayer(Player *p, int x, int y, char *n, int name_count, int mapSize){
   int i;
   p->name_count = name_count;
@@ -29,6 +30,7 @@ void createPlayer(Player *p, int x, int y, char *n, int name_count, int mapSize)
   p->score->historic->last = NULL;
 }
 
+//checa se a celula representada pelos parametros x e y já foi visitada pelo player representado no endereço de *p
 int checkCel(Player *p, int x, int y){
   Move *m = (Move*)malloc(sizeof(Move));
 
@@ -42,35 +44,69 @@ int checkCel(Player *p, int x, int y){
   return 0;
 }
 
-int defineNextMove(Player *p, int **map, int mapsize){
-  Move *best_move = (Move*)malloc(sizeof(Move));
-  int x,y, best_filled = 0;
+//retorna uma lista de movimentos possíveis para o player
+Move* explorar(Player *p, int mapsize, int **map){
+  int x,y, count = 0;
   for(x =(p->x)-1;x<=(p->x)+1;x++){
     for(y =(p->y)-1;y<=(p->y)+1;y++){
       if(x >= 0 && y >= 0 && x <= (mapsize-1) && y <= (mapsize-1)){
         if(checkCel(p,x,y) == 0){
-          if(best_filled == 0){
-            best_move->x = x;
-            best_move->y = y;
-            best_move->val = map[x][y];
-            best_filled = 1;
-          } else {
-            if((map[x][y] > best_move->val) || (best_move->val == 6 && p->count_pokebolas > 0 && map[x][y] > 0 && map[x][y] < 6)){
-              if(map[x][y] != 6){
-                best_move->x = x;
-                best_move->y = y;
-                best_move->val = map[x][y];
-              } else if(p->count_pokebolas == 0 || best_move->val < 0){
-                best_move->x = x;
-                best_move->y = y;
-                best_move->val = map[x][y];
-              }
-            }
-          }
+          count++;
         }
       }
     }
   }
+  Move *possiveis = (Move*)malloc(sizeof(Move)*count);
+  count = 0;
+  for(x =(p->x)-1;x<=(p->x)+1;x++){
+    for(y =(p->y)-1;y<=(p->y)+1;y++){
+      if(x >= 0 && y >= 0 && x <= (mapsize-1) && y <= (mapsize-1)){
+        if(checkCel(p,x,y) == 0){
+          possiveis[count].x = x;
+          possiveis[count].y = y;
+          possiveis[count].val = map[x][y];
+          possiveis[count].next = NULL;
+          if(count > 0){
+            possiveis[count-1].next = &possiveis[count];
+          }
+          count++;
+        }
+      }
+    }
+  }
+  return &possiveis[0];
+}
+
+//altera a posição do player com as coordenadas de seu próximo movimento; caso não exista um próximo movimento válido, retorna 0
+int defineNextMove(Player *p, int **map, int mapsize){
+  Move *best_move = (Move*)malloc(sizeof(Move)), *possible;// = (Move*)malloc(sizeof(Move));
+  int best_filled = 0;
+
+  possible = explorar(p,mapsize,map);
+  while (possible != NULL) {
+    if(checkCel(p,possible->x,possible->y)==0){
+      if(best_filled == 0){
+        best_move->x = possible->x;
+        best_move->y = possible->y;
+        best_move->val = map[possible->x][possible->y];
+        best_filled = 1;
+      } else {
+        if((map[possible->x][possible->y] > best_move->val) || (best_move->val == 6 && p->count_pokebolas > 0 && map[possible->x][possible->y] > 0 && map[possible->x][possible->y] < 6)){
+          if(map[possible->x][possible->y] != 6){
+            best_move->x = possible->x;
+            best_move->y = possible->y;
+            best_move->val = map[possible->x][possible->y];
+          } else if(p->count_pokebolas == 0 || best_move->val < 0){
+            best_move->x = possible->x;
+            best_move->y = possible->y;
+            best_move->val = map[possible->x][possible->y];
+          }
+        }
+      }
+    }
+    possible = possible->next;
+  }
+
   if(best_filled == 0){
     return 0;
   } else {
@@ -80,6 +116,7 @@ int defineNextMove(Player *p, int **map, int mapsize){
   }
 }
 
+//registra a jogada do player baseado na sua posição atual
 void registerPlay(Player *p, int **map){
   Move *actual_move = (Move*)malloc(sizeof(Move));
 
@@ -114,6 +151,7 @@ void registerPlay(Player *p, int **map){
   //printf("[JOGADA]Player %s foi na posicao %d,%d e ganhou %d pontos. Total:%d\n", p->name, p->x, p->y, map[p->x][p->y], p->score->scoreTotal);
 }
 
+//faz com que o player se movimente e jogue enquanto existirem movimentações válidas e o limite de movimentos não for ultrapassado
 void andar(Player *p, int **map, int mapsize){
   if(p->score->moveTotal <= (3*mapsize)){
     registerPlay(p, map);
@@ -123,36 +161,12 @@ void andar(Player *p, int **map, int mapsize){
   }
 }
 
-int* explorar(Player *p, int mapsize, int **map){
-  int x,y, count = 0;
-  for(x =(p->x)-1;x<=(p->x)+1;x++){
-    for(y =(p->y)-1;y<=(p->y)+1;y++){
-      if(x >= 0 && y >= 0 && x <= (mapsize-1) && y <= (mapsize-1)){
-        if(checkCel(p,x,y) == 0){
-          count++;
-        }
-      }
-    }
-  }
-  Move *possiveis = (Move*)malloc(sizeof(Move)*count);
-  count = 0;
-  for(x =(p->x)-1;x<=(p->x)+1;x++){
-    for(y =(p->y)-1;y<=(p->y)+1;y++){
-      if(x >= 0 && y >= 0 && x <= (mapsize-1) && y <= (mapsize-1)){
-        if(checkCel(p,x,y) == 0){
-          possiveis[count].x = x;
-          possiveis[count].y = y;
-          possiveis[count].val = map[x][y];
-        }
-      }
-    }
-  }
-}
-
+//retorna o endereço para o primeiro movimento, e por ele, se pode ter toda a lista de movimentos
 Move* caminho_percorrido(Player *p){
   return p->score->historic->first;
 }
 
+//imprime no arquivo *arq todos os movimentos do player *p
 void printHistoric(Player *p, FILE *arq){
   Move *m = (Move*)malloc(sizeof(Move));
   m = caminho_percorrido(p);
@@ -164,6 +178,7 @@ void printHistoric(Player *p, FILE *arq){
   fprintf(arq, "\n");
 }
 
+//resolve empates pela quantidade de pokemons de maior cp, e pelo numero de movimentos do jogador
 void ResolveTie(Player *p, int qtdPlayers, FILE *arq){
   int i, cp = 5, vencedor = -1, *qtd_pokemon = (int*)malloc(sizeof(int)*qtdPlayers);
   Move *m = (Move*)malloc(sizeof(Move));
@@ -225,6 +240,7 @@ void ResolveTie(Player *p, int qtdPlayers, FILE *arq){
   }
 }
 
+//define o vencedor usando a pontuação como critério
 void DefineWinner(Player *p, int qtdPlayers, FILE *arq){
   int i, maxScore = 0, tie = 0;
 
