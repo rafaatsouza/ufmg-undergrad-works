@@ -5,4 +5,4 @@ typedef struct u {
 } Usuario;
 
 void registraUsuario(Usuario *u, int id, char *n, int nome_qtd);
-void listaInfoUsuario(Usuario *u);
+Usuario* retornaUsuario(Usuario *u, int qtdUsuarios, int id_user);

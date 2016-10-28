@@ -4,6 +4,7 @@
 
 void registraUsuario(Usuario *u, int id, char *n, int nome_qtd){
   int i;
+
   u->id = id;
   u->nome_qtd = nome_qtd;
   u->nome = (char*)malloc(nome_qtd * sizeof(char));
@@ -14,6 +15,11 @@ void registraUsuario(Usuario *u, int id, char *n, int nome_qtd){
   }
 }
 
-void listaInfoUsuario(Usuario *u){
-  printf("Usuario %s, de id %d\n", u->nome, u->id);
+Usuario* retornaUsuario(Usuario *u, int qtdUsuarios, int id_user){
+    int i;
+    for(i=0;i<qtdUsuarios;i++){
+        if(u[i].id == id_user){
+            return &u[i];
+        }
+    }
 }
