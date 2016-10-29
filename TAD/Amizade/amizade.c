@@ -60,7 +60,7 @@ void ativaAmizade(Relacao *r, int tempo){
   r->ativa = 1;
 }
 
-void insereAmizade(Amizade *a, int id1, int id2, int tempo){
+void iniciarAmizade(Amizade *a, int id1, int id2, int tempo){
   Relacao *r = (Relacao*)malloc(sizeof(Relacao));
 
   r->id1 = id1;
@@ -101,4 +101,47 @@ void insereAmizade(Amizade *a, int id1, int id2, int tempo){
       }
     }
   }
+}
+
+void cancelarAmizade(Amizade *a, int id1, int id2, int tempo){
+    if(a->qtd > 0){
+      Relacao *r_aux = (Relacao*)malloc(sizeof(Relacao));
+      Relacao *r;
+
+      r_aux = a->primeira;
+      while (r_aux != NULL) {
+        if((r_aux->id1 == id1 || r_aux->id1 == id2) && (r_aux->id2 == id1 || r_aux->id2 == id2)){
+          r = r_aux;
+        }
+        r_aux = r_aux->prox;
+      }
+
+      if(r != NULL){
+          if(r->ativa == 1){
+              Momento *m = (Momento*)malloc(sizeof(Momento));
+              m = r->momento;
+              while(m->t_cancelamento != -1){
+                  m = m->prox;
+              }
+              m->t_cancelamento = tempo;
+              r->ativa = 0;
+          }
+      }
+    }
+}
+
+Amizade* verAmigos(Amizade *a, int id_user){
+    Amizade *retorno = iniciaListaAmizade();
+    Relacao *r_aux = (Relacao*)malloc(sizeof(Relacao));
+
+    r_aux = a->primeira;
+    while (r_aux != NULL) {
+      if(r_aux->id1 == id_user){
+          iniciarAmizade(retorno, id_user, r_aux->id2, r_aux->momento->t_cadastro);
+      } else if(r_aux->id2 == id_user) {
+          iniciarAmizade(retorno, id_user, r_aux->id1, r_aux->momento->t_cadastro);
+      }
+      r_aux = r_aux->prox;
+    }
+    return retorno;
 }

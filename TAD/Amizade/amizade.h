@@ -20,4 +20,5 @@ typedef struct h {
 
 Amizade* iniciaListaAmizade();
 int amizadeRepetida(Amizade *a, Relacao *r);
-void insereAmizade(Amizade *a, int id1, int id2, int tempo);
+void iniciarAmizade(Amizade *a, int id1, int id2, int tempo);
+void cancelarAmizade(Amizade *a, int id1, int id2, int tempo);
