@@ -11,14 +11,14 @@ Amizade* iniciaListaAmizade(){
   return a;
 }
 
-int amizadeRepetida(Amizade *a, Relacao *r){
+int amizadeRepetida(Amizade *a, int id1, int id2){
   if(a->qtd <= 0){
     return 0;
   }
 
   Relacao *r_aux = a->primeira;
   while (r_aux != NULL) {
-    if((r_aux->id1 == r->id1 || r_aux->id1 == r->id2) && (r_aux->id2 == r->id1 || r_aux->id2 == r->id2)){
+    if((r_aux->id1 == id1 || r_aux->id1 == id2) && (r_aux->id2 == id1 || r_aux->id2 == id2)){
       return 1;
     }
     r_aux = r_aux->prox;
@@ -44,16 +44,15 @@ Relacao* retornaRelacao(Amizade *a, int id1, int id2){
 }
 
 void iniciarAmizade(Amizade *a, int id1, int id2, int tempo){
-  Relacao *r = (Relacao*)malloc(sizeof(Relacao));
-
-  r->id1 = id1;
-  r->id2 = id2;
-  r->ativa = 1;
-  r->t_cadastro = tempo;
-  r->prox = NULL;
-
   if(id1 != id2){
-    if(amizadeRepetida(a,r) == 0){
+    if(amizadeRepetida(a,id1,id2) == 0){
+      Relacao *r = (Relacao*)malloc(sizeof(Relacao));
+
+      r->id1 = id1;
+      r->id2 = id2;
+      r->ativa = 1;
+      r->t_cadastro = tempo;
+      r->prox = NULL;
       if(a->qtd <= 0){
         a->primeira = r;
         a->ultima = r;
@@ -69,7 +68,7 @@ void iniciarAmizade(Amizade *a, int id1, int id2, int tempo){
         a->qtd++;
       }
     } else {
-      r = retornaRelacao(a, id1, id2);
+      Relacao *r = retornaRelacao(a, id1, id2);
       if(r != NULL){
         if(r->ativa == 0){
             r->t_cadastro = tempo;

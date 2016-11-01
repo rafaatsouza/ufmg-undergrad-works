@@ -57,6 +57,7 @@ void exibeTimeline(Usuario *us, int qtdUsuarios, Timeline *ts, int id_user, FILE
                     }
                     m = m->abaixo;
                 }
+                free(m);
             }
         }
     }
@@ -77,6 +78,7 @@ int usuarioVeMsg(Amizade *a, int id1, int id_autor){
             r = r->prox;
         }
     }
+    free(r);
     return 0;
 }
 
@@ -164,6 +166,7 @@ void adicionaMensagens(Timeline *t, Amizade *a, Usuario *u, int qtdUsuarios, int
                 }
                 m = m->abaixo;
             }
+            free(m);
         }
     }
 }
