@@ -79,6 +79,9 @@ int main(){
       }
       fclose(saida);
       fclose(entrada);
+      free(usuarios);
+      free(timeline);
+      free(amizades);
       contador_entrada++;
       if(contador_entrada > 9){
           sprintf(arquivo_saida, "log.entrada%d.txt", contador_entrada);

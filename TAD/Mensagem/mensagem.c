@@ -62,18 +62,16 @@ void exibeTimeline(Usuario *us, int qtdUsuarios, Timeline *ts, int id_user, FILE
     }
 }
 
-int usuarioVeMsg(Amizade *a, Usuario *u, int id_autor){
-    if(u->id == id_autor){
+int usuarioVeMsg(Amizade *a, int id1, int id_autor){
+    if(id1 == id_autor){
         return 1;
     }
     if(a->qtd <= 0){
         return 0;
     }
-    Relacao *r = (Relacao*)malloc(sizeof(Relacao));
-
-    r = a->primeira;
+    Relacao *r = a->primeira;
     while (r != NULL) {
-        if((r->id1 == id_autor || r->id1 == u->id) && (r->id2 == id_autor || r->id2 == u->id)){
+        if((r->id1 == id_autor || r->id1 == id1) && (r->id2 == id_autor || r->id2 == id1)){
             return r->ativa;
         } else {
             r = r->prox;
@@ -91,7 +89,7 @@ void insereMensagem(Timeline *t, Amizade *a, Usuario *u, int qtdUsuarios, int id
 
     for(ti=0;ti<qtdUsuarios;ti++){
         Usuario *ut = retornaUsuario(u, qtdUsuarios, t[ti].id);
-        if(usuarioVeMsg(a, ut, id_user) == 1 && retornaMensagem(&t[ti],id_mensagem) == NULL){
+        if(usuarioVeMsg(a, ut->id, id_user) == 1 && retornaMensagem(&t[ti],id_mensagem) == NULL){
             Mensagem *m = (Mensagem*)malloc(sizeof(Mensagem));
 
             m->id_mensagem = id_mensagem;
@@ -100,7 +98,6 @@ void insereMensagem(Timeline *t, Amizade *a, Usuario *u, int qtdUsuarios, int id
             m->acima = NULL;
             m->abaixo = NULL;
             m->qtd_curtidas = 0;
-            m->curtidas = NULL;
             m->tempo_exibicao = tempo_exibicao;
             m->qtd_conteudo = qtd_conteudo;
             m->conteudo = (char*)malloc(qtd_conteudo * sizeof(char));
@@ -125,9 +122,7 @@ void insereMensagem(Timeline *t, Amizade *a, Usuario *u, int qtdUsuarios, int id
 
 void reavaliaTimeline(Timeline *t, Mensagem *m){
     while(m->acima != NULL){
-        Mensagem *m_de_cima, *m_aux;
-
-        m_de_cima = m->acima;
+        Mensagem *m_de_cima = m->acima, *m_aux;
 
         if(m_de_cima->id_mensagem != t->topo->id_mensagem){
             m_de_cima->acima->abaixo = m;
@@ -179,26 +174,12 @@ void curtirMensagem(Timeline *t, int qtdTimelines, int id_mensagem, int id_user,
     for(i=0;i<qtdTimelines;i++){
         Mensagem *m = retornaMensagem(&t[i], id_mensagem);
         if(m != NULL){
-            Curtidas *c = (Curtidas*)malloc(sizeof(Curtidas));
-
-            c->id_usuario = id_user;
-            c->tempo = tempo;
-            c->prox = NULL;
-
             if(m->qtd_curtidas <= 0){
-                m->curtidas = c;
                 m->qtd_curtidas = 1;
-                m->tempo_exibicao = -1;
             } else {
-                Curtidas *c_aux = (Curtidas*)malloc(sizeof(Curtidas));
-                c_aux = m->curtidas->prox;
-                while (c_aux != NULL) {
-                    c_aux = c_aux->prox;
-                }
-                c_aux->prox = c;
                 m->qtd_curtidas++;
-                m->tempo_exibicao = -1;
             }
+            m->tempo_exibicao = -1;
             reavaliaTimeline(&t[i], m);
         }
     }

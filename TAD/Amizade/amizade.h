@@ -1,15 +1,7 @@
 typedef struct a * ta_pont;
 
-typedef struct m * tm_pont;
-
-typedef struct m {
-  int t_cadastro, t_cancelamento;
-  tm_pont prox;
-} Momento;
-
 typedef struct a {
-  int id1, id2, ativa;
-  Momento *momento;
+  int id1, id2, ativa, t_cadastro;
   ta_pont ant, prox;
 } Relacao;
 

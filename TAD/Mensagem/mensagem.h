@@ -1,16 +1,8 @@
 typedef struct p * tp_apont;
 
-typedef struct c * tc_apont;
-
-typedef struct c {
-    int id_usuario, tempo;
-    tc_apont prox;
-} Curtidas;
-
 typedef struct p {
   char *conteudo;
   int id_mensagem, qtd_conteudo, qtd_curtidas, id_usuario, tempo, tempo_exibicao;
-  Curtidas *curtidas;
   tp_apont acima, abaixo;
 } Mensagem;
 
