@@ -105,16 +105,7 @@ void iniciarAmizade(Amizade *a, int id1, int id2, int tempo){
 
 void cancelarAmizade(Amizade *a, int id1, int id2, int tempo){
     if(a->qtd > 0){
-      Relacao *r_aux = (Relacao*)malloc(sizeof(Relacao));
-      Relacao *r;
-
-      r_aux = a->primeira;
-      while (r_aux != NULL) {
-        if((r_aux->id1 == id1 || r_aux->id1 == id2) && (r_aux->id2 == id1 || r_aux->id2 == id2)){
-          r = r_aux;
-        }
-        r_aux = r_aux->prox;
-      }
+      Relacao *r = retornaRelacao(a, id1, id2);
 
       if(r != NULL){
           if(r->ativa == 1){
