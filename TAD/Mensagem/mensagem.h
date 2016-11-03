@@ -2,7 +2,7 @@ typedef struct p * tp_apont;
 
 typedef struct p {
   char *conteudo;
-  int id_mensagem, qtd_conteudo, qtd_curtidas, id_usuario, tempo, tempo_exibicao;
+  int id_mensagem, qtd_curtidas, id_usuario, tempo, tempo_exibicao;
   tp_apont acima, abaixo;
 } Mensagem;
 

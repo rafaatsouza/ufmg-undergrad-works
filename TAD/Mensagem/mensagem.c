@@ -48,11 +48,7 @@ void exibeTimeline(Usuario *us, int qtdUsuarios, Timeline *ts, int id_user, FILE
                 Mensagem *m = t->topo;
                 while(m != NULL){
                     if(m->tempo_exibicao == -1){
-                        fprintf(arq, "%d ", m->id_mensagem);
-                        for(i=0;i<(m->qtd_conteudo - 2);i++){
-                            fprintf(arq, "%c", m->conteudo[i]);
-                        }
-                        fprintf(arq, " %d\n", m->qtd_curtidas);
+                        fprintf(arq, "%d %s %d\n", m->id_mensagem, m->conteudo, m->qtd_curtidas);
                         m->tempo_exibicao = tempo;
                     }
                     m = m->abaixo;
@@ -83,11 +79,7 @@ int usuarioVeMsg(Amizade *a, int id1, int id_autor){
 }
 
 void insereMensagem(Timeline *t, Amizade *a, Usuario *u, int qtdUsuarios, int id_mensagem, char *conteudo, int id_user, int tempo, int tempo_exibicao){
-    int ti, i, qtd_conteudo = strlen(conteudo);
-
-    if(qtd_conteudo > 140){
-        qtd_conteudo = 140;
-    }
+    int ti, i;
 
     for(ti=0;ti<qtdUsuarios;ti++){
         Usuario *ut = retornaUsuario(u, qtdUsuarios, t[ti].id);
@@ -101,10 +93,9 @@ void insereMensagem(Timeline *t, Amizade *a, Usuario *u, int qtdUsuarios, int id
             m->abaixo = NULL;
             m->qtd_curtidas = 0;
             m->tempo_exibicao = tempo_exibicao;
-            m->qtd_conteudo = qtd_conteudo;
-            m->conteudo = (char*)malloc(qtd_conteudo * sizeof(char));
-            for(i = 0;i < qtd_conteudo; i++){
-                if(conteudo[i] != '\n') {
+            m->conteudo = (char*)malloc(strlen(conteudo) * sizeof(char));
+            for(i = 0;i < strlen(conteudo) && i < 140; i++){
+                if((int)(conteudo[i]) != 10 && (int)(conteudo[i]) != 13 && (int)(conteudo[i]) != 0) {
                     m->conteudo[i] = conteudo[i];
                 }
             }

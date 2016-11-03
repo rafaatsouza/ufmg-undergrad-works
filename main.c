@@ -40,7 +40,7 @@ int main(){
                 quantidade_amizades = retornaQtdDelimiter(content) - 1;
                 id = atoi(strtok(content,";"));
                 nome = strtok(NULL,";");
-                registraUsuario(&usuarios[i],id,nome, strlen(nome));
+                registraUsuario(&usuarios[i],id,nome);
                 iniciaTimeline(id, &timeline[i]);
 
                 for(j=0;j<quantidade_amizades;j++){
