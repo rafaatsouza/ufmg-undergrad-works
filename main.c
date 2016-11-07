@@ -34,7 +34,7 @@ int main(){
       coord = strtok(NULL," ");
       x = atoi(strtok(coord,","));
       y = atoi(strtok(NULL,","));
-      createPlayer(&players[i], x, y, name, strlen(name), mapSize);
+      createPlayer(&players[i], x, y, name, mapSize);
       i++;
     }
   }
@@ -52,6 +52,18 @@ int main(){
   //define o vencedor do jogo e registra no arquivo de saida
   DefineWinner(players, qtdPlayers, arq);
   fclose(arq);
-
+  //libera as memórias alocadas
+  free(map);
+  for(i=0;i<qtdPlayers;i++){
+      Move *m_aux, *m = players[i].score->historic->first;
+      while (m != NULL) {
+        m_aux = m;
+        m = m->next;
+        free(m_aux);
+      }
+      free(players[i].score->historic);
+      free(players[i].score);
+  }
+  free(players);
   return 0;
 }

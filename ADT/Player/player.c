@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "player.h"
 
 //recebe o endereço de memória para a variável Player, e cria um novo registro nesse endereço.
-void createPlayer(Player *p, int x, int y, char *n, int name_count, int mapSize){
+void createPlayer(Player *p, int x, int y, char *n, int mapSize){
   int i;
-  p->name_count = name_count;
   p->count_pokebolas = 3;
-  p->name = (char*)malloc(name_count * sizeof(char));
-  for(i = 0;i < name_count; i++){
+  p->name = (char*)malloc(strlen(n) * sizeof(char));
+  for(i = 0;i < strlen(n); i++){
       if(n[i] != ':') {
         p->name[i] = n[i];
       }
@@ -32,9 +32,7 @@ void createPlayer(Player *p, int x, int y, char *n, int name_count, int mapSize)
 
 //checa se a celula representada pelos parametros x e y já foi visitada pelo player representado no endereço de *p
 int checkCel(Player *p, int x, int y){
-  Move *m = (Move*)malloc(sizeof(Move));
-
-  m = p->score->historic->first;
+  Move *m = p->score->historic->first;
   while (m != NULL) {
     if(m->x == x && m->y == y){
       return 1;
@@ -79,7 +77,7 @@ Move* explorar(Player *p, int mapsize, int **map){
 
 //altera a posição do player com as coordenadas de seu próximo movimento; caso não exista um próximo movimento válido, retorna 0
 int defineNextMove(Player *p, int **map, int mapsize){
-  Move *best_move = (Move*)malloc(sizeof(Move)), *possible;// = (Move*)malloc(sizeof(Move));
+  Move *best_move = (Move*)malloc(sizeof(Move)), *possible;
   int best_filled = 0;
 
   possible = explorar(p,mapsize,map);
@@ -108,10 +106,12 @@ int defineNextMove(Player *p, int **map, int mapsize){
   }
 
   if(best_filled == 0){
+    free(best_move);
     return 0;
   } else {
     p->x = best_move->x;
     p->y = best_move->y;
+    free(best_move);
     return 1;
   }
 }
@@ -168,8 +168,7 @@ Move* caminho_percorrido(Player *p){
 
 //imprime no arquivo *arq todos os movimentos do player *p
 void printHistoric(Player *p, FILE *arq){
-  Move *m = (Move*)malloc(sizeof(Move));
-  m = caminho_percorrido(p);
+  Move *m = caminho_percorrido(p);
 
   while (m != NULL) {
     fprintf(arq, " %d,%d", m->x, m->y);
