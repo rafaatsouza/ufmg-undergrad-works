@@ -5,6 +5,7 @@
 #include "../Usuario/usuario.h"
 #include "mensagem.h"
 
+//inicia uma nova timeline para um usuario
 void iniciaTimeline(int id_user, Timeline *t){
     t->qtd = 0;
     t->topo = NULL;
@@ -12,6 +13,7 @@ void iniciaTimeline(int id_user, Timeline *t){
     t->ultimo = NULL;
 }
 
+//retorna o end. de memória da timeline de um usuario
 Timeline* retornaTimeline(Timeline *t, int qtdTimelines, int id_user){
     int i;
     for(i=0;i<qtdTimelines;i++){
@@ -21,6 +23,7 @@ Timeline* retornaTimeline(Timeline *t, int qtdTimelines, int id_user){
     }
 }
 
+//retorna o end. de memória de uma mensagem em uma timeline específica
 Mensagem* retornaMensagem(Timeline *t, int id_mensagem){
     if(t->qtd == 0){
         return NULL;
@@ -37,6 +40,7 @@ Mensagem* retornaMensagem(Timeline *t, int id_mensagem){
     return NULL;
 }
 
+//imprime a timeline de um usuario no arquivo especificado
 void exibeTimeline(Usuario *us, int qtdUsuarios, Timeline *ts, int id_user, FILE *arq, int tempo){
     Usuario *u = retornaUsuario(us, qtdUsuarios, id_user);
     if(u != NULL){
@@ -59,6 +63,7 @@ void exibeTimeline(Usuario *us, int qtdUsuarios, Timeline *ts, int id_user, FILE
     }
 }
 
+//retorna se usuario pode ver a mensagem de um determinado autor
 int usuarioVeMsg(Amizade *a, int id1, int id_autor){
     if(id1 == id_autor){
         return 1;
@@ -78,6 +83,7 @@ int usuarioVeMsg(Amizade *a, int id1, int id_autor){
     return 0;
 }
 
+//cria uma mensagem em todas as timelines de usuarios que podem ver essa mensagem
 void insereMensagem(Timeline *t, Amizade *a, Usuario *u, int qtdUsuarios, int id_mensagem, char *conteudo, int id_user, int tempo, int tempo_exibicao){
     int ti, i;
 
@@ -85,6 +91,7 @@ void insereMensagem(Timeline *t, Amizade *a, Usuario *u, int qtdUsuarios, int id
         Usuario *ut = retornaUsuario(u, qtdUsuarios, t[ti].id);
         if(usuarioVeMsg(a, ut->id, id_user) == 1 && retornaMensagem(&t[ti],id_mensagem) == NULL){
             Mensagem *m = (Mensagem*)malloc(sizeof(Mensagem));
+            int max_conteudo = 140;
 
             m->id_mensagem = id_mensagem;
             m->id_usuario = id_user;
@@ -94,9 +101,11 @@ void insereMensagem(Timeline *t, Amizade *a, Usuario *u, int qtdUsuarios, int id
             m->qtd_curtidas = 0;
             m->tempo_exibicao = tempo_exibicao;
             m->conteudo = (char*)malloc(strlen(conteudo) * sizeof(char));
-            for(i = 0;i < strlen(conteudo) && i < 140; i++){
+            for(i = 0;i <= strlen(conteudo) && i <= max_conteudo + 1; i++){
                 if((int)(conteudo[i]) != 10 && (int)(conteudo[i]) != 13 && (int)(conteudo[i]) != 0) {
                     m->conteudo[i] = conteudo[i];
+                } else {
+                    max_conteudo++;
                 }
             }
             if(t[ti].qtd <= 0){
@@ -113,39 +122,34 @@ void insereMensagem(Timeline *t, Amizade *a, Usuario *u, int qtdUsuarios, int id
     }
 }
 
+//"sobe" uma mensagem para o topo da timeline
 void reavaliaTimeline(Timeline *t, Mensagem *m){
-    while(m->acima != NULL){
-        Mensagem *m_de_cima = m->acima, *m_aux;
-
-        if(m_de_cima->id_mensagem != t->topo->id_mensagem){
-            m_de_cima->acima->abaixo = m;
-            m->acima = m_de_cima->acima;
-            m_de_cima->acima = m;
+    if(m->id_mensagem != t->topo->id_mensagem){
+        if(m->acima->id_mensagem == t->topo->id_mensagem){
+            t->topo->acima = m;
             if(m->abaixo != NULL){
-                m_aux = m->abaixo;
-                m_aux->acima = m_de_cima;
-                m_de_cima->abaixo = m_aux;
+                t->topo->abaixo = m->abaixo;
             } else {
-                m_de_cima->abaixo = NULL;
-                t->ultimo = m_de_cima;
+                t->topo->abaixo = NULL;
+                t->ultimo = t->topo;
             }
-            m->abaixo = m_de_cima;
         } else {
-            m_de_cima->acima = m;
             if(m->abaixo != NULL){
-                m_aux = m->abaixo;
-                m_de_cima->abaixo = m_aux;
+                m->acima->abaixo = m->abaixo;
+                m->abaixo->acima = m->acima;
             } else {
-                m_de_cima->abaixo = NULL;
-                t->ultimo = m_de_cima;
+                m->acima->abaixo = NULL;
+                t->ultimo = m->acima;
             }
-            m->abaixo = m_de_cima;
-            t->topo = m;
-            m->acima = NULL;
+            t->topo->acima = m;
         }
+        m->abaixo = t->topo;
+        t->topo = m;
+        m->acima = NULL;
     }
 }
 
+//adiciona as mensagens de autoria dos dois usuarios na timeline de cada um deles
 void adicionaMensagens(Timeline *t, Amizade *a, Usuario *u, int qtdUsuarios, int id1, int id2, int tempo){
     int i, ti;
     for(ti=0;ti<qtdUsuarios;ti++){
@@ -162,6 +166,7 @@ void adicionaMensagens(Timeline *t, Amizade *a, Usuario *u, int qtdUsuarios, int
     }
 }
 
+//curte uma mensagem em todas as timelines que ela esteja presente
 void curtirMensagem(Timeline *t, int qtdTimelines, int id_mensagem, int id_user, int tempo){
     int i;
 

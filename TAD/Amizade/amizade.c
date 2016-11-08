@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "amizade.h"
 
+//inicia uma nova lista de amizades
 Amizade* iniciaListaAmizade(){
   Amizade *a = (Amizade*)malloc(sizeof(Amizade));
   a->qtd = 0;
@@ -11,6 +12,7 @@ Amizade* iniciaListaAmizade(){
   return a;
 }
 
+//verifica se uma amizade entre dois usuarios ja existe
 int amizadeRepetida(Amizade *a, int id1, int id2){
   if(a->qtd <= 0){
     return 0;
@@ -27,6 +29,7 @@ int amizadeRepetida(Amizade *a, int id1, int id2){
   return 0;
 }
 
+//retorna o end. de memória para a relação entre dois usuarios
 Relacao* retornaRelacao(Amizade *a, int id1, int id2){
   if(a->qtd > 0){
     Relacao *r_aux = a->primeira;
@@ -43,6 +46,7 @@ Relacao* retornaRelacao(Amizade *a, int id1, int id2){
   }
 }
 
+//inicia a amizade entre dois usuarios
 void iniciarAmizade(Amizade *a, int id1, int id2, int tempo){
   if(id1 != id2){
     if(amizadeRepetida(a,id1,id2) == 0){
@@ -79,6 +83,7 @@ void iniciarAmizade(Amizade *a, int id1, int id2, int tempo){
   }
 }
 
+//cancela a amizade entre dois usuarios
 void cancelarAmizade(Amizade *a, int id1, int id2, int tempo){
     if(a->qtd > 0){
       Relacao *r = retornaRelacao(a, id1, id2);
@@ -91,6 +96,7 @@ void cancelarAmizade(Amizade *a, int id1, int id2, int tempo){
     }
 }
 
+//retorna uma nova lista de amizades contendo só as amizades de um determinado usuario
 Amizade* verAmigos(Amizade *a, int id_user){
     Amizade *retorno = iniciaListaAmizade();
     Relacao *r_aux = a->primeira;

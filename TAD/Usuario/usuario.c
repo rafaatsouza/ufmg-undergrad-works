@@ -3,6 +3,7 @@
 #include <string.h>
 #include "usuario.h"
 
+//cria um novo usuario
 void registraUsuario(Usuario *u, int id, char *n){
   int i;
 
@@ -11,6 +12,7 @@ void registraUsuario(Usuario *u, int id, char *n){
   strcpy(u->nome, n);
 }
 
+//retorna o end. de memória de um usuario na lista
 Usuario* retornaUsuario(Usuario *u, int qtdUsuarios, int id_user){
     int i;
     for(i=0;i<qtdUsuarios;i++){
