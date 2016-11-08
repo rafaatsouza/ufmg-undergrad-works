@@ -23,7 +23,6 @@ int main(int argc, char *argv[]){
   for(qtd_arg_entrada=1;qtd_arg_entrada<argc;qtd_arg_entrada++){
       strcpy(arquivo_entrada, argv[qtd_arg_entrada]);
       sprintf(arquivo_saida, "log.%s", argv[qtd_arg_entrada]);
-      printf("entrada %s - saida %s .\n", arquivo_entrada, arquivo_saida);
       entrada = fopen(arquivo_entrada,"r");
       if(entrada != NULL){
           int i = 0, j = 0, qtdUsuarios;
