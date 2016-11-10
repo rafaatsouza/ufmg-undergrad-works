@@ -49,7 +49,7 @@ int main(int argc, char *argv[]){
                     iniciaTimeline(id, &timeline[i]); //cria uma timeline para o novo usuario
                     //cria as amizades do novo usuario
                     for(j=0;j<quantidade_amizades;j++){
-                      iniciarAmizade(amizades, id, atoi(strtok(NULL,";")),0);
+                      iniciarAmizade(amizades, id, atoi(strtok(NULL,";")));
                     }
                     i++;
                 } else {
@@ -65,11 +65,11 @@ int main(int argc, char *argv[]){
                             break;
                             case 2:
                                 novo_amigo = atoi(strtok(NULL,";"));
-                                iniciarAmizade(amizades, user_executa->id, novo_amigo,tempo);
+                                iniciarAmizade(amizades, user_executa->id, novo_amigo);
                                 adicionaMensagens(timeline, amizades, usuarios, qtdUsuarios, user_executa->id, novo_amigo, tempo);
                             break;
                             case 3:
-                                cancelarAmizade(amizades, user_executa->id, atoi(strtok(NULL,";")),tempo);
+                                cancelarAmizade(amizades, user_executa->id, atoi(strtok(NULL,";")));
                             break;
                             case 4:
                                 curtirMensagem(timeline, qtdUsuarios, atoi(strtok(NULL,";")), user_executa->id, tempo);
@@ -94,6 +94,7 @@ int main(int argc, char *argv[]){
           while(m != NULL){
               m_aux = m;
               m = m->abaixo;
+              free(m_aux->conteudo);
               free(m_aux);
           }
           free(m);
