@@ -83,9 +83,37 @@ int usuarioVeMsg(Amizade *a, int id1, int id_autor){
     return 0;
 }
 
+//método para checar e adaptar a string de conteudo para ser armazenada na variável de mensagem
+void AdaptaConteudo(char *m){
+    int i, length = 0;
+
+    for(i = 0;i <= strlen(m); i++){
+        if((int)(m[i]) != 10 && (int)(m[i]) != 13 && (int)(m[i]) != 0 && (int)(m[i]) != 9) {
+            length++;
+        }
+    }
+
+    if(length > 0){
+        char *retorno = (char*)malloc((length - 1) * sizeof(char));
+        int j = 0;
+        for(i = 0;i <= (length - 1); i++){
+            if((int)(m[i]) != 10 && (int)(m[i]) != 13 && (int)(m[i]) != 0 && (int)(m[i]) != 9) {
+                retorno[j] = m[i];
+                j++;
+            } else {
+                length++;
+            }
+        }
+        strcpy(m,retorno);
+        free(retorno);
+    }
+}
+
 //cria uma mensagem em todas as timelines de usuarios que podem ver essa mensagem
 void insereMensagem(Timeline *t, Amizade *a, Usuario *u, int qtdUsuarios, int id_mensagem, char *conteudo, int id_user, int tempo, int tempo_exibicao){
     int ti, i;
+
+    AdaptaConteudo(conteudo);
 
     for(ti=0;ti<qtdUsuarios;ti++){
         Usuario *ut = retornaUsuario(u, qtdUsuarios, t[ti].id);
@@ -101,13 +129,7 @@ void insereMensagem(Timeline *t, Amizade *a, Usuario *u, int qtdUsuarios, int id
             m->qtd_curtidas = 0;
             m->tempo_exibicao = tempo_exibicao;
             m->conteudo = (char*)malloc(strlen(conteudo) * sizeof(char));
-            for(i = 0;i <= strlen(conteudo) && i <= max_conteudo + 1; i++){
-                if((int)(conteudo[i]) != 10 && (int)(conteudo[i]) != 13 && (int)(conteudo[i]) != 0) {
-                    m->conteudo[i] = conteudo[i];
-                } else {
-                    max_conteudo++;
-                }
-            }
+            strcpy(m->conteudo, conteudo);
             if(t[ti].qtd <= 0){
                 t[ti].topo = m;
                 t[ti].ultimo = m;
