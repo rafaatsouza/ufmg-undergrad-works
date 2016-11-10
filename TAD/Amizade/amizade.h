@@ -1,7 +1,7 @@
 typedef struct a * ta_pont;
 
 typedef struct a {
-  int id1, id2, ativa, t_cadastro;
+  int id1, id2, ativa;
   ta_pont ant, prox;
 } Relacao;
 
@@ -11,5 +11,5 @@ typedef struct h {
 } Amizade;
 
 Amizade* iniciaListaAmizade();
-void iniciarAmizade(Amizade *a, int id1, int id2, int tempo);
-void cancelarAmizade(Amizade *a, int id1, int id2, int tempo);
+void iniciarAmizade(Amizade *a, int id1, int id2);
+void cancelarAmizade(Amizade *a, int id1, int id2);

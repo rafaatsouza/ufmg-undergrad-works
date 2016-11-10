@@ -47,7 +47,7 @@ Relacao* retornaRelacao(Amizade *a, int id1, int id2){
 }
 
 //inicia a amizade entre dois usuarios
-void iniciarAmizade(Amizade *a, int id1, int id2, int tempo){
+void iniciarAmizade(Amizade *a, int id1, int id2){
   if(id1 != id2){
     if(amizadeRepetida(a,id1,id2) == 0){
       Relacao *r = (Relacao*)malloc(sizeof(Relacao));
@@ -55,7 +55,6 @@ void iniciarAmizade(Amizade *a, int id1, int id2, int tempo){
       r->id1 = id1;
       r->id2 = id2;
       r->ativa = 1;
-      r->t_cadastro = tempo;
       r->prox = NULL;
       if(a->qtd <= 0){
         a->primeira = r;
@@ -75,7 +74,6 @@ void iniciarAmizade(Amizade *a, int id1, int id2, int tempo){
       Relacao *r = retornaRelacao(a, id1, id2);
       if(r != NULL){
         if(r->ativa == 0){
-            r->t_cadastro = tempo;
             r->ativa = 1;
         }
       }
@@ -84,7 +82,7 @@ void iniciarAmizade(Amizade *a, int id1, int id2, int tempo){
 }
 
 //cancela a amizade entre dois usuarios
-void cancelarAmizade(Amizade *a, int id1, int id2, int tempo){
+void cancelarAmizade(Amizade *a, int id1, int id2){
     if(a->qtd > 0){
       Relacao *r = retornaRelacao(a, id1, id2);
 
@@ -103,9 +101,9 @@ Amizade* verAmigos(Amizade *a, int id_user){
     while (r_aux != NULL) {
       if(r_aux->ativa == 1){
           if(r_aux->id1 == id_user){
-              iniciarAmizade(retorno, id_user, r_aux->id2, r_aux->t_cadastro);
+              iniciarAmizade(retorno, id_user, r_aux->id2);
           } else if(r_aux->id2 == id_user) {
-              iniciarAmizade(retorno, id_user, r_aux->id1, r_aux->t_cadastro);
+              iniciarAmizade(retorno, id_user, r_aux->id1);
           }
       }
       r_aux = r_aux->prox;
