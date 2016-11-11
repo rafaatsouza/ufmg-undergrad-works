@@ -42,67 +42,36 @@ int checkCel(Player *p, int x, int y){
   return 0;
 }
 
-//retorna uma lista de movimentos possíveis para o player
-Move* explorar(Player *p, int mapsize, int **map){
-  int x,y, count = 0;
-  for(x =(p->x)-1;x<=(p->x)+1;x++){
-    for(y =(p->y)-1;y<=(p->y)+1;y++){
-      if(x >= 0 && y >= 0 && x <= (mapsize-1) && y <= (mapsize-1)){
-        if(checkCel(p,x,y) == 0){
-          count++;
-        }
-      }
-    }
-  }
-  Move *possiveis = (Move*)malloc(sizeof(Move)*count);
-  count = 0;
-  for(x =(p->x)-1;x<=(p->x)+1;x++){
-    for(y =(p->y)-1;y<=(p->y)+1;y++){
-      if(x >= 0 && y >= 0 && x <= (mapsize-1) && y <= (mapsize-1)){
-        if(checkCel(p,x,y) == 0){
-          possiveis[count].x = x;
-          possiveis[count].y = y;
-          possiveis[count].val = map[x][y];
-          possiveis[count].next = NULL;
-          if(count > 0){
-            possiveis[count-1].next = &possiveis[count];
-          }
-          count++;
-        }
-      }
-    }
-  }
-  return &possiveis[0];
-}
-
 //altera a posição do player com as coordenadas de seu próximo movimento; caso não exista um próximo movimento válido, retorna 0
 int defineNextMove(Player *p, int **map, int mapsize){
-  Move *best_move = (Move*)malloc(sizeof(Move)), *possible;
-  int best_filled = 0;
+  Move *best_move = (Move*)malloc(sizeof(Move));
+  int best_filled = 0, x, y;
 
-  possible = explorar(p,mapsize,map);
-  while (possible != NULL) {
-    if(checkCel(p,possible->x,possible->y)==0){
-      if(best_filled == 0){
-        best_move->x = possible->x;
-        best_move->y = possible->y;
-        best_move->val = map[possible->x][possible->y];
-        best_filled = 1;
-      } else {
-        if((map[possible->x][possible->y] > best_move->val) || (best_move->val == 6 && p->count_pokebolas > 0 && map[possible->x][possible->y] > 0 && map[possible->x][possible->y] < 6)){
-          if(map[possible->x][possible->y] != 6){
-            best_move->x = possible->x;
-            best_move->y = possible->y;
-            best_move->val = map[possible->x][possible->y];
-          } else if(p->count_pokebolas == 0 || best_move->val < 0){
-            best_move->x = possible->x;
-            best_move->y = possible->y;
-            best_move->val = map[possible->x][possible->y];
-          }
+  for(x =(p->x)-1;x<=(p->x)+1;x++){
+    for(y =(p->y)-1;y<=(p->y)+1;y++){
+      if(x >= 0 && y >= 0 && x <= (mapsize-1) && y <= (mapsize-1)){
+        if(checkCel(p,x,y) == 0){
+            if(best_filled == 0){
+              best_move->x = x;
+              best_move->y = y;
+              best_move->val = map[x][y];
+              best_filled = 1;
+            } else {
+              if((map[x][y] > best_move->val) || (best_move->val == 6 && p->count_pokebolas > 0 && map[x][y] > 0 && map[x][y] < 6)){
+                if(map[x][y] != 6){
+                  best_move->x = x;
+                  best_move->y = y;
+                  best_move->val = map[x][y];
+                } else if(p->count_pokebolas == 0 || best_move->val < 0){
+                  best_move->x = x;
+                  best_move->y = y;
+                  best_move->val = map[x][y];
+                }
+              }
+            }
         }
       }
     }
-    possible = possible->next;
   }
 
   if(best_filled == 0){
@@ -255,16 +224,15 @@ void DefineWinner(Player *p, int qtdPlayers, FILE *arq){
     }
   }
 
-  Player *winners = (Player*)malloc(tie*sizeof(Player));
   if(tie == 1){
     for(i=0;i<qtdPlayers;i++){
       if(p[i].score->scoreTotal == maxScore){
-        winners = &p[i];
+        fprintf(arq, "VENCEDOR %s", p[i].name);
         break;
       }
     }
-    fprintf(arq, "VENCEDOR %s", winners->name);
   } else {
+    Player *winners = (Player*)malloc(tie*sizeof(Player));
     int c = 0;
     for (i = 0; i < qtdPlayers; i++) {
       if(p[i].score->scoreTotal == maxScore){

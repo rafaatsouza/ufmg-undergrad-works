@@ -29,7 +29,7 @@ int main(){
   //lê os valores do arquivo de entrada para registrar todos os jogadores
   i = 0;
   while (fgets(buf,100,arq) != NULL) {
-    if (buf[0] != '\n' && buf[0] != ' ' && buf[0] != ""){
+    if (buf[0] != '\n' && buf[0] != ' ' && buf[0] != "" && (int)(buf[0]) != 13){
       name = strtok(buf," ");
       coord = strtok(NULL," ");
       x = atoi(strtok(coord,","));
@@ -38,7 +38,6 @@ int main(){
       i++;
     }
   }
-
   fclose(arq);
   arq = fopen("saida.txt","w");
   fclose(arq);
@@ -53,6 +52,9 @@ int main(){
   DefineWinner(players, qtdPlayers, arq);
   fclose(arq);
   //libera as memórias alocadas
+  for (i = 0; i < mapSize; i++){
+    free(map[i]);
+  }
   free(map);
   for(i=0;i<qtdPlayers;i++){
       Move *m_aux, *m = players[i].score->historic->first;
@@ -63,6 +65,7 @@ int main(){
       }
       free(players[i].score->historic);
       free(players[i].score);
+      free(players[i].name);
   }
   free(players);
   return 0;
