@@ -8,7 +8,7 @@ void registraUsuario(Usuario *u, int id, char *n){
   int i;
 
   u->id = id;
-  u->nome = (char*)malloc(strlen(n) * sizeof(char));
+  u->nome = (char*)malloc((strlen(n) + 1) * sizeof(char));
   strcpy(u->nome, n);
 }
 

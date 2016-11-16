@@ -84,20 +84,20 @@ int usuarioVeMsg(Amizade *a, int id1, int id_autor){
 }
 
 //método para checar e adaptar a string de conteudo para ser armazenada na variável de mensagem
-void AdaptaConteudo(char *m){
+char* RetornaConteudo(char *m){
     int i, length = 0;
 
     for(i = 0;i <= strlen(m); i++){
-        if((int)(m[i]) != 10 && (int)(m[i]) != 13 && (int)(m[i]) != 0 && (int)(m[i]) != 9) {
+        if((int)(m[i]) != 0 && (int)(m[i]) != 10 && (int)(m[i]) != 13 && (int)(m[i]) != 0 && (int)(m[i]) != 9) {
             length++;
         }
     }
 
     if(length > 0){
-        char *retorno = (char*)malloc((length - 1) * sizeof(char));
+        char *retorno = (char*)malloc((length + 1) * sizeof(char));
         int j = 0;
         for(i = 0;i <= (length - 1); i++){
-            if((int)(m[i]) != 10 && (int)(m[i]) != 13 && (int)(m[i]) != 0 && (int)(m[i]) != 9) {
+            if((int)(m[i]) != 0 && (int)(m[i]) != 10 && (int)(m[i]) != 13 && (int)(m[i]) != 0 && (int)(m[i]) != 9) {
                 retorno[j] = m[i];
                 j++;
             } else {
@@ -106,6 +106,7 @@ void AdaptaConteudo(char *m){
         }
         strcpy(m,retorno);
         free(retorno);
+        return m;
     }
 }
 
@@ -113,13 +114,11 @@ void AdaptaConteudo(char *m){
 void insereMensagem(Timeline *t, Amizade *a, Usuario *u, int qtdUsuarios, int id_mensagem, char *conteudo, int id_user, int tempo, int tempo_exibicao){
     int ti, i;
 
-    AdaptaConteudo(conteudo);
-
     for(ti=0;ti<qtdUsuarios;ti++){
         Usuario *ut = retornaUsuario(u, qtdUsuarios, t[ti].id);
         if(usuarioVeMsg(a, ut->id, id_user) == 1 && retornaMensagem(&t[ti],id_mensagem) == NULL){
             Mensagem *m = (Mensagem*)malloc(sizeof(Mensagem));
-            int max_conteudo = 140;
+            char *cnt = RetornaConteudo(conteudo);
 
             m->id_mensagem = id_mensagem;
             m->id_usuario = id_user;
@@ -128,8 +127,8 @@ void insereMensagem(Timeline *t, Amizade *a, Usuario *u, int qtdUsuarios, int id
             m->abaixo = NULL;
             m->qtd_curtidas = 0;
             m->tempo_exibicao = tempo_exibicao;
-            m->conteudo = (char*)malloc(strlen(conteudo) * sizeof(char));
-            strcpy(m->conteudo, conteudo);
+            m->conteudo = (char*)malloc((strlen(cnt) + 1) * sizeof(char));
+            strcpy(m->conteudo, cnt);
             if(t[ti].qtd <= 0){
                 t[ti].topo = m;
                 t[ti].ultimo = m;
