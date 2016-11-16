@@ -8,6 +8,7 @@
 //retorna o numero de caracteres ";" na string
 int retornaQtdDelimiter(char *s){
   int qtd = 0;
+  if(strlen(s) == 0) { return 0; }
   while((s = strchr(s, ';')) != NULL) {
       qtd++;
       s++;
@@ -90,14 +91,17 @@ int main(int argc, char *argv[]){
               free(usuarios[i].nome);
           }
           free(usuarios);
-          Mensagem *m_aux, *m = timeline->topo;
-          while(m != NULL){
-              m_aux = m;
-              m = m->abaixo;
-              free(m_aux->conteudo);
-              free(m_aux);
+          Mensagem *m_aux;
+          for(i=0;i<qtdUsuarios;i++){
+              Mensagem *m = timeline[i].topo;
+              while(m != NULL){
+                  m_aux = m;
+                  m = m->abaixo;
+                  free(m_aux->conteudo);
+                  free(m_aux);
+              }
+              free(m);
           }
-          free(m);
           free(timeline);
           Relacao *r_aux, *r = amizades->primeira;
           while (r != NULL) {
