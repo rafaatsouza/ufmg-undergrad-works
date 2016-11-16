@@ -1,4 +1,4 @@
-all: tp1.out
+all: clean tp1.out
 
 tp1.out: TAD/Amizade/amizade.o TAD/Usuario/usuario.o TAD/Mensagem/mensagem.o
 	gcc -w main.c -o tp1.out TAD/Amizade/amizade.o TAD/Usuario/usuario.o TAD/Mensagem/mensagem.o
