@@ -104,7 +104,6 @@ void AdaptaConteudo(char *m){
                 length++;
             }
         }
-        m = (char*)realloc(m,(length + 1) * sizeof(char));
         strcpy(m,retorno);
         free(retorno);
     }
