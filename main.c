@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "Funções/Funcoes.h"
+#include "Funcoes/Funcoes.h"
 
 int main(){
     srand((unsigned)time(NULL));
