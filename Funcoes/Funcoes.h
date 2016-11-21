@@ -3,4 +3,8 @@ typedef struct vetor {
     int *v;
 } vetor;
 
-vetor* retornaVetor(int min, int max, int tamanho);
+void defineOrdenado(vetor *v);
+vetor* criaVetor(int min, int max, int tamanho);
+void imprimeVetor(vetor *v);
+void ordenaSelecao(vetor *v);
+void ordenaBolha(vetor *v);
