@@ -1,10 +1,4 @@
-typedef struct vetor {
-    int tamanho;
-    int *v;
-} vetor;
-
-void defineOrdenado(vetor *v);
-vetor* criaVetor(int min, int max, int tamanho);
-void imprimeVetor(vetor *v);
-void ordenaSelecao(vetor *v);
-void ordenaBolha(vetor *v);
+int retornaAleatorio(int min, int max);
+int retornaMax(int *v, int tamanho);
+int retornaNumDigitos(int n);
+int retornaDigito(int n, int i);
