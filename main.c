@@ -19,6 +19,7 @@ int main(){
     int fim = 0;
 
     while(fim == 0){
+        system("clear");
         imprimeVetor(v);
         defineOrdenado(v);
         printf("Informe o tipo de ordenacao desejado: \n1 - Bolha\n2 - Seleção\n3 - Inserção\n4 - ShellSort\n5 - QuickSort\n6 - HeapSort\n7 - MergeSort\n8 - RadixSort\n");
@@ -70,10 +71,6 @@ int main(){
                 imprimeVetor(v);
                 defineOrdenado(v);
                 fim = 1;
-            break;
-            default:
-            system("clear");
-            printf("Informe o tipo de ordenacao desejado: \n1 - Bolha\n2 -Seleção\n3 -Inserção\n4 -ShellSort\n4 -QuickSort\n5 -HeapSort\n6 -MergeSort\n7 -RadixSort\n");
             break;
         }
     }
