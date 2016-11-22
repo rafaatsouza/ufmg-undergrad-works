@@ -11,12 +11,12 @@ void defineOrdenado(vetor *v){
     for(i=0;i<v->tamanho;i++){
         if(i != 0){
             if(v->v[i] < v->v[i-1]){
-                printf("Vetor nao esta ordenado.\n");
+                printf("Vetor nao esta ordenado:\n");
                 return;
             }
         }
     }
-    printf("Vetor esta ordenado.\n");
+    printf("Vetor esta ordenado:\n");
 }
 
 //cria uma nova variável do tipo vetor
@@ -61,10 +61,12 @@ void ordenaBolha(vetor *v){
     int i, j, x;
     for (i=0;i<= v->tamanho;i++){
         for (j=0;j<=(v->tamanho-i);j++){
-            if (v->v[j] > v->v[j+1]){
-                x = v->v[j];
-                v->v[j] = v->v[j+1];
-                v->v[j+1] = x;
+            if(j<v->tamanho-1){
+                if (v->v[j] > v->v[j+1]){
+                    x = v->v[j];
+                    v->v[j] = v->v[j+1];
+                    v->v[j+1] = x;
+                }
             }
         }
     }
