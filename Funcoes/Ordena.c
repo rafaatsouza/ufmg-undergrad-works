@@ -124,9 +124,10 @@ void ordenaInsercao(vetor *v){
     }
 }
 
+//divide os vetores para ordenação de método quicksort
 int separaQuick (vetor *v, int inicio, int final) {
    int c = v->v[inicio], i = inicio+1, j = final, t;
-   while (/*A*/ i <= j) {
+   while (i <= j) {
       if (v->v[i] <= c) ++i;
       else if (c < v->v[j]) --j;
       else {
@@ -134,11 +135,11 @@ int separaQuick (vetor *v, int inicio, int final) {
          ++i; --j;
       }
    }
-   // agora i == j+1
    v->v[inicio] = v->v[j], v->v[j] = c;
    return j;
 }
 
+//ordena vetor por método quicksort
 void ordenaQuicksort(vetor *v, int inicio, int final) {
    int j;
    while (inicio < final) {
@@ -148,10 +149,9 @@ void ordenaQuicksort(vetor *v, int inicio, int final) {
    }
 }
 
+//order vetor por método radixsort
 void ordenaRadixsort(vetor *v) {
-    int i, digito = 1;
-    int aux[v->tamanho];
-    int maior = retornaMax(v->v, v->tamanho);
+    int i, digito = 1, aux[v->tamanho], maior = retornaMax(v->v, v->tamanho);
 
     while (maior / digito > 0){
         int bucket[10] = { 0 };
