@@ -34,12 +34,10 @@ int main(){
                 fim = 1;
             break;
             case 4:
-                // ordenaShellsort(v);
-                // imprimeVetor(v);
-                // defineOrdenado(v);
-                // fim = 1;
-                system("clear");
-                printf("Ainda nao implementado.\n");
+                ordenaShellsort(v);
+                imprimeVetor(v);
+                defineOrdenado(v);
+                fim = 1;
             break;
             case 5:
                 system("clear");

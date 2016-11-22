@@ -77,10 +77,12 @@ void ordenaShellsort(vetor *v){
     do{
         h /= 3;
         for (i = 0; i <= v->tamanho; i=i+h){
-            x = v->v[i]; j = i;
-            while (v->v[j - h] > x){
-                v->v[j] = v->v[j - h]; j -= h;
-                if (j <= h) break;
+            x = v->v[i];
+            j = i;
+            while (v->v[j - h] >= x){
+                v->v[j] = v->v[j - h];
+                j -= h;
+                if (j < h) break;
             }
             v->v[j] = x;
         }
