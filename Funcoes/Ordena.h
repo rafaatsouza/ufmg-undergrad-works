@@ -9,7 +9,7 @@ void imprimeVetor(vetor *v);
 void ordenaSelecao(vetor *v);
 void ordenaBolha(vetor *v);
 void ordenaShellsort(vetor *v);
-void ordenaMergesort(vetor *v, int inicio, int final);
+void ordenaMergesort(int *v, int tamanho);
 void ordenaInsercao(vetor *v);
 void ordenaQuicksort(vetor *v, int inicio, int final);
 void ordenaRadixsort(vetor *v);

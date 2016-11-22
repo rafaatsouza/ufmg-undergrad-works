@@ -91,25 +91,34 @@ void ordenaShellsort(vetor *v){
     } while (h != 1);
 }
 
-void merge(vetor *v, int p, int q, int r){
-    int i, j, k, *aux = (int*)malloc(sizeof(int) * (p+q));
-    for (i = q+1; i > p; i--)
-       aux[i-1] = v->v[i-1];
-    for (j = q; j < r; j++)
-       aux[r+q-j] = v->v[j+1];
-    for (k = p; k <= r; k++)
-       if (less(aux[j], aux[i])) v->v[k] = aux[j--];
-       else v->v[k] = aux[i++];
+void merge(int *v, int *esquerda, int cont_e, int *direita, int cont_d){
+    int i = 0, j = 0, k =0;
+
+	while(i<cont_e && j< cont_d) {
+		if(esquerda[i]  < direita[j]) v[k++] = esquerda[i++];
+		else v[k++] = direita[j++];
+	}
+	while(i < cont_e) v[k++] = esquerda[i++];
+	while(j < cont_d) v[k++] = direita[j++];
 }
 
 //ordena vetor por método mergesort
-void ordenaMergesort(vetor *v, int inicio, int final){
-    if (inicio < final) {
-       int q = (inicio + final) / 2;
-       ordenaMergesort(v, inicio, q);
-       ordenaMergesort(v, q+1, final);
-       merge(v, inicio, q, final);
-    }
+void ordenaMergesort(int *v, int tamanho){
+    int meio,i, *esquerda, *direita;
+    if(tamanho < 2) return;
+
+    meio = tamanho/2;
+    esquerda = (int*)malloc(meio*sizeof(int));
+    direita = (int*)malloc((tamanho - meio)*sizeof(int));
+
+    for(i = 0;i<meio;i++) esquerda[i] = v[i];
+    for(i = meio;i<tamanho;i++) direita[i-meio] = v[i];
+
+    ordenaMergesort(esquerda,meio);
+    ordenaMergesort(direita,tamanho-meio);
+    merge(v,esquerda,meio,direita,tamanho-meio);
+    free(esquerda);
+    free(direita);
 }
 
 //ordena vetor por método inserção

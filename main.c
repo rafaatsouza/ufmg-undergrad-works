@@ -58,7 +58,7 @@ int main(int argc, char *argv[]){
         exit(-1);
     } else if(strcmp(argv[1],"mer") == 0){
         tempo_exec = clock();
-        ordenaMergesort(v,0,v->tamanho-1);
+        ordenaMergesort(v->v,v->tamanho);
         tempo_exec = clock() - tempo_exec;
     } else if(strcmp(argv[1],"rad") == 0){
         tempo_exec = clock();
