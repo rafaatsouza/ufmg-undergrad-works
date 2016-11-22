@@ -124,23 +124,50 @@ void ordenaInsercao(vetor *v){
     }
 }
 
-// void Radixsort(vetor *v, int n, int base, int num_digitos) {
-//     int i, j, digito, max = retornaMax(v->v, v->tamanho), **tabela = (int**)malloc(sizeof(int*)), aux = (int*)malloc(sizeof(int)* v->tamanho);
-//     int numDigitos = retornaNumDigitos(max);
-//
-//     for(i=0;i<10;i++){
-//         tabela[i] = (int*)malloc(sizeof(int) * v->tamanho);
-//     }
-//
-//     for(i=0;i<10;i++){
-//         for(j=0;j<v->tamanho;j++){
-//             tabela[i][j] = 0;
-//         }
-//     }
-//
-//     for(i=0;i<numDigitos;i++){
-//         for(j=0;j<v->tamanho;j++){
-//             digito = retornaDigito(v->v[j],i);
-//         }
-//     }
-// }
+int separaQuick (vetor *v, int inicio, int final) {
+   int c = v->v[inicio], i = inicio+1, j = final, t;
+   while (/*A*/ i <= j) {
+      if (v->v[i] <= c) ++i;
+      else if (c < v->v[j]) --j;
+      else {
+         t = v->v[i], v->v[i] = v->v[j], v->v[j] = t;
+         ++i; --j;
+      }
+   }
+   // agora i == j+1
+   v->v[inicio] = v->v[j], v->v[j] = c;
+   return j;
+}
+
+void ordenaQuicksort(vetor *v, int inicio, int final) {
+   int j;
+   while (inicio < final) {
+      j = separaQuick(v, inicio, final);
+      ordenaQuicksort(v, inicio, j-1);
+      inicio = j + 1;
+   }
+}
+
+void ordenaRadixsort(vetor *v) {
+    int i, digito = 1;
+    int aux[v->tamanho];
+    int maior = retornaMax(v->v, v->tamanho);
+
+    while (maior / digito > 0){
+        int bucket[10] = { 0 };
+
+        for (i = 0; i < v->tamanho; i++)
+            bucket[(v->v[i] / digito) % 10]++;
+
+        for (i = 1; i < 10; i++)
+            bucket[i] += bucket[i - 1];
+
+        for (i = v->tamanho - 1; i >= 0; i--)
+            aux[--bucket[(v->v[i] / digito) % 10]] = v->v[i];
+
+        for (i = 0; i < v->tamanho; i++)
+            v->v[i] = aux[i];
+
+        digito *= 10;
+    }
+}

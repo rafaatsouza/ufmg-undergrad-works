@@ -5,13 +5,23 @@
 
 int main(){
     srand((unsigned)time(NULL));
-    vetor *v = criaVetor(1,10,10);
+
+    printf("Informe a quantidade de elementos no vetor à ser ordenado: ");
+    int tamanho;
+    scanf("%d",&tamanho);
+
+    if(tamanho <= 0){
+        fprintf(stderr, "Tamanho inválido.\n");
+        exit(-1);
+    }
+
+    vetor *v = criaVetor(1,99,tamanho);
     int fim = 0;
 
     while(fim == 0){
         imprimeVetor(v);
         defineOrdenado(v);
-        printf("Informe o tipo de ordenacao desejado: \n1 - Bolha\n2 -Seleção\n3 -Inserção\n4 -ShellSort\n5 -QuickSort\n6 -HeapSort\n7 -MergeSort\n8 -RadixSort\n");
+        printf("Informe o tipo de ordenacao desejado: \n1 - Bolha\n2 - Seleção\n3 - Inserção\n4 - ShellSort\n5 - QuickSort\n6 - HeapSort\n7 - MergeSort\n8 - RadixSort\n");
         int ordenacao;
         scanf("%d",&ordenacao);
         switch (ordenacao) {
@@ -40,12 +50,14 @@ int main(){
                 fim = 1;
             break;
             case 5:
-                system("clear");
-                printf("Ainda nao implementado.\n");
+                ordenaQuicksort(v,0,v->tamanho-1);
+                imprimeVetor(v);
+                defineOrdenado(v);
+                fim = 1;
             break;
             case 6:
                 system("clear");
-                printf("Ainda nao implementado.\n");
+                printf("Heapsort ainda nao implementado.\n");
             break;
             case 7:
                 ordenaMergesort(v,0,v->tamanho-1);
@@ -54,8 +66,10 @@ int main(){
                 fim = 1;
             break;
             case 8:
-                system("clear");
-                printf("Ainda nao implementado.\n");
+                ordenaRadixsort(v);
+                imprimeVetor(v);
+                defineOrdenado(v);
+                fim = 1;
             break;
             default:
             system("clear");
@@ -63,5 +77,8 @@ int main(){
             break;
         }
     }
+
+    free(v->v);
+    free(v);
     return 0;
 }
