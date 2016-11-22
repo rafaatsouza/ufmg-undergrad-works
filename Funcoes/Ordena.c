@@ -74,21 +74,23 @@ void ordenaBolha(vetor *v){
 
 //ordena vetor por método shellsort
 void ordenaShellsort(vetor *v){
-    int i, j, x, h = 1;
-    do h = h * 3 + 1; while (h < v->tamanho);
-    do{
-        h /= 3;
-        for (i = 0; i <= v->tamanho; i=i+h){
-            x = v->v[i];
-            j = i;
-            while (v->v[j - h] >= x){
-                v->v[j] = v->v[j - h];
-                j -= h;
-                if (j < h) break;
+    int i = (v->tamanho - 1) / 2;
+    int chave, k, aux;
+
+    while(i != 0) {
+        do {
+            chave = 1;
+            for(k = 0; k < v->tamanho - i; ++k) {
+                if(v->v[k] > v->v[k + i]) {
+                    aux = v->v[k];
+                    v->v[k] = v->v[k + i];
+                    v->v[k + i] = aux;
+                    chave = 0;
+                }
             }
-            v->v[j] = x;
-        }
-    } while (h != 1);
+        } while(chave == 0);
+        i = i / 2;
+    }
 }
 
 void merge(int *v, int *esquerda, int cont_e, int *direita, int cont_d){
