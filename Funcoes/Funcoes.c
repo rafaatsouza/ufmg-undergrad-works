@@ -19,22 +19,3 @@ int retornaMax(int *v, int tamanho){
     }
     return max;
 }
-
-int retornaNumDigitos(int n){
-    int digitos = 0;
-    while(n != 0){
-        n /= 10;
-        digitos++;
-    }
-    return digitos;
-}
-
-int retornaDigito(int n, int i){
-    int digito;
-    while(i > 0){
-        digito = n % 10;
-        n /= 10;
-        i--;
-    }
-    return digito;
-}
