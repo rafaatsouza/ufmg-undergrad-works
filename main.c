@@ -1,79 +1,81 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 #include "Funcoes/Ordena.h"
+#include "Funcoes/Funcoes.h"
 
-int main(){
+int main(int argc, char *argv[]){
     srand((unsigned)time(NULL));
 
-    printf("Informe a quantidade de elementos no vetor à ser ordenado: ");
-    int tamanho;
-    scanf("%d",&tamanho);
-
-    if(tamanho <= 0){
-        fprintf(stderr, "Tamanho inválido.\n");
+    if(argc < 3){
+        fprintf(stderr, "Parametros invalidos.\n");
         exit(-1);
     }
 
-    vetor *v = criaVetor(1,99,tamanho);
-    int fim = 0;
+    if(strlen(argv[1]) < 3){
+        fprintf(stderr, "Ordenacao invalida.\n");
+        exit(-1);
+    }
 
-    while(fim == 0){
-        system("clear");
-        imprimeVetor(v);
-        defineOrdenado(v);
-        printf("Informe o tipo de ordenacao desejado: \n1 - Bolha\n2 - Seleção\n3 - Inserção\n4 - ShellSort\n5 - QuickSort\n6 - HeapSort\n7 - MergeSort\n8 - RadixSort\n");
-        int ordenacao;
-        scanf("%d",&ordenacao);
-        switch (ordenacao) {
-            case 1:
-                ordenaBolha(v);
-                imprimeVetor(v);
-                defineOrdenado(v);
-                fim = 1;
-            break;
-            case 2:
-                ordenaSelecao(v);
-                imprimeVetor(v);
-                defineOrdenado(v);
-                fim = 1;
-            break;
-            case 3:
-                ordenaInsercao(v);
-                imprimeVetor(v);
-                defineOrdenado(v);
-                fim = 1;
-            break;
-            case 4:
-                ordenaShellsort(v);
-                imprimeVetor(v);
-                defineOrdenado(v);
-                fim = 1;
-            break;
-            case 5:
-                ordenaQuicksort(v,0,v->tamanho-1);
-                imprimeVetor(v);
-                defineOrdenado(v);
-                fim = 1;
-            break;
-            case 6:
-                system("clear");
-                printf("Heapsort ainda nao implementado.\n");
-            break;
-            case 7:
-                ordenaMergesort(v,0,v->tamanho-1);
-                imprimeVetor(v);
-                defineOrdenado(v);
-                fim = 1;
-            break;
-            case 8:
-                ordenaRadixsort(v);
-                imprimeVetor(v);
-                defineOrdenado(v);
-                fim = 1;
-            break;
+    if(atoi(argv[2]) <= 0){
+        fprintf(stderr, "Tamanho invalido.\n");
+        exit(-1);
+    }
+
+    vetor *v = criaVetor(1, 99, atoi(argv[2]));
+    clock_t tempo_exec;
+
+    if(argc >= 4){
+        if(strcmp(argv[3],"-P") == 0){
+            defineOrdenado(v);
+            imprimeVetor(v);
         }
     }
+
+    if(strcmp(argv[1],"bol") == 0){
+        tempo_exec = clock();
+        ordenaBolha(v);
+        tempo_exec = clock() - tempo_exec;
+    } else if(strcmp(argv[1],"sel") == 0){
+        tempo_exec = clock();
+        ordenaSelecao(v);
+        tempo_exec = clock() - tempo_exec;
+    } else if(strcmp(argv[1],"ins") == 0){
+        tempo_exec = clock();
+        ordenaInsercao(v);
+        tempo_exec = clock() - tempo_exec;
+    } else if(strcmp(argv[1],"she") == 0){
+        tempo_exec = clock();
+        ordenaShellsort(v);
+        tempo_exec = clock() - tempo_exec;
+    } else if(strcmp(argv[1],"qui") == 0){
+        tempo_exec = clock();
+        ordenaQuicksort(v,0,v->tamanho-1);
+        tempo_exec = clock() - tempo_exec;
+    } else if(strcmp(argv[1],"hea") == 0){
+        fprintf(stderr, "Heapsort ainda nao implementado.\n");
+        exit(-1);
+    } else if(strcmp(argv[1],"mer") == 0){
+        tempo_exec = clock();
+        ordenaMergesort(v,0,v->tamanho-1);
+        tempo_exec = clock() - tempo_exec;
+    } else if(strcmp(argv[1],"rad") == 0){
+        tempo_exec = clock();
+        ordenaRadixsort(v);
+        tempo_exec = clock() - tempo_exec;
+    } else {
+        fprintf(stderr, "Ordenacao invalida.\n");
+        exit(-1);
+    }
+
+    if(argc >= 4){
+        if(strcmp(argv[3],"-P") == 0){
+            defineOrdenado(v);
+            imprimeVetor(v);
+        }
+    }
+    printf("Tempo gasto: %f segundos\n", ((double)tempo_exec)/CLOCKS_PER_SEC);
 
     free(v->v);
     free(v);
