@@ -8,6 +8,7 @@ int retornaAleatorio(int min, int max){
     return min + (rand()%max);
 }
 
+//retorna maior valor dentro de um vetor
 int retornaMax(int *v, int tamanho){
     int i, max;
     for(i=0;i<tamanho;i++){

@@ -3,8 +3,6 @@
 #include "Funcoes.h"
 #include "Ordena.h"
 
-#define less(A, B) (A < B)
-
 //informa se o vetor está ordenado ou não
 void defineOrdenado(vetor *v){
     int i;
