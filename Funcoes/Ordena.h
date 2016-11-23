@@ -4,7 +4,8 @@ typedef struct vetor {
 } vetor;
 
 void defineOrdenado(vetor *v);
-vetor* criaVetor(int min, int max, int tamanho);
+vetor* criaVetorAleatorio(int min, int max, int tamanho);
+vetor* criaVetorOrdenado(int tamanho, int reversamenteOrdenado);
 void imprimeVetor(vetor *v);
 void ordenaSelecao(vetor *v);
 void ordenaBolha(vetor *v);

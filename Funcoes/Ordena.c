@@ -19,8 +19,8 @@ void defineOrdenado(vetor *v){
     printf("Vetor esta ordenado:\n");
 }
 
-//cria uma nova variável do tipo vetor
-vetor* criaVetor(int min, int max, int tamanho){
+//cria uma nova variável do tipo vetor com os elementos aleatorios
+vetor* criaVetorAleatorio(int min, int max, int tamanho){
     int i;
     vetor *v = (vetor*)malloc(sizeof(vetor));
 
@@ -29,6 +29,26 @@ vetor* criaVetor(int min, int max, int tamanho){
 
     for(i=0;i<tamanho;i++){
         v->v[i] = retornaAleatorio(min,max);
+    }
+    return v;
+}
+
+//cria uma nova variável do tipo vetor com os elementos ordenados de forma crescente/decrescente
+vetor* criaVetorOrdenado(int tamanho, int reversamenteOrdenado){
+    int i;
+    vetor *v = (vetor*)malloc(sizeof(vetor));
+
+    v->tamanho = tamanho;
+    v->v = (int*)malloc(sizeof(int) * tamanho);
+
+    if(reversamenteOrdenado == 0){
+        for(i=0;i<tamanho;i++){
+            v->v[i] = i+1;
+        }
+    } else {
+        for(i=0;i<tamanho;i++){
+            v->v[i] = tamanho-i;
+        }
     }
     return v;
 }
@@ -93,6 +113,7 @@ void ordenaShellsort(vetor *v){
     }
 }
 
+//concatena os dois vetores em um só no vetor original
 void merge(int *v, int *esquerda, int cont_e, int *direita, int cont_d){
     int i = 0, j = 0, k =0;
 
@@ -185,6 +206,7 @@ void ordenaRadixsort(vetor *v) {
     }
 }
 
+//adapta o vetor ao formato de heap
 void reconstroiHeap(int *v, int limit, int pos) {
 	int c1 = 2 * pos, c2;
 
@@ -194,27 +216,27 @@ void reconstroiHeap(int *v, int limit, int pos) {
 		return;
     }
 
-	int greater_index = -1;
+	int index = -1;
 
 	if(c2 > limit) {
-		greater_index = c1;
+		index = c1;
 	} else {
 		if(v[c1 - 1] > v[c2 - 1]){
-			greater_index = c1;
+			index = c1;
 		} else {
-			greater_index = c2;
+			index = c2;
         }
 	}
 
-	if(greater_index != -1) {
-		int aux = v[greater_index - 1];
-		v[greater_index - 1] = v[pos - 1];
+	if(index != -1) {
+		int aux = v[index - 1];
+		v[index - 1] = v[pos - 1];
 		v[pos - 1] = aux;
-		reconstroiHeap(v, limit, greater_index);
+		reconstroiHeap(v, limit, index);
 	}
 }
 
-
+//adapta o vetor ao formato de heap
 void transformaHeap(int *v, int size_v) {
 	int left;
 
@@ -240,9 +262,7 @@ void ordenaHeapSort(vetor *v) {
 		v->v[0] = v->v[tamanho - 1];
 		v->v[tamanho - 1] = aux;
 
-		reconstroiHeap(v->v, tamanho - 1, 1);
-
-		tamanho--;
+		reconstroiHeap(v->v, tamanho-- - 1, 1);
 
 		if(tamanho <= 2 && v->v[0] <= v->v[1]) {
 			break;

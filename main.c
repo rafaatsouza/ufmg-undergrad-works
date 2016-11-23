@@ -6,13 +6,18 @@
 #include "Funcoes/Funcoes.h"
 
 int main(int argc, char *argv[]){
-    if(argc < 3){
+    if(argc < 4){
         fprintf(stderr, "Parametros invalidos.\n");
         exit(-1);
     }
 
     if(strlen(argv[1]) < 3){
-        fprintf(stderr, "Ordenacao invalida.\n");
+        fprintf(stderr, "Tipo de ordenacao invalida.\n");
+        exit(-1);
+    }
+
+    if(strlen(argv[3]) < 3){
+        fprintf(stderr, "Ordenacao inicial invalida.\n");
         exit(-1);
     }
 
@@ -21,13 +26,26 @@ int main(int argc, char *argv[]){
         exit(-1);
     }
 
-    srand((unsigned)time(NULL));
+    vetor *v;
+    if(strcmp(argv[3],"asc") == 0){
+        v = criaVetorOrdenado(atoi(argv[2]),0);
+    } else if(strcmp(argv[3],"desc") == 0){
+        v = criaVetorOrdenado(atoi(argv[2]),1);
+    } else if(strcmp(argv[3],"ale") == 0){
+        srand((unsigned)time(NULL));
+        v = criaVetorAleatorio(1, 99, atoi(argv[2]));
+    } else if(strcmp(argv[3],"qasc") == 0){
+        fprintf(stderr, "Ordenacao inicial ainda nao implementada.\n");
+        exit(-1);
+    } else {
+        fprintf(stderr, "Ordenacao inicial invalida.\n");
+        exit(-1);
+    }
 
-    vetor *v = criaVetor(1, 99, atoi(argv[2]));
     clock_t tempo_exec;
 
-    if(argc >= 4){
-        if(strcmp(argv[3],"-P") == 0){
+    if(argc >= 5){
+        if(strcmp(argv[4],"-P") == 0){
             defineOrdenado(v);
             imprimeVetor(v);
         }
@@ -72,8 +90,8 @@ int main(int argc, char *argv[]){
         exit(-1);
     }
 
-    if(argc >= 4){
-        if(strcmp(argv[3],"-P") == 0){
+    if(argc >= 5){
+        if(strcmp(argv[4],"-P") == 0){
             defineOrdenado(v);
             imprimeVetor(v);
         }
