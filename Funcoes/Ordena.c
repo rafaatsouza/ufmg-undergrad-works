@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "Funcoes.h"
 #include "Ordena.h"
 
 //informa se o vetor está ordenado ou não
@@ -26,7 +25,7 @@ vetor* criaVetorAleatorio(int min, int max, int tamanho){
     v->v = (int*)malloc(sizeof(int) * tamanho);
 
     for(i=0;i<tamanho;i++){
-        v->v[i] = retornaAleatorio(min,max);
+        v->v[i] = (min + (rand()%max));
     }
     return v;
 }
@@ -179,6 +178,19 @@ void ordenaQuicksort(vetor *v, int inicio, int final) {
       ordenaQuicksort(v, inicio, j-1);
       inicio = j + 1;
    }
+}
+
+//retorna o maior valor de um vetor
+int retornaMax(int *v, int tamanho){
+    int i, max;
+    for(i=0;i<tamanho;i++){
+        if(i==0){
+            max = v[i];
+        } else if(v[i] > max) {
+            max = v[i];
+        }
+    }
+    return max;
 }
 
 //ordena vetor por método radixsort

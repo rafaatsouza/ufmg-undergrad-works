@@ -3,7 +3,6 @@
 #include <time.h>
 #include <string.h>
 #include "Funcoes/Ordena.h"
-#include "Funcoes/Funcoes.h"
 
 int main(int argc, char *argv[]){
     if(argc < 4){
