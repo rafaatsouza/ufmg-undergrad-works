@@ -13,3 +13,4 @@ void ordenaMergesort(int *v, int tamanho);
 void ordenaInsercao(vetor *v);
 void ordenaQuicksort(vetor *v, int inicio, int final);
 void ordenaRadixsort(vetor *v);
+void ordenaHeapSort(vetor *v);

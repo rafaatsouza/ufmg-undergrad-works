@@ -162,7 +162,7 @@ void ordenaQuicksort(vetor *v, int inicio, int final) {
    }
 }
 
-//order vetor por método radixsort
+//ordena vetor por método radixsort
 void ordenaRadixsort(vetor *v) {
     int i, digito = 1, aux[v->tamanho], maior = retornaMax(v->v, v->tamanho);
 
@@ -183,4 +183,69 @@ void ordenaRadixsort(vetor *v) {
 
         digito *= 10;
     }
+}
+
+void reconstroiHeap(int *v, int limit, int pos) {
+	int c1 = 2 * pos, c2;
+
+	c2 = c1 + 1;
+
+	if(c1 > limit || (v[pos - 1] >= v[c1 - 1] && v[pos - 1] >= v[c2 - 1])) {
+		return;
+    }
+
+	int greater_index = -1;
+
+	if(c2 > limit) {
+		greater_index = c1;
+	} else {
+		if(v[c1 - 1] > v[c2 - 1]){
+			greater_index = c1;
+		} else {
+			greater_index = c2;
+        }
+	}
+
+	if(greater_index != -1) {
+		int aux = v[greater_index - 1];
+		v[greater_index - 1] = v[pos - 1];
+		v[pos - 1] = aux;
+		reconstroiHeap(v, limit, greater_index);
+	}
+}
+
+
+void transformaHeap(int *v, int size_v) {
+	int left;
+
+	if(size_v % 2 == 0) {
+		left = size_v / 2 + 1;
+	} else {
+		left = (size_v - 1) / 2 + 1;
+    }
+
+	while(left > 1) {
+		left--;
+		reconstroiHeap(v, size_v, left);
+	}
+}
+
+//ordena vetor por método heapsort
+void ordenaHeapSort(vetor *v) {
+	transformaHeap(v->v, v->tamanho);
+    int tamanho = v->tamanho;
+
+    while(1) {
+		int aux = v->v[0];
+		v->v[0] = v->v[tamanho - 1];
+		v->v[tamanho - 1] = aux;
+
+		reconstroiHeap(v->v, tamanho - 1, 1);
+
+		tamanho--;
+
+		if(tamanho <= 2 && v->v[0] <= v->v[1]) {
+			break;
+        }
+	}
 }

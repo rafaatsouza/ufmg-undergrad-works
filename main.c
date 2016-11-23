@@ -6,8 +6,6 @@
 #include "Funcoes/Funcoes.h"
 
 int main(int argc, char *argv[]){
-    srand((unsigned)time(NULL));
-
     if(argc < 3){
         fprintf(stderr, "Parametros invalidos.\n");
         exit(-1);
@@ -22,6 +20,8 @@ int main(int argc, char *argv[]){
         fprintf(stderr, "Tamanho invalido.\n");
         exit(-1);
     }
+
+    srand((unsigned)time(NULL));
 
     vetor *v = criaVetor(1, 99, atoi(argv[2]));
     clock_t tempo_exec;
@@ -54,8 +54,9 @@ int main(int argc, char *argv[]){
         ordenaQuicksort(v,0,v->tamanho-1);
         tempo_exec = clock() - tempo_exec;
     } else if(strcmp(argv[1],"hea") == 0){
-        fprintf(stderr, "Heapsort ainda nao implementado.\n");
-        exit(-1);
+        tempo_exec = clock();
+        ordenaHeapSort(v);
+        tempo_exec = clock() - tempo_exec;
     } else if(strcmp(argv[1],"mer") == 0){
         tempo_exec = clock();
         ordenaMergesort(v->v,v->tamanho);
@@ -66,6 +67,8 @@ int main(int argc, char *argv[]){
         tempo_exec = clock() - tempo_exec;
     } else {
         fprintf(stderr, "Ordenacao invalida.\n");
+        free(v->v);
+        free(v);
         exit(-1);
     }
 
