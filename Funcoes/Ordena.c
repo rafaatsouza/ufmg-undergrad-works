@@ -50,6 +50,23 @@ vetor* criaVetorOrdenado(int tamanho, int reversamenteOrdenado){
     return v;
 }
 
+vetor* criaVetorQuaseAleatorio(int min, int max, int tamanho){
+    int i, j;
+    vetor *v = (vetor*)malloc(sizeof(vetor));
+
+    v->tamanho = tamanho;
+    v->v = (int*)malloc(sizeof(int) * tamanho);
+
+    for(i=0;i<(tamanho-(tamanho/10));i++){
+        v->v[i] = i+1;
+    }
+    for(j=i;j<tamanho;j++){
+        v->v[j] = (min + (rand()%max));
+    }
+    
+    return v;
+}
+
 //imprime todos os elementos de um vetor
 void imprimeVetor(vetor *v){
     int i;

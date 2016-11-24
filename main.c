@@ -34,8 +34,8 @@ int main(int argc, char *argv[]){
         srand((unsigned)time(NULL));
         v = criaVetorAleatorio(1, 99, atoi(argv[2]));
     } else if(strcmp(argv[3],"qasc") == 0){
-        fprintf(stderr, "Ordenacao inicial ainda nao implementada.\n");
-        exit(-1);
+        srand((unsigned)time(NULL));
+        v = criaVetorQuaseAleatorio(1, 99, atoi(argv[2]));
     } else {
         fprintf(stderr, "Ordenacao inicial invalida.\n");
         exit(-1);
