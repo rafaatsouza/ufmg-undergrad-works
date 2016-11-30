@@ -1,7 +1,5 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
-#include <string.h>
 #include "Funcoes/Ordena.h"
 
 int main(int argc, char *argv[]){
@@ -31,10 +29,8 @@ int main(int argc, char *argv[]){
     } else if(strcmp(argv[3],"desc") == 0){
         v = criaVetorOrdenado(atoi(argv[2]),1);
     } else if(strcmp(argv[3],"ale") == 0){
-        srand((unsigned)time(NULL));
         v = criaVetorAleatorio(1, 99, atoi(argv[2]));
     } else if(strcmp(argv[3],"qasc") == 0){
-        srand((unsigned)time(NULL));
         v = criaVetorQuaseAleatorio(1, 99, atoi(argv[2]));
     } else {
         fprintf(stderr, "Ordenacao inicial invalida.\n");

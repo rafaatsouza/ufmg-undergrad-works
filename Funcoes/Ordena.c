@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "Ordena.h"
 
 //informa se o vetor está ordenado ou não
@@ -24,6 +25,7 @@ vetor* criaVetorAleatorio(int min, int max, int tamanho){
     v->tamanho = tamanho;
     v->v = (int*)malloc(sizeof(int) * tamanho);
 
+    srand((unsigned)time(NULL));
     for(i=0;i<tamanho;i++){
         v->v[i] = (min + (rand()%max));
     }
@@ -60,10 +62,11 @@ vetor* criaVetorQuaseAleatorio(int min, int max, int tamanho){
     for(i=0;i<(tamanho-(tamanho/10));i++){
         v->v[i] = i+1;
     }
+    srand((unsigned)time(NULL));
     for(j=i;j<tamanho;j++){
         v->v[j] = (min + (rand()%max));
     }
-    
+
     return v;
 }
 
