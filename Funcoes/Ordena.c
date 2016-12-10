@@ -80,22 +80,24 @@ void imprimeVetor(vetor *v){
 }
 
 //ordena vetor por método seleção
-void ordenaSelecao(vetor *v){
-    int i, j, Min, x;
+int ordenaSelecao(vetor *v){
+    int i, j, Min, x, mov = 0;
     for (i=0;i<v->tamanho;i++){
         Min = i;
         for (j=i+1;j<v->tamanho;j++)
             if (v->v[j] < v->v[Min])
                 Min = j;
+        if(Min != i) {mov++;}
         x = v->v[Min];
         v->v[Min] = v->v[i];
         v->v[i] = x;
     }
+    return mov;
 }
 
 //ordena vetor por método bolha
-void ordenaBolha(vetor *v){
-    int i, j, x;
+int ordenaBolha(vetor *v){
+    int i, j, x, mov = 0;
     for (i=0;i<= v->tamanho;i++){
         for (j=0;j<=(v->tamanho-i);j++){
             if(j<v->tamanho-1){
@@ -103,16 +105,17 @@ void ordenaBolha(vetor *v){
                     x = v->v[j];
                     v->v[j] = v->v[j+1];
                     v->v[j+1] = x;
+                    mov++;
                 }
             }
         }
     }
+    return mov;
 }
 
 //ordena vetor por método shellsort
-void ordenaShellsort(vetor *v){
-    int i = (v->tamanho - 1) / 2;
-    int chave, k, aux;
+int ordenaShellsort(vetor *v){
+    int chave, k, aux, mov = 0, i = (v->tamanho - 1) / 2;
 
     while(i != 0) {
         do {
@@ -123,19 +126,21 @@ void ordenaShellsort(vetor *v){
                     v->v[k] = v->v[k + i];
                     v->v[k + i] = aux;
                     chave = 0;
+                    mov++;
                 }
             }
         } while(chave == 0);
         i = i / 2;
     }
+    return mov;
 }
 
 //concatena os dois vetores em um só no vetor original
-void merge(int *v, int *esquerda, int cont_e, int *direita, int cont_d){
+void merge(int *v, int *esquerda, int cont_e, int *direita, int cont_d, int *mov){
     int i = 0, j = 0, k =0;
 
 	while(i<cont_e && j< cont_d) {
-		if(esquerda[i]  < direita[j]) v[k++] = esquerda[i++];
+		if(esquerda[i]  < direita[j]) v[k++] = esquerda[i++], *mov = *mov + 1;
 		else v[k++] = direita[j++];
 	}
 	while(i < cont_e) v[k++] = esquerda[i++];
@@ -143,7 +148,7 @@ void merge(int *v, int *esquerda, int cont_e, int *direita, int cont_d){
 }
 
 //ordena vetor por método mergesort
-void ordenaMergesort(int *v, int tamanho){
+void ordenaMergesort(int *v, int tamanho, int *mov){
     int meio,i, *esquerda, *direita;
     if(tamanho < 2) return;
 
@@ -154,34 +159,43 @@ void ordenaMergesort(int *v, int tamanho){
     for(i = 0;i<meio;i++) esquerda[i] = v[i];
     for(i = meio;i<tamanho;i++) direita[i-meio] = v[i];
 
-    ordenaMergesort(esquerda,meio);
-    ordenaMergesort(direita,tamanho-meio);
-    merge(v,esquerda,meio,direita,tamanho-meio);
+    ordenaMergesort(esquerda,meio,mov);
+    ordenaMergesort(direita,tamanho-meio,mov);
+    merge(v,esquerda,meio,direita,tamanho-meio,mov);
     free(esquerda);
     free(direita);
 }
 
 //ordena vetor por método inserção
-void ordenaInsercao(vetor *v){
-    int j, i, x;
+int ordenaInsercao(vetor *v){
+    int j, i, x, mov = 0;
     for(j=1;j<v->tamanho;j++){
         x = v->v[j];
         i = j-1;
         while(i>=0 && v->v[i] > x){
             v->v[i+1] = v->v[i];
             i--;
+            mov++;
+        }
+        if(v->v[i+1] != x){
+            mov++;
         }
         v->v[i+1] = x;
+
     }
 }
 
 //divide os vetores para ordenação de método quicksort
-int separaQuick (vetor *v, int inicio, int final) {
+int separaQuick (vetor *v, int inicio, int final, int *mov) {
    int c = v->v[inicio], i = inicio+1, j = final, t;
    while (i <= j) {
-      if (v->v[i] <= c) ++i;
-      else if (c < v->v[j]) --j;
-      else {
+      if (v->v[i] <= c){
+          ++i;
+          *mov = *mov + 1;
+      } else if (c < v->v[j]){
+          --j;
+          *mov = *mov + 1;
+      } else {
          t = v->v[i], v->v[i] = v->v[j], v->v[j] = t;
          ++i; --j;
       }
@@ -191,11 +205,11 @@ int separaQuick (vetor *v, int inicio, int final) {
 }
 
 //ordena vetor por método quicksort
-void ordenaQuicksort(vetor *v, int inicio, int final) {
+void ordenaQuicksort(vetor *v, int inicio, int final, int *mov) {
    int j;
    while (inicio < final) {
-      j = separaQuick(v, inicio, final);
-      ordenaQuicksort(v, inicio, j-1);
+      j = separaQuick(v, inicio, final, mov);
+      ordenaQuicksort(v, inicio, j-1, mov);
       inicio = j + 1;
    }
 }
@@ -214,8 +228,8 @@ int retornaMax(int *v, int tamanho){
 }
 
 //ordena vetor por método radixsort
-void ordenaRadixsort(vetor *v) {
-    int i, digito = 1, aux[v->tamanho], maior = retornaMax(v->v, v->tamanho);
+int ordenaRadixsort(vetor *v) {
+    int i, mov = 0, digito = 1, aux[v->tamanho], maior = retornaMax(v->v, v->tamanho);
 
     while (maior / digito > 0){
         int bucket[10] = { 0 };
@@ -229,15 +243,20 @@ void ordenaRadixsort(vetor *v) {
         for (i = v->tamanho - 1; i >= 0; i--)
             aux[--bucket[(v->v[i] / digito) % 10]] = v->v[i];
 
-        for (i = 0; i < v->tamanho; i++)
+        for (i = 0; i < v->tamanho; i++){
+            if(v->v[i] != aux[i]){
+                mov++;
+            }
             v->v[i] = aux[i];
+        }
 
         digito *= 10;
     }
+    return mov;
 }
 
 //adapta o vetor ao formato de heap
-void reconstroiHeap(int *v, int limit, int pos) {
+void reconstroiHeap(int *v, int limit, int pos, int *mov) {
 	int c1 = 2 * pos, c2;
 
 	c2 = c1 + 1;
@@ -258,16 +277,17 @@ void reconstroiHeap(int *v, int limit, int pos) {
         }
 	}
 
+    *mov = *mov + 1;
 	if(index != -1) {
 		int aux = v[index - 1];
 		v[index - 1] = v[pos - 1];
 		v[pos - 1] = aux;
-		reconstroiHeap(v, limit, index);
+		reconstroiHeap(v, limit, index, mov);
 	}
 }
 
 //adapta o vetor ao formato de heap
-void transformaHeap(int *v, int size_v) {
+void transformaHeap(int *v, int size_v, int *mov) {
 	int left;
 
 	if(size_v % 2 == 0) {
@@ -278,13 +298,14 @@ void transformaHeap(int *v, int size_v) {
 
 	while(left > 1) {
 		left--;
-		reconstroiHeap(v, size_v, left);
+		reconstroiHeap(v, size_v, left, mov);
 	}
 }
 
 //ordena vetor por método heapsort
-void ordenaHeapSort(vetor *v) {
-	transformaHeap(v->v, v->tamanho);
+int ordenaHeapSort(vetor *v) {
+    int mov = 0;
+	transformaHeap(v->v, v->tamanho, &mov);
     int tamanho = v->tamanho;
 
     while(1) {
@@ -292,7 +313,7 @@ void ordenaHeapSort(vetor *v) {
 		v->v[0] = v->v[tamanho - 1];
 		v->v[tamanho - 1] = aux;
 
-		reconstroiHeap(v->v, tamanho-- - 1, 1);
+		reconstroiHeap(v->v, tamanho-- - 1, 1, &mov);
 
 		if(tamanho <= 2 && v->v[0] <= v->v[1]) {
 			break;

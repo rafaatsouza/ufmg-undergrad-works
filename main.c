@@ -46,37 +46,47 @@ int main(int argc, char *argv[]){
         }
     }
 
+    int movimentacoes = 0;
+
     if(strcmp(argv[1],"bol") == 0){
+        printf("Ordenacao escolhida: BubbleSort.\n");
         tempo_exec = clock();
-        ordenaBolha(v);
+        movimentacoes = ordenaBolha(v);
         tempo_exec = clock() - tempo_exec;
     } else if(strcmp(argv[1],"sel") == 0){
+        printf("Ordenacao escolhida: Selecao.\n");
         tempo_exec = clock();
-        ordenaSelecao(v);
+        movimentacoes = ordenaSelecao(v);
         tempo_exec = clock() - tempo_exec;
     } else if(strcmp(argv[1],"ins") == 0){
+        printf("Ordenacao escolhida: Insercao.\n");
         tempo_exec = clock();
-        ordenaInsercao(v);
+        movimentacoes = ordenaInsercao(v);
         tempo_exec = clock() - tempo_exec;
     } else if(strcmp(argv[1],"she") == 0){
+        printf("Ordenacao escolhida: ShellSort.\n");
         tempo_exec = clock();
-        ordenaShellsort(v);
+        movimentacoes = ordenaShellsort(v);
         tempo_exec = clock() - tempo_exec;
     } else if(strcmp(argv[1],"qui") == 0){
+        printf("Ordenacao escolhida: QuickSort.\n");
         tempo_exec = clock();
-        ordenaQuicksort(v,0,v->tamanho-1);
+        ordenaQuicksort(v,0,v->tamanho-1, &movimentacoes);
         tempo_exec = clock() - tempo_exec;
     } else if(strcmp(argv[1],"hea") == 0){
+        printf("Ordenacao escolhida: HeapSort.\n");
         tempo_exec = clock();
-        ordenaHeapSort(v);
+        movimentacoes = ordenaHeapSort(v);
         tempo_exec = clock() - tempo_exec;
     } else if(strcmp(argv[1],"mer") == 0){
+        printf("Ordenacao escolhida: MergeSort.\n");
         tempo_exec = clock();
-        ordenaMergesort(v->v,v->tamanho);
+        ordenaMergesort(v->v,v->tamanho, &movimentacoes);
         tempo_exec = clock() - tempo_exec;
     } else if(strcmp(argv[1],"rad") == 0){
+        printf("Ordenacao escolhida: RadixSort.\n");
         tempo_exec = clock();
-        ordenaRadixsort(v);
+        movimentacoes = ordenaRadixsort(v);
         tempo_exec = clock() - tempo_exec;
     } else {
         fprintf(stderr, "Ordenacao invalida.\n");
@@ -91,6 +101,7 @@ int main(int argc, char *argv[]){
             imprimeVetor(v);
         }
     }
+    printf("Movimentacoes: %d\n", movimentacoes);
     printf("Tempo gasto: %f segundos\n", ((double)tempo_exec)/CLOCKS_PER_SEC);
 
     free(v->v);
