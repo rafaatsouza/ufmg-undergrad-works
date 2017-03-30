@@ -41,7 +41,7 @@ qasc – Vetor com 90% dos valores crescentes, e 10% aleatórios.
 
 **4 - "-P" caso queira queira que os vetores sejam exibidos na tela**
 
-*Exemplo: "./tp2.out she 10 ale -P"
+Exemplo: "./tp2.out she 10 ale -P"
 Onde "tp2.out" é o nome do executável, 
 
 "she" é o identificador para o tipo de ordenação ShellSort, 
@@ -50,4 +50,4 @@ Onde "tp2.out" é o nome do executável,
 
 "ale" informa que a ordenação inicial do vetor será totalmente aleatória,
 
-"-P" informa que os vetores devem ser exibidos na tela.*
+"-P" informa que os vetores devem ser exibidos na tela.
