@@ -15,8 +15,6 @@ Espaço: Solta uma bomba na localização que o bomberman está. A bomba explode
 
 Caso o bomberman seja alcançado por um inimigo ou esteja no raio de uma bomba no momento de explosão, ele morre e a tela mostra a pontuação. 
 ###### Critérios de pontuação:
-Matar inimigo: 10 pontos + valor variável (cresce ao passar de fase).
-
-Morrer para uma bomba: -[10 pontos + valor variável (cresce ao passar de fase)].
-
-Tempo: 1 ponto por segundo * valor variável (cresce ao passar de fase). Observação: só é contado à partir da 2º fase.
+* Matar inimigo: 10 pontos + valor variável (cresce ao passar de fase).
+* Morrer para uma bomba: -[10 pontos + valor variável (cresce ao passar de fase)].
+* Tempo: 1 ponto por segundo * valor variável (cresce ao passar de fase). Observação: só é contado à partir da 2º fase.
