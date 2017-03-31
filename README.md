@@ -10,34 +10,22 @@ Makefile contém as instruções necessárias para gerar o executável (sistema 
 Ao executar o programa, devem ser passados como parâmetros:
 
 **1 - Tipo de ordenação:**
-
-bol – BubbleSort
-
-sel – Seleção
-
-ins – Inserção
-
-she – ShellSort
-
-qui – QuickSort
-
-hea – HeapSort
-
-mer – MergeSort
-
-rad – RadixSort
+ * bol – BubbleSort
+* sel – Seleção
+* ins – Inserção
+* she – ShellSort
+* qui – QuickSort
+* hea – HeapSort
+* mer – MergeSort
+* rad – RadixSort
 
 **2 - Quantidade de elementos**
 
 **3 - Opções de grau de ordenação inicial:**
-
-asc –  Vetor já totalmente ordenado.
-
-desc – Vetor inversamente ordenado.
-
-ale – Vetor com valores totalmente aleatorios.
-
-qasc – Vetor com 90% dos valores crescentes, e 10% aleatórios.
+* asc –  Vetor já totalmente ordenado
+* desc – Vetor inversamente ordenado
+* ale – Vetor com valores totalmente aleatorios
+* qasc – Vetor com 90% dos valores crescentes, e 10% aleatórios
 
 **4 - "-P" caso queira queira que os vetores sejam exibidos na tela**
 
