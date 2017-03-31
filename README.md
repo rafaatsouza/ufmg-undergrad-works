@@ -2,10 +2,10 @@
 
 Trabalho prático que consiste em um módulo para testar ordenações de vetores, escolhendo o tipo de ordenação desejado, o grau de ordenação inicial e a quantidade de elementos à serem ordenados. Ao informar o tamanho do vetor, o tipo de ordenação, e o grau de ordenação inicial,  será  gerado  um  vetor  e  ordenado  conforme  escolhido,  sendo  exibido  ao  final  o tempo  gasto  para  a  operação  de  ordenação,  quantas  movimentações  e  comparações foram feitas.
 
-#### Build
+### Build
 Makefile contém as instruções necessárias para gerar o executável (sistema Linux)
 
-#### Instruções
+### Instruções
 
 Ao executar o programa, devem ser passados como parâmetros:
 
