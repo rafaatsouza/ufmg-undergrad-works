@@ -1,3 +1,6 @@
+# others
+*.pdf
+
 # Object files
 *.o
 *.ko
