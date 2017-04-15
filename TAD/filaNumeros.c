@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include "filaNumeros.h"
 
 int returnExp(int num, int expo) {

@@ -13,5 +13,3 @@ typedef struct {
 void freeFila(filaNumeros *fn);
 filaNumeros* createFV();
 void addElement(filaNumeros *fn, int num, int iOperador);
-void imprimeFila(filaNumeros* fn);
-void printResults(filaNumeros *fn);
