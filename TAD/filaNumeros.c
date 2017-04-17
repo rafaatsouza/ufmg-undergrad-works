@@ -1,15 +1,6 @@
 #include <stdlib.h>
 #include "filaNumeros.h"
 
-int returnExp(int num, int expo) {
-    int resultado = 1;
-    while(expo > 0) {
-        resultado *= num;
-        expo--;
-    }
-    return resultado;
-}
-
 void freeFila(filaNumeros *fn){
     Value *val = fn->first;
     Value *aux;
