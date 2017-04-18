@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "TAD/filaNumeros.h"
-#include "TAD/possibilidades.h"
+#include "Functions/possibilidades.h"
 
 int main(){
     int num = 0, i = 0;

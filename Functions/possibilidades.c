@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <math.h>
-#include "filaNumeros.h"
-#include "pilhaOperacoes.h"
+#include "../TAD/filaNumeros.h"
+#include "../TAD/pilhaOperacoes.h"
 #include "possibilidades.h"
 
-void criaPossibilidades(possibilidadeResult *pr, int count){
+void criaPossibilidades(char **pr, int count){
     int i, j = -1, aux, contador, changeNum = count;
     while(changeNum > 1){
         contador = 1;
@@ -14,9 +14,9 @@ void criaPossibilidades(possibilidadeResult *pr, int count){
         for(i=0;i<count;i++){
             contador++;
             if(aux == 1){
-                pr[i].result[j] = '+';
+                pr[i][j] = '+';
             } else {
-                pr[i].result[j] = '*';
+                pr[i][j] = '*';
             }
             if(contador > changeNum){
                 aux *= -1;
@@ -26,16 +26,16 @@ void criaPossibilidades(possibilidadeResult *pr, int count){
     }
 }
 
-void retornaPossibilidades(possibilidadeResult *pr, int count){
+void retornaPossibilidades(filaNumeros *fn, char **pr, int count){
     int i, j, aux;
     Value *actual;
     for(i=0;i<count;i++){
         j = 0;
         pilhaOperacoes *pilha = createPV();
-        actual = pr[i].fn->first;
-        while(actual != NULL && pr[i].valid == 1){
+        actual = fn->first;
+        while(actual != NULL && (pilha->topo == NULL || pilha->topo->val <= fn->resultado)){
             if(actual->iOperador == 1){
-                if(pr[i].result[j] == '+'){
+                if(pr[i][j] == '+'){
                     fazOperacao(pilha,1);
                 } else {
                     fazOperacao(pilha,0);
@@ -45,14 +45,9 @@ void retornaPossibilidades(possibilidadeResult *pr, int count){
                 addNumPilha(pilha,actual->val);
             }
             actual = actual->next;
-            if(pilha->topo->val > pr[i].fn->resultado){
-                pr[i].valid = 0;
-            }
         }
-        if(pilha->result != pr[i].fn->resultado){
-            pr[i].valid = 0;
-        } else {
-            printf("%s\n", pr[i].result);
+        if(pilha->result == fn->resultado){
+            printf("%s\n", pr[i]);
         }
         freePilha(pilha);
     }
@@ -60,18 +55,16 @@ void retornaPossibilidades(possibilidadeResult *pr, int count){
 
 void printResults(filaNumeros *fn){
     int i, j, count_possibilidades = pow(2,fn->count_operadores);
-    possibilidadeResult *result = (possibilidadeResult*)malloc(sizeof(possibilidadeResult)*count_possibilidades);
+    char **result = (char**)malloc(sizeof(char*)*count_possibilidades);
 
     for(i=0;i<count_possibilidades;i++){
-        result[i].result = (char*)malloc(sizeof(char)*count_possibilidades);
-        result[i].valid = 1;
-        result[i].fn = fn;
+        result[i] = (char*)malloc(sizeof(char)*count_possibilidades);
     }
     criaPossibilidades(result, count_possibilidades);
-    retornaPossibilidades(result, count_possibilidades);
+    retornaPossibilidades(fn, result, count_possibilidades);
 
     for(i=0;i<count_possibilidades;i++){
-        free(result[i].result);
+        free(result[i]);
     }
     free(result);
 }
