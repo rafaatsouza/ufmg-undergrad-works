@@ -8,8 +8,8 @@ typedef struct v {
 typedef struct {
   int count_numeros, count_operadores, resultado;
   t_prox first, last;
-} filaNumeros;
+} filaElementos;
 
-void freeFila(filaNumeros *fn);
-filaNumeros* createFV();
-void addElement(filaNumeros *fn, int num, int iOperador);
+void freeFila(filaElementos *fn);
+filaElementos* createFV();
+void addElement(filaElementos *fn, int num, int iOperador);

@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <string.h>
-#include "TAD/filaNumeros.h"
+#include "TAD/filaElementos.h"
 #include "Functions/possibilidades.h"
 
 int main(){
     int num = 0, i = 0;
     char c;
 
-    filaNumeros *fv = createFV();
+    filaElementos *fv = createFV();
 
     c = getchar();
     while(c != '\n' && c != '\0'){
@@ -32,7 +32,7 @@ int main(){
 
     scanf("%d", &(fv->resultado));
     getchar();
-    printResults(fv);
+    exibeResultados(fv);
     freeFila(fv);
     return 0;
 }

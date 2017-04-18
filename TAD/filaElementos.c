@@ -1,7 +1,7 @@
 #include <stdlib.h>
-#include "filaNumeros.h"
+#include "filaElementos.h"
 
-void freeFila(filaNumeros *fn){
+void freeFila(filaElementos *fn){
     Value *val = fn->first;
     Value *aux;
     while(val != NULL){
@@ -13,8 +13,8 @@ void freeFila(filaNumeros *fn){
     free(fn);
 }
 
-filaNumeros* createFV(){
-    filaNumeros *fv = (filaNumeros*)malloc(sizeof(filaNumeros));
+filaElementos* createFV(){
+    filaElementos *fv = (filaElementos*)malloc(sizeof(filaElementos));
 
     fv->count_numeros = 0;
     fv->count_operadores = 0;
@@ -22,7 +22,7 @@ filaNumeros* createFV(){
     return fv;
 }
 
-void addElement(filaNumeros *fn, int num, int iOperador){
+void addElement(filaElementos *fn, int num, int iOperador){
     Value *val = (Value*)malloc(sizeof(Value));
 
     val->val = num;

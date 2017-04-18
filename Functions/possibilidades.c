@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <math.h>
-#include "../TAD/filaNumeros.h"
+#include "../TAD/filaElementos.h"
 #include "../TAD/pilhaOperacoes.h"
 #include "possibilidades.h"
 
@@ -26,7 +26,7 @@ void criaPossibilidades(char **pr, int count){
     }
 }
 
-void retornaPossibilidades(filaNumeros *fn, char **pr, int count){
+void verificaPossibilidades(filaElementos *fn, char **pr, int count){
     int i, j, aux;
     Value *actual;
     for(i=0;i<count;i++){
@@ -53,15 +53,15 @@ void retornaPossibilidades(filaNumeros *fn, char **pr, int count){
     }
 }
 
-void printResults(filaNumeros *fn){
+void exibeResultados(filaElementos *fn){
     int i, j, count_possibilidades = pow(2,fn->count_operadores);
     char **result = (char**)malloc(sizeof(char*)*count_possibilidades);
 
     for(i=0;i<count_possibilidades;i++){
-        result[i] = (char*)malloc(sizeof(char)*count_possibilidades);
+        result[i] = (char*)malloc(sizeof(char)*fn->count_operadores);
     }
     criaPossibilidades(result, count_possibilidades);
-    retornaPossibilidades(fn, result, count_possibilidades);
+    verificaPossibilidades(fn, result, count_possibilidades);
 
     for(i=0;i<count_possibilidades;i++){
         free(result[i]);
