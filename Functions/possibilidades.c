@@ -17,7 +17,7 @@ void printaPossibilidade(char *possibilidade, int operadores){
     printf("\n");
 }
 
-void converteParaDecimal(long long int num, char *possibilidade, int operadores){
+void converteParaBinario(long long int num, char *possibilidade, int operadores){
     long long int j, i = operadores-1, resto;
     while(num >= 1){
         resto = num % 2;
@@ -46,7 +46,7 @@ void exibeResultados(filaElementos *fn){
     char *possibilidadeAtual = (char*)malloc(sizeof(char)*fn->count_operadores);
 
     for(i=0;i<count;i++){
-        converteParaDecimal(i,possibilidadeAtual, fn->count_operadores);
+        converteParaBinario(i,possibilidadeAtual, fn->count_operadores);
         pilhaOperacoes *pilha = createPV();
         j = 0;
         Value *actual = fn->first;
