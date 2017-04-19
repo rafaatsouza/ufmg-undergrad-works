@@ -1,3 +1,4 @@
+//#include <time.h>
 #include <stdio.h>
 #include <string.h>
 #include "TAD/filaElementos.h"
@@ -32,7 +33,11 @@ int main(){
 
     scanf("%d", &(fv->resultado));
     getchar();
+    // clock_t tempo_exec;
+    // tempo_exec = clock();
     exibeResultados(fv);
+    // tempo_exec = clock() - tempo_exec;
+    // printf("Tempo gasto: %f segundos\n", ((double)tempo_exec)/CLOCKS_PER_SEC);
     freeFila(fv);
     return 0;
 }
