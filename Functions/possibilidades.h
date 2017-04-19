@@ -1,3 +1,3 @@
-void criaPossibilidades(char **pr, int count);
-void verificaPossibilidades(filaElementos *fn, char **pr, int count);
+void printaPossibilidade(char *possibilidade, int operadores);
+void converteParaDecimal(long long int num, char *possibilidade, int operadores);
 void exibeResultados(filaElementos *fn);
