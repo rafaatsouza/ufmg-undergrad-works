@@ -8,10 +8,10 @@ int main(){
     int num = 0, i = 0;
     char c;
 
-    filaElementos *fv = createFV();
+    filaElementos *fv = createFV(); //cria uma fila vazia
 
     c = getchar();
-    while(c != '\n' && c != '\0'){
+    while(c != '\n' && c != '\0'){ //recebe os números e operadores da equação
         if(c == ' '){
             if(num > -1){
                 addElement(fv, num, 0);
@@ -31,13 +31,13 @@ int main(){
         c = getchar();
     }
 
-    scanf("%d", &(fv->resultado));
+    scanf("%d", &(fv->resultado)); //recebe o resultado da equação
     getchar();
     // clock_t tempo_exec;
     // tempo_exec = clock();
-    exibeResultados(fv);
+    exibeResultados(fv); //chama método que calcula e exibe os resultados possiveis
     // tempo_exec = clock() - tempo_exec;
     // printf("Tempo gasto: %f segundos\n", ((double)tempo_exec)/CLOCKS_PER_SEC);
-    freeFila(fv);
+    freeFila(fv); //desaloca a memória referente à fila
     return 0;
 }
