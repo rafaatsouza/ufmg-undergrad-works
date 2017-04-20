@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "pilhaOperacoes.h"
 
-void freePilha(pilhaOperacoes *po){
+void freePilha(pilhaOperacoes *po){ //desaloca a memória de todos os itens dentra da pilha, e posteriormente, a memória da própria pilha
     Num *n = po->topo;
     Num *aux;
     while(n != NULL){
@@ -13,7 +13,7 @@ void freePilha(pilhaOperacoes *po){
     free(po);
 }
 
-pilhaOperacoes* createPV(){
+pilhaOperacoes* createPV(){ //cria uma pilha vazia
     pilhaOperacoes *pv = (pilhaOperacoes*)malloc(sizeof(pilhaOperacoes));
 
     pv->result = 0;
@@ -21,7 +21,7 @@ pilhaOperacoes* createPV(){
     pv->topo = NULL;
 }
 
-void addNumPilha(pilhaOperacoes *po, int num){
+void addNumPilha(pilhaOperacoes *po, int num){ //adiciona um número ao topo da pilha
     Num *n = (Num*)malloc(sizeof(Num));
 
     n->val = num;
@@ -36,7 +36,7 @@ void addNumPilha(pilhaOperacoes *po, int num){
     po->count_numeros++;
 }
 
-void fazOperacao(pilhaOperacoes *po, int iSoma){
+void fazOperacao(pilhaOperacoes *po, int iSoma){ //executa uma soma/multiplicação com dois itens do topo da pilha, transformado-os em um item com o resultado da operação
     if(po->count_numeros >= 2){
         int ResultadoOperacao;
 
