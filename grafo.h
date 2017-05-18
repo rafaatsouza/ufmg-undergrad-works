@@ -5,7 +5,7 @@ typedef struct a {
 } aresta;
 
 typedef struct v {
-    int index, possuiFranquia, possuiCliente;
+    int possuiFranquia, possuiCliente, distancia_bfs, cor; //cor vai de 0 à 2 (equivale à branco, cinza e preto)
 } vertice;
 
 typedef struct g {
@@ -14,10 +14,11 @@ typedef struct g {
     aresta *a;
 } grafo;
 
-
 grafo* criaGrafoVazio();
+void printaTudo(grafo *g);
 int existeVertice(grafo *g, int index);
 void InsereVertice(grafo *g, int index);
 void InsereAresta(grafo *g, int indexOrigem, int indexDestino, int qtdCiclistas);
 void DefineComFranquia(grafo *g, int indexOrigem);
 void DefineComCliente(grafo *g, int indexOrigem);
+void liberaGrafo(grafo *g);
