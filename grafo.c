@@ -15,23 +15,9 @@ grafo* criaGrafoVazio(int qtdVertices){
         g->g[i] = (int*)malloc(sizeof(int) * qtdVertices);
         for(j=0;j<g->qtdVertices;j++){
             g->g[i][j] = 0;
-        }        
+        }
     }
     return g;
-}
-
-void printaTudo(grafo *g){
-    int i, j;
-    printf("----DADOS:\n");
-    printf("Qtd Vertices: %d Qtd Arestas: %d\n", g->qtdVertices, g->qtdArestas);
-
-    for(int i = 0; i < g->qtdVertices; i++){
-        for(int j = 0; j < g->qtdVertices; j++){
-            printf("%i ",g->g[i][j]);
-        }
-        printf("\n");
-    }
-    printf("-----------------\n");
 }
 
 void InsereAresta(grafo *g, int indexOrigem, int indexDestino, int qtdCiclistas){
@@ -64,7 +50,7 @@ int* retornaAdj(grafo *g, int vertice, int *qtdAdj){ //retorna quantidade de ver
 
 int existeCaminho(grafo *g, int origem, int destino, int *arrayCaminho){ //retorna 1 caso exista caminho entre dois vertices informados, e 0 caso não exista.
     int i, j, aux, *cor, *distancia_bfs, qtd_adj, *adj;
-    
+
     cor = (int*)malloc(sizeof(int) * g->qtdVertices);
     distancia_bfs = (int*)malloc(sizeof(int) * g->qtdVertices);
 
@@ -100,9 +86,9 @@ int existeCaminho(grafo *g, int origem, int destino, int *arrayCaminho){ //retor
     if(distancia_bfs[destino] > 0){
         free(distancia_bfs);
         return 1;
-    } else { 
+    } else {
         free(distancia_bfs);
-        return 0; 
+        return 0;
     }
 }
 
@@ -113,7 +99,7 @@ int retornaFluxoMax(grafo *g){
 
     while(existeCaminho(g, origem, destino, arrayCaminho) == 1){
         fluxo = 9999999;
-        
+
         aux = destino;
         while(aux != origem){
             if(fluxo > g->g[arrayCaminho[aux]][aux]){

@@ -30,7 +30,6 @@ int main(){
         InsereAresta(grafoMapa, indexOrigem + 1, QtdIntersecoes + 1, 9999999);
     }
 
-    //printaTudo(grafoMapa);
     printf("%d\n",retornaFluxoMax(grafoMapa));
     liberaGrafo(grafoMapa);
 }
