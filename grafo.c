@@ -2,106 +2,138 @@
 #include "fila.h"
 
 grafo* criaGrafoVazio(int qtdVertices){
-    int i, qtdMaxArestas;
-    grafo *g = (grafo*)malloc(sizeof(grafo));
+    int i, j;
+    grafo *g;
 
-    qtdMaxArestas = (qtdVertices * (qtdVertices - 1))/2;
+    g = (grafo*)malloc(sizeof(grafo));
 
     g->qtdVertices = qtdVertices;
     g->qtdArestas = 0;
-    g->v = (vertice*)malloc(sizeof(vertice) * (qtdVertices));
-    g->a = (aresta*)malloc(sizeof(aresta) * qtdMaxArestas);
 
+    g->g = (int**)malloc(sizeof(int*) * qtdVertices);
     for(i=0;i<g->qtdVertices;i++){
-        g->v[i].possuiCliente = 0;
-        g->v[i].possuiFranquia = 0;
+        g->g[i] = (int*)malloc(sizeof(int) * qtdVertices);
+        for(j=0;j<g->qtdVertices;j++){
+            g->g[i][j] = 0;
+        }        
     }
-
     return g;
 }
 
 void printaTudo(grafo *g){
-    int i;
+    int i, j;
     printf("----DADOS:\n");
     printf("Qtd Vertices: %d Qtd Arestas: %d\n", g->qtdVertices, g->qtdArestas);
 
-    for(i = 0; i < g->qtdArestas; i++){
-        printf("Index %d vai do vertice %d ao vertice %d, comporta no max %d ciclistas.\n", i, g->a[i].indexOrigem, g->a[i].indexDestino, g->a[i].qtdMaxCiclistas);
+    for(int i = 0; i < g->qtdVertices; i++){
+        for(int j = 0; j < g->qtdVertices; j++){
+            printf("%i ",g->g[i][j]);
+        }
+        printf("\n");
     }
     printf("-----------------\n");
 }
 
 void InsereAresta(grafo *g, int indexOrigem, int indexDestino, int qtdCiclistas){
-    g->a[g->qtdArestas].indexOrigem = indexOrigem;
-    g->a[g->qtdArestas].indexDestino = indexDestino;
-    g->a[g->qtdArestas].qtdMaxCiclistas = qtdCiclistas;
+    g->g[indexOrigem][indexDestino] = qtdCiclistas;
     g->qtdArestas++;
 }
 
-void DefineComFranquia(grafo *g, int index){
-    g->v[index].possuiFranquia = 1;
-}
-
-void DefineComCliente(grafo *g, int index){
-    g->v[index].possuiCliente = 1;
-}
-
-int* retornaVerticesQueVao(grafo *g, int index, int *qtdVerticesDest){ //retorna um vetor com index de todos os vertices que tem uma aresta indo ao vertice de index informado
+int* retornaAdj(grafo *g, int vertice, int *qtdAdj){ //retorna quantidade de vertices adjacentes um vertice informado possui
     int i, *retorno;
-    *qtdVerticesDest = 0;
-    for(i=0;i<g->qtdArestas;i++){
-        if(g->a[i].indexDestino == index) {
-            *qtdVerticesDest = *qtdVerticesDest + 1;
+    *qtdAdj = 0;
+
+    for(i=0;i<g->qtdVertices;i++){
+        if(g->g[vertice][i] != -1){
+            *qtdAdj = *qtdAdj + 1;
         }
     }
 
-    retorno = (int*)malloc(sizeof(int) * (*qtdVerticesDest));
-    *qtdVerticesDest = 0;
+    retorno = (int*)malloc(sizeof(int) * (*qtdAdj));
+    *qtdAdj = 0;
 
-    for(i=0;i<g->qtdArestas;i++){
-        if(g->a[i].indexDestino == index) {
-            retorno[*qtdVerticesDest] = g->a[i].indexOrigem;
-            *qtdVerticesDest = *qtdVerticesDest + 1;
+    for(i=0;i<g->qtdVertices;i++){
+        if(g->g[vertice][i] != -1){
+            retorno[*qtdAdj] = i;
+            *qtdAdj = *qtdAdj + 1;
         }
     }
+
     return retorno;
 }
 
-int retornaIndexFranquiaMaisProx(grafo *g, int indexVertice){
-    int i, aux, qtdVerticesDest, *VerticesDest, indexFranquia = -1;
+int existeCaminho(grafo *g, int origem, int destino, int *arrayCaminho){ //retorna 1 caso exista caminho entre dois vertices informados, e 0 caso não exista.
+    int i, j, aux, *cor, *distancia_bfs, qtd_adj, *adj;
+    
+    cor = (int*)malloc(sizeof(int) * g->qtdVertices);
+    distancia_bfs = (int*)malloc(sizeof(int) * g->qtdVertices);
 
     for(i=0;i<g->qtdVertices;i++){
-        g->v[i].cor = 0;
-        g->v[i].distancia_bfs = 0;
+        cor[i] = 0;
+        distancia_bfs[i] = -1;
     }
-    g->v[indexVertice].distancia_bfs = 1;
+    distancia_bfs[origem] = 0;
+    arrayCaminho[origem] = -1;
 
     filaNumeros *fv = criaFilaVazia(g->qtdVertices);
-    enfileira(fv, indexVertice);
+    enfileira(fv, origem);
 
-    while(filaVazia(fv) == 0 && indexFranquia == -1){
+    while(filaVazia(fv) == 0){
         aux = desenfileira(fv);
-        VerticesDest = retornaVerticesQueVao(g, aux, &qtdVerticesDest);
-        for(i=0;i<qtdVerticesDest;i++){
-            if(g->v[VerticesDest[i]].cor == 0){
-                g->v[VerticesDest[i]].cor = 1;
-                g->v[VerticesDest[i]].distancia_bfs = g->v[aux].distancia_bfs + 1;
-                enfileira(fv, VerticesDest[i]);
-                if(g->v[VerticesDest[i]].possuiFranquia == 1 && indexFranquia == -1){ //eh a franquia mais prox
-                    indexFranquia = VerticesDest[i];
-                }
+        adj = retornaAdj(g, aux, &(qtd_adj));
+
+        for(i=0;i<qtd_adj;i++){
+            if(cor[adj[i]] == 0 && g->g[aux][adj[i]] > 0){
+                cor[adj[i]] = 1;
+                distancia_bfs[adj[i]] = distancia_bfs[aux] + 1;
+                arrayCaminho[adj[i]] = aux;
+                enfileira(fv, adj[i]);
             }
-            g->v[aux].cor = 2;
+            cor[aux] = 2;
         }
-        free(VerticesDest);
+        free(adj);
     }
 
     liberaFila(fv);
-    return indexFranquia;
+    free(cor);
+
+    if(distancia_bfs[destino] > 0){
+        free(distancia_bfs);
+        return 1;
+    } else { 
+        free(distancia_bfs);
+        return 0; 
+    }
+}
+
+int retornaFluxoMax(grafo *g){
+    int i, j, aux, fluxo, fluxo_max = 0, origem = 0, destino = g->qtdVertices - 1, *arrayCaminho, **grafo_fluxo;
+
+    arrayCaminho = (int*)malloc(sizeof(int) * (g->qtdVertices));
+
+    while(existeCaminho(g, origem, destino, arrayCaminho) == 1){
+        fluxo = 9999999;
+        
+        aux = destino;
+        while(aux != origem){
+            if(fluxo > g->g[arrayCaminho[aux]][aux]){
+                fluxo = g->g[arrayCaminho[aux]][aux];
+            }
+            aux = arrayCaminho[aux];
+        }
+
+        aux = destino;
+        while(aux != origem){
+            g->g[arrayCaminho[aux]][aux] -= fluxo;
+            g->g[aux][arrayCaminho[aux]] += fluxo;
+            aux = arrayCaminho[aux];
+        }
+        fluxo_max += fluxo;
+    }
+    return fluxo_max;
 }
 
 void liberaGrafo(grafo *g){
-    free(g->a);
-    free(g->v);
+    free(g->g);
     free(g);
 }

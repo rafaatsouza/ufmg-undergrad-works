@@ -12,23 +12,25 @@ int main(){
         exit(-1);
     }
 
-    grafo *grafoMapa = criaGrafoVazio(QtdIntersecoes);
+    grafo *grafoMapa = criaGrafoVazio(QtdIntersecoes + 2);
     int indexOrigem, indexDestino, qtdCiclistas, i;
     for(i = 0; i < QtdCiclofaixas; i++){
         scanf("%d %d %d", &indexOrigem, &indexDestino, &qtdCiclistas);
         getchar();
-        InsereAresta(grafoMapa, indexOrigem, indexDestino, qtdCiclistas);
+        InsereAresta(grafoMapa, indexOrigem + 1, indexDestino + 1, qtdCiclistas);
     }
     for(i = 0; i < QtdIntersecoesComFranquias; i++){
-        scanf("%d", &indexOrigem);
+        scanf("%d", &indexDestino);
         getchar();
-        DefineComFranquia(grafoMapa, indexOrigem);
+        InsereAresta(grafoMapa, 0, indexDestino + 1, 9999999);
     }
     for(i = 0; i < QtdIntersecoesComClientes; i++){
         scanf("%d", &indexOrigem);
         getchar();
-        DefineComCliente(grafoMapa, indexOrigem);
+        InsereAresta(grafoMapa, indexOrigem + 1, QtdIntersecoes + 1, 9999999);
     }
 
-    printaTudo(grafoMapa);
+    //printaTudo(grafoMapa);
+    printf("%d\n",retornaFluxoMax(grafoMapa));
+    liberaGrafo(grafoMapa);
 }
