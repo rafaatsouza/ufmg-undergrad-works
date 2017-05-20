@@ -22,7 +22,7 @@ grafo* criaGrafoVazio(int qtdVertices){
 
 void InsereAresta(grafo *g, int indexOrigem, int indexDestino, int qtdCiclistas){
     g->g[indexOrigem][indexDestino] = qtdCiclistas;
-    g->qtdArestas++;
+    g->qtdArestas = g->qtdArestas + 1;
 }
 
 int* retornaAdj(grafo *g, int vertice, int *qtdAdj){ //retorna quantidade de vertices adjacentes um vertice informado possui
@@ -93,7 +93,7 @@ int existeCaminho(grafo *g, int origem, int destino, int *arrayCaminho){ //retor
 }
 
 int retornaFluxoMax(grafo *g){
-    int i, j, aux, fluxo, fluxo_max = 0, origem = 0, destino = g->qtdVertices - 1, *arrayCaminho, **grafo_fluxo;
+    int aux, fluxo, fluxo_max = 0, origem = 0, destino = g->qtdVertices - 1, *arrayCaminho;
 
     arrayCaminho = (int*)malloc(sizeof(int) * (g->qtdVertices));
 
@@ -116,10 +116,16 @@ int retornaFluxoMax(grafo *g){
         }
         fluxo_max += fluxo;
     }
+
+    free(arrayCaminho);
     return fluxo_max;
 }
 
 void liberaGrafo(grafo *g){
+    int i;
+    for(i=0;i<g->qtdVertices;i++){
+        free(g->g[i]);
+    }
     free(g->g);
     free(g);
 }
