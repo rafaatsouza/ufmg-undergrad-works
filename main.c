@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "grafo.h"
 
-int main(){
+int main(int argc, char *argv[]){
     int QtdIntersecoes, QtdCiclofaixas, QtdIntersecoesComFranquias, QtdIntersecoesComClientes;
 
     scanf("%d %d %d %d", &QtdIntersecoes, &QtdCiclofaixas, &QtdIntersecoesComFranquias, &QtdIntersecoesComClientes);
@@ -31,10 +31,14 @@ int main(){
         InsereAresta(grafoMapa, indexOrigem + 1, QtdIntersecoes + 1, 9999999);
     }
 
-    //clock_t tempo_exec;
-    //tempo_exec = clock();
+    clock_t tempo_exec;
+    tempo_exec = clock();
     printf("%d\n",retornaFluxoMax(grafoMapa));
-    //tempo_exec = clock() - tempo_exec;
-    //printf("Tempo gasto: %f segundos\n", ((double)tempo_exec)/CLOCKS_PER_SEC);
+    if(argc >= 2){
+        if(strcmp(argv[1],"-t") == 0){
+            tempo_exec = clock() - tempo_exec;
+            printf("Tempo gasto: %f segundos\n", ((double)tempo_exec)/CLOCKS_PER_SEC);
+        }
+    }
     liberaGrafo(grafoMapa);
 }
