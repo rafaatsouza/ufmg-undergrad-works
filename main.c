@@ -1,3 +1,4 @@
+#include <time.h>
 #include <stdio.h>
 #include "grafo.h"
 
@@ -30,6 +31,10 @@ int main(){
         InsereAresta(grafoMapa, indexOrigem + 1, QtdIntersecoes + 1, 9999999);
     }
 
+    //clock_t tempo_exec;
+    //tempo_exec = clock();
     printf("%d\n",retornaFluxoMax(grafoMapa));
+    //tempo_exec = clock() - tempo_exec;
+    //printf("Tempo gasto: %f segundos\n", ((double)tempo_exec)/CLOCKS_PER_SEC);
     liberaGrafo(grafoMapa);
 }

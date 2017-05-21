@@ -1,5 +1,5 @@
 typedef struct gr {
-    int **g, qtdVertices, qtdArestas;
+    int **g, **adj, qtdVertices, qtdArestas;
 } grafo;
 
 grafo* criaGrafoVazio();
