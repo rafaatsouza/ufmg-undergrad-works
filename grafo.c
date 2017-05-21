@@ -52,29 +52,6 @@ void InsereAresta(grafo *g, int indexOrigem, int indexDestino, int qtdCiclistas)
     }
 }
 
-int* retornaAdj(grafo *g, int vertice, int *qtdAdj){ //retorna quantidade de vertices adjacentes um vertice informado possui
-    int i, *retorno;
-    *qtdAdj = 0;
-
-    for(i=0;i<g->qtdVertices;i++){
-        if(g->g[vertice][i] != -1){
-            *qtdAdj = *qtdAdj + 1;
-        }
-    }
-
-    retorno = (int*)malloc(sizeof(int) * (*qtdAdj));
-    *qtdAdj = 0;
-
-    for(i=0;i<g->qtdVertices;i++){
-        if(g->g[vertice][i] != -1){
-            retorno[*qtdAdj] = i;
-            *qtdAdj = *qtdAdj + 1;
-        }
-    }
-
-    return retorno;
-}
-
 int existeCaminho(grafo *g, int origem, int destino, int *arrayCaminho){ //retorna 1 caso exista caminho entre dois vertices informados, e 0 caso não exista.
     int i, j, aux, *cor, *distancia_bfs, qtd_adj;
 
