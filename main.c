@@ -3,6 +3,33 @@
 #include <string.h>
 #include "index.h"
 
+void criaFitas(int qtdFitas){
+    FILE *fita;
+    int i;
+    char *NomFita;
+
+    for(i=0;i<qtdFitas;i++) { 
+        NomFita = (char*)malloc(sizeof(char)*255); 
+        sprintf(NomFita, "fita_%d.txt", i+1);
+        fita = fopen(NomFita,"w");
+        fclose(fita);
+        free(NomFita);
+    }
+}
+
+void deletaFitas(int qtdFitas){
+    FILE *fita;
+    int i;
+    char *NomFita;
+
+    for(i=0;i<qtdFitas;i++) { 
+        NomFita = (char*)malloc(sizeof(char)*255); 
+        sprintf(NomFita, "fita_%d.txt", i+1);
+        remove(NomFita);
+        free(NomFita);
+    }
+}
+
 void OrdenaIndices(FILE *arquivo, char *diretorio, int qtdLinhas, int qtdMemoria){
     int i, qtdRestante, qtdMaxTamanho, qtdFitas, itensPorBloco, itensAtual = 0, filaAtual = 1, arq, freq, pos;
     FILE *fita;
@@ -13,14 +40,11 @@ void OrdenaIndices(FILE *arquivo, char *diretorio, int qtdLinhas, int qtdMemoria
     itensPorBloco = (qtdMemoria/qtdMaxTamanho);
     qtdFitas = 2*itensPorBloco;
 
-    for(i=0;i<qtdFitas;i++) { 
-        NomFita = (char*)malloc(sizeof(char)*255); 
-        sprintf(NomFita, "fita_%d.txt", i+1);
-        fita = fopen(NomFita,"w");
-        fclose(fita);
-    }
+    criaFitas(qtdFitas);
+    printf(" ");
 
     qtdRestante = qtdLinhas;
+
     while(qtdRestante > 0){
         itensAtual = 0;
         arquivo = fopen(diretorio, "r");
@@ -36,7 +60,7 @@ void OrdenaIndices(FILE *arquivo, char *diretorio, int qtdLinhas, int qtdMemoria
         indices = ordenaIndex(indices, itensPorBloco);
 
         sprintf(NomFita, "fita_%d.txt", filaAtual);
-        fita = fopen(NomFita,"w");
+        fita = fopen(NomFita,"a");
         for(i=0;i<itensAtual;i++) { 
             fprintf(fita, "%s %d %d %d\n", indices[i]->palavra, indices[i]->arquivo, indices[i]->frequencia, indices[i]->posicao);
         }
