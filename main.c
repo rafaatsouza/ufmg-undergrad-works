@@ -8,8 +8,8 @@ void criaFitas(int qtdFitas){
     int i;
     char *NomFita;
 
-    for(i=0;i<qtdFitas;i++) { 
-        NomFita = (char*)malloc(sizeof(char)*255); 
+    for(i=0;i<qtdFitas;i++) {
+        NomFita = (char*)malloc(sizeof(char)*255);
         sprintf(NomFita, "fita_%d.txt", i+1);
         fita = fopen(NomFita,"w");
         fclose(fita);
@@ -22,55 +22,57 @@ void deletaFitas(int qtdFitas){
     int i;
     char *NomFita;
 
-    for(i=0;i<qtdFitas;i++) { 
-        NomFita = (char*)malloc(sizeof(char)*255); 
+    for(i=0;i<qtdFitas;i++) {
+        NomFita = (char*)malloc(sizeof(char)*255);
         sprintf(NomFita, "fita_%d.txt", i+1);
         remove(NomFita);
         free(NomFita);
     }
 }
 
-void OrdenaIndices(FILE *arquivo, char *diretorio, int qtdLinhas, int qtdMemoria){
-    int i, qtdRestante, qtdMaxTamanho, qtdFitas, itensPorBloco, itensAtual = 0, filaAtual = 1, arq, freq, pos;
-    FILE *fita;
+void preencheFitas(int qtdFitas, char *diretorio, int qtdLinhas, int itensPorBloco){
+    int i, j, itensAtual = 0, fitaAtual = 1, arq, freq, pos;
     index **indices;
-    char palavra[20], *NomFita;
+    FILE *fita, *arquivo;
+    char palavra[20], NomFita[15];
+
+    indices = (index**)malloc(sizeof(index*)*itensPorBloco);
+
+    arquivo = fopen(diretorio, "r");
+    for(i=0;i<qtdLinhas;i++){
+        if(fscanf(arquivo,"%s %d %d %d\n", palavra, &arq, &freq, &pos) != -1){
+            indices[itensAtual++] = defineIndex(palavra, arq, freq, pos);
+
+            if(itensAtual > 0 && (i == qtdLinhas - 1 || itensAtual == itensPorBloco)){
+                indices = ordenaIndex(indices, itensAtual);
+                sprintf(NomFita, "fita_%d.txt", fitaAtual);
+                fita = fopen(NomFita,"a");
+                for(j=0;j<itensAtual;j++) {
+                    fprintf(fita, "%s %d %d %d\n", indices[j]->palavra, indices[j]->arquivo, indices[j]->frequencia, indices[j]->posicao);
+                    free(indices[j]);
+                }
+                fprintf(fita, "\n");
+                fclose(fita);
+                free(indices);
+                itensAtual = 0;
+                fitaAtual++;
+                if(fitaAtual > qtdFitas/2){ fitaAtual = 1; }
+                indices = (index**)malloc(sizeof(index*)*itensPorBloco);
+            }
+        }
+    }
+    fclose(arquivo);
+}
+
+void CriaIndicesOrdenados(char *diretorio, int qtdLinhas, int qtdMemoria){
+    int qtdMaxTamanho, qtdFitas, itensPorBloco;
 
     qtdMaxTamanho = 32;
     itensPorBloco = (qtdMemoria/qtdMaxTamanho);
     qtdFitas = 2*itensPorBloco;
 
     criaFitas(qtdFitas);
-    printf(" ");
-
-    qtdRestante = qtdLinhas;
-
-    while(qtdRestante > 0){
-        itensAtual = 0;
-        arquivo = fopen(diretorio, "r");
-        indices = (index**)malloc(sizeof(index*)*itensPorBloco);
-        for(i=0;i<itensPorBloco && qtdRestante > 0;i++) { 
-            fscanf(arquivo,"%s %d %d %d", palavra, &arq, &freq, &pos);
-            indices[i] = defineIndex(palavra, arq, freq, pos);
-            qtdRestante--;
-            itensAtual++;
-        }
-        fclose(arquivo);
-
-        indices = ordenaIndex(indices, itensPorBloco);
-
-        sprintf(NomFita, "fita_%d.txt", filaAtual);
-        fita = fopen(NomFita,"a");
-        for(i=0;i<itensAtual;i++) { 
-            fprintf(fita, "%s %d %d %d\n", indices[i]->palavra, indices[i]->arquivo, indices[i]->frequencia, indices[i]->posicao);
-        }
-        fclose(fita);
-        for(i=0;i<itensAtual;i++) { 
-            free(indices[i]);
-        }
-        free(indices);
-        filaAtual++;
-    }
+    preencheFitas(qtdFitas, diretorio, qtdLinhas, itensPorBloco);
 }
 
 int main(int argc, char *argv[]){
@@ -83,7 +85,7 @@ int main(int argc, char *argv[]){
     getchar();
     scanf(" %s", &dirEntrada);
     scanf(" %s\n", &dirSaida);
-    
+
     sprintf(nomArqSaida, "%sindexx.txt", dirSaida);
     saida = fopen(nomArqSaida,"w");
     fclose(saida);
@@ -105,5 +107,5 @@ int main(int argc, char *argv[]){
     }
     fclose(saida);
 
-    OrdenaIndices(saida, nomArqSaida, qtdLinhas, qtdMemoria);
+    CriaIndicesOrdenados(nomArqSaida, qtdLinhas, qtdMemoria);
 }
