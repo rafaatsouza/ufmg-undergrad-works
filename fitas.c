@@ -43,7 +43,6 @@ int preencheFitas(int qtdFitas, char *diretorio, int qtdLinhas, int itensPorBloc
     for(i=0;i<qtdLinhas;i++){
         if(fscanf(arquivo,"%s %d %d %d\n", palavra, &arq, &freq, &pos) != -1){
             indices[itensAtual++] = defineIndex(palavra, arq, freq, pos);
-
             if(itensAtual > 0 && (i == qtdLinhas - 1 || itensAtual == itensPorBloco)){
                 indices = ordenaIndex(indices, itensAtual);
                 sprintf(NomFita, "fita_%d.txt", fitaAtual);
@@ -179,12 +178,10 @@ void intercalaFitas(int qtdMaxMemoria, int qtdFitas, char *diretorio, int qtdLin
 					int ultimaLinhaLida = linhasLidas[i - minFita];
 					sprintf(NomFita, "fita_%d.txt", i);
 					fita = fopen(NomFita,"r");
-					//printf("vai ler até a posicao %d da fita %s \n", ultimaLinhaLida+1, NomFita);
 					for(j=0;j<ultimaLinhaLida+1;j++){
 						if(fscanf(fita,"%s ", palavra) != -1){
 							if(palavra[0] != '*'){
 								if(fscanf(fita,"%d %d %d\n", &arq, &freq, &pos) != -1 && j >= ultimaLinhaLida){
-									//printf("leu ->>> %s %d %d %d\n", palavra, arq, freq, pos);
 									if(min == -1){
 										indices[itensNoIndice] = defineIndex(palavra, arq, freq, pos);
 									} else {
@@ -204,7 +201,6 @@ void intercalaFitas(int qtdMaxMemoria, int qtdFitas, char *diretorio, int qtdLin
 			if(itensNoIndice > 0){
 				min = retornaIndexMenor(indices, qtdMaxMemoria/32);
 				if(min >= 0){
-					//printf("retira o menor, que eh a posicao %d -- qtd atual:%d\n", min, itensNoIndice);
 					printaIndice(indices[min], fitaAtual);
 					indices[min] = NULL;
 					itensNoIndice--;
@@ -222,7 +218,6 @@ void intercalaFitas(int qtdMaxMemoria, int qtdFitas, char *diretorio, int qtdLin
 						novoUltim = ++fitaAtual;
 						min = -1;
 						for(i=0;i<qtdFitas;i++) { linhasLidas[i] = linhasLidas[i] + 1; }
-						//printf("mudou de fita\n");
 					}
 				}
 			}
@@ -242,7 +237,6 @@ void intercalaFitas(int qtdMaxMemoria, int qtdFitas, char *diretorio, int qtdLin
 		ultimaFitaPreenchida = fitaAtual;
 		fitaAtual = aux;
 		novoMin = -1;
-		//printf("passou. min %d - max %d - atual %d\n", minFita, ultimaFitaPreenchida, fitaAtual);
 	}
 	printaFinal(diretorio,minFita);
 }
