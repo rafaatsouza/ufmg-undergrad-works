@@ -60,10 +60,22 @@ int retornaMenor(index *indice_1, index *indice_2){
 
 	if(strlen(indice_1->palavra) < strlen(indice_2->palavra)){
 		return 0;
-	} else if(strlen(indice_1->palavra) < strlen(indice_2->palavra)){
+	} else if(strlen(indice_1->palavra) > strlen(indice_2->palavra)){
 		return 1;
 	} else {
-		return -1;
+		if(indice_1->arquivo < indice_2->arquivo){
+			return 0;
+		} else if(indice_1->arquivo > indice_2->arquivo){
+			return 1;
+		} else {
+			if(indice_1->posicao < indice_2->posicao){
+				return 0;
+			} else if(indice_1->posicao > indice_2->posicao){
+				return 1;
+			} else {
+				return -1;
+			}
+		}
 	}
 }
 
