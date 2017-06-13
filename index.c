@@ -23,6 +23,8 @@ index** ordenaIndex(index **indices, int qtdIndices){
 	int i = (qtdIndices-1)/2, chave, k;
 	index *aux;
 
+	if(i == 0){ i = 1; }
+
     while(i != 0) {
         do {
             chave = 1;
