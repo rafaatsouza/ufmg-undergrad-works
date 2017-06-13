@@ -41,7 +41,7 @@ int main(int argc, char *argv[]){
                 palavra[strlen(palavra)] = '\0';
                 fprintf(saida, "%s %d %d %d\n", palavra, i, contadorPalavra, contadorLetra);
                 qtdLinhas++;
-                contadorLetra += strlen(palavra);
+                contadorLetra += strlen(palavra) + 1;
             }
         }
         fclose(leitura);
