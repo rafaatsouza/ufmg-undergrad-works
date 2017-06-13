@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <time.h>
 #include <stdlib.h>
 #include <string.h>
 #include "fitas.h"
@@ -48,5 +49,13 @@ int main(int argc, char *argv[]){
     }
     fclose(saida);
 
+    clock_t tempo_exec;
+    tempo_exec = clock();
     CriaIndicesOrdenados(nomArqSaida, qtdLinhas, qtdMemoria);
+    if(argc >= 2){
+        if(strcmp(argv[1],"-t") == 0){
+            tempo_exec = clock() - tempo_exec;
+            printf("Tempo gasto: %f segundos\n", ((double)tempo_exec)/CLOCKS_PER_SEC);
+        }
+    }
 }
