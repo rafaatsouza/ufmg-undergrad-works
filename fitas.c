@@ -110,11 +110,12 @@ int PalavraEhIgual(char *palavra1, char *palavra2){
 }
 
 void printaFinal(char *diretorio, int numFita){
-	int arq, freq, pos, iMaisFreq = 0;
-	FILE *saida, *fita;
-	char ultimaPalavra[20], palavra[20], NomFita[20];
+	int i, ultArq, arq, arq_aux, freq, pos, iVaiPrintar = 0, iMaisFreq = 1;
+	FILE *saida, *fita, *fita_aux;
+	char ultimaPalavra[20], palavra[20], palavra_aux[20], NomFita[20];
 
 	ultimaPalavra[0] = "-";
+    ultArq = -1;
 
 	sprintf(NomFita, "fita_%d.txt", numFita);
 
@@ -123,20 +124,34 @@ void printaFinal(char *diretorio, int numFita){
 	saida = fopen(diretorio,"a");
 
 	fita = fopen(NomFita,"r");
+	fita_aux = fopen(NomFita,"r");
 	while(!feof(fita)){
 		if(fscanf(fita,"%s %d %d %d\n", palavra, &arq, &freq, &pos) != -1){
-			if(ultimaPalavra[0] != '-'){
-				if(PalavraEhIgual(ultimaPalavra,palavra) == 1){
+            iVaiPrintar++;
+			if(ultimaPalavra[0] != '-' && ultArq > -1){
+				if(PalavraEhIgual(ultimaPalavra,palavra) == 1 && ultArq == arq){
 					iMaisFreq++;
 				} else {
-					iMaisFreq = 0;
+                    for(i=0;i<iMaisFreq;i++){
+                        if(fscanf(fita_aux,"%s %d %d %d\n", palavra_aux, &arq_aux, &freq, &pos) != -1){
+                            fprintf(saida, "%s,%d,%d,%d\n", palavra_aux, arq_aux, iMaisFreq, pos);
+                            iVaiPrintar--;
+                        }
+                    }
+					iMaisFreq = 1;
 				}
 			}
-			fprintf(saida, "%s,%d,%d,%d\n", palavra, arq, freq + iMaisFreq, pos);
 			strcpy(ultimaPalavra,palavra);
+            ultArq = arq;
 		}
 	}
+    for(i=0;i<iVaiPrintar;i++){
+        if(fscanf(fita_aux,"%s %d %d %d\n", palavra, &arq, &freq, &pos) != -1){
+            fprintf(saida, "%s,%d,%d,%d\n", palavra, arq, iMaisFreq, pos);
+        }
+    }
 	fclose(fita);
+	fclose(fita_aux);
 	fclose(saida);
 }
 
