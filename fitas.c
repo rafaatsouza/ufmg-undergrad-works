@@ -155,13 +155,14 @@ void printaFinal(char *diretorio, int numFita){
 }
 
 void intercalaFitas(int qtdMaxMemoria, int qtdFitas, char *diretorio, int qtdLinhas, int itensPorBloco, int ultimaFitaPreenchida){
-	int i, j, minFita = 1, itensNoIndice = 0, arq, freq, pos, min = -1, fitaAtual = ultimaFitaPreenchida+1, novoMin = -1, novoUltim, linhasEscritas = 0, *linhasLidas, *linhasEscritasPorFita;
+	int i, j, minFita = 1, itensNoIndice = 0, arq, freq, pos, min = -1, fitaAtual = ultimaFitaPreenchida+1, novoMin = -1, novoUltim, linhasEscritas = 0;
+    int *linhasLidas, *linhasEscritasPorFita;
 	index **indices;
 	FILE *fita;
 	char palavra[20], NomFita[20];
 
-	linhasLidas = (int*)malloc(sizeof(int)*qtdFitas);
-	linhasEscritasPorFita = (int*)malloc(sizeof(int)*qtdFitas);
+	linhasLidas = (int*)malloc(sizeof(int) * qtdFitas);
+	linhasEscritasPorFita = (int*)malloc(sizeof(int) * qtdFitas);
 
 	for(i=0;i<qtdFitas;i++) {
 		linhasLidas[i] = 0;
@@ -174,8 +175,8 @@ void intercalaFitas(int qtdMaxMemoria, int qtdFitas, char *diretorio, int qtdLin
 		itensPorBloco *= itensPorBloco;
 		while(linhasEscritas < qtdLinhas){
 			for(i=minFita;i<=ultimaFitaPreenchida && itensNoIndice < (qtdMaxMemoria/32);i++){
-				if(min == -1 || (min == (i - minFita) && (retornaLinhasLidas(linhasLidas[i - minFita],(int)(sqrt(itensPorBloco))))%((int)(sqrt(itensPorBloco))) > 0)){
-					int ultimaLinhaLida = linhasLidas[i - minFita];
+				if(min == -1 || (min == ((i - minFita)) && (retornaLinhasLidas(linhasLidas[(i - minFita)],(int)(sqrt(itensPorBloco))))%((int)(sqrt(itensPorBloco))) > 0)){
+					int ultimaLinhaLida = linhasLidas[(i - minFita)];
 					sprintf(NomFita, "fita_%d.txt", i);
 					fita = fopen(NomFita,"r");
 					for(j=0;j<ultimaLinhaLida+1;j++){
@@ -189,8 +190,8 @@ void intercalaFitas(int qtdMaxMemoria, int qtdFitas, char *diretorio, int qtdLin
 									}
 									itensNoIndice++;
 								}
-								if(j >= linhasLidas[i - minFita]){
-									linhasLidas[i - minFita] = linhasLidas[i - minFita] + 1;
+								if(j >= linhasLidas[(i - minFita)]){
+									linhasLidas[(i - minFita)] = linhasLidas[(i - minFita)] + 1;
 								}
 							}
 						}
@@ -204,7 +205,7 @@ void intercalaFitas(int qtdMaxMemoria, int qtdFitas, char *diretorio, int qtdLin
 					printaIndice(indices[min], fitaAtual);
 					indices[min] = NULL;
 					itensNoIndice--;
-					linhasEscritasPorFita[fitaAtual]++;
+					linhasEscritasPorFita[fitaAtual] = linhasEscritasPorFita[fitaAtual] + 1;
 					linhasEscritas++;
 					if(novoMin == -1 || fitaAtual < novoMin){
 						novoMin = fitaAtual;
@@ -239,4 +240,7 @@ void intercalaFitas(int qtdMaxMemoria, int qtdFitas, char *diretorio, int qtdLin
 		novoMin = -1;
 	}
 	printaFinal(diretorio,minFita);
+    //free(linhasLidas);
+    //free(linhasEscritasPorFita);
+    //free(indices);
 }

@@ -19,7 +19,7 @@ void CriaIndicesOrdenados(char *diretorio, int qtdLinhas, int qtdMemoria){
 
 int main(int argc, char *argv[]){
     int i, qtdDocumentos, qtdMemoria, contadorLetra, contadorPalavra, qtdLinhas = 0;
-    char dirEntrada[255], dirSaida[255], nomArqSaida[255], nomArqLeitura[255], palavra[20], *buf;
+    char dirEntrada[255], dirSaida[255], nomArqSaida[255], nomArqLeitura[255], palavra[20];
     FILE *saida, *leitura;
 
     scanf("%d %d", &qtdDocumentos, &qtdMemoria);
