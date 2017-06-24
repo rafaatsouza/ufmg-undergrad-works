@@ -4,6 +4,7 @@
 #include "vizinhanca.h"
 
 int main(int argc, char *argv[]){
+    clock_t tempo_exec;
     char tipoAlgoritmo;
     vizinhanca *v;
     int qtdBar, mostraTempo = 0;
@@ -27,7 +28,6 @@ int main(int argc, char *argv[]){
     v = instanciaVizinhanca(qtdBar);
     preencheVizinhanca(v);
 
-    clock_t tempo_exec;
     if(mostraTempo == 1){ tempo_exec = clock(); }
 
     if(tipoAlgoritmo == 'd'){
@@ -42,6 +42,8 @@ int main(int argc, char *argv[]){
         tempo_exec = clock() - tempo_exec;
         printf("Tempo gasto: %f segundos\n", ((double)tempo_exec)/CLOCKS_PER_SEC);
     }
-    
+
+    liberaVizinhanca(v);
+
     return 0;
 }

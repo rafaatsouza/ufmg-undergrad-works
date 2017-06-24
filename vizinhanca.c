@@ -2,6 +2,28 @@
 #include <stdlib.h>
 #include "vizinhanca.h"
 
+void converteParaDecimal(int num, char *possibilidade, int qtd){
+    int j, i = qtd-1, resto;
+    while(num >= 1){
+        resto = num % 2;
+        num = (num-resto)/2;
+        if(resto == 0){
+            possibilidade[i] = '0';
+        } else {
+            possibilidade[i] = '1';
+        }
+        i--;
+        if(num == 1){
+            possibilidade[i] = '1';
+            i--;
+            break;
+        }
+    }
+    for(j=i;j>=0;j--){
+        possibilidade[j] = '0';
+    }
+}
+
 int retornaMax(int *v, int tamanho){
     int i, max;
     for(i=0;i<tamanho;i++){
@@ -32,10 +54,17 @@ vizinhanca* instanciaVizinhanca(int qtdBar){
 
     v->qtdBar = qtdBar;
     v->r = (relacao*)malloc(sizeof(relacao) * qtdBar);
-    v->bares = (int*)malloc(sizeof(int) * qtdBar);
-    v->casas = (int*)malloc(sizeof(int) * qtdBar);
+    v->par = (int*)malloc(sizeof(int) * qtdBar);
+    v->impar = (int*)malloc(sizeof(int) * qtdBar);
 
     return v;
+}
+
+void liberaVizinhanca(vizinhanca *v){
+    free(v->par);
+    free(v->impar);
+    free(v->r);
+    free(v);
 }
 
 void preencheVizinhanca(vizinhanca *v){
@@ -45,12 +74,55 @@ void preencheVizinhanca(vizinhanca *v){
         scanf("%d %d", &bar, &casa);
         v->r[i].bar = bar;
         v->r[i].casa = casa;
-        v->bares[i] = bar;
-        v->casas[i] = casa;
+        if(bar%2 == 0){
+            v->par[i] = bar;
+            v->impar[i] = casa;
+        } else {
+            v->par[i] = casa;
+            v->impar[i] = bar;
+        }
     }
 
-    ordenaRadixsort(v->bares, v->qtdBar);
-    ordenaRadixsort(v->casas, v->qtdBar);
+    ordenaRadixsort(v->par, v->qtdBar);
+    ordenaRadixsort(v->impar, v->qtdBar);
+}
+
+int retornaCorrespondenteImpar(vizinhanca *v, int par){
+    int i, impar = -1;
+    for(i=0;i<v->qtdBar && impar == -1;i++){
+        if(v->r[i].bar == par){
+            impar = v->r[i].casa;
+        } else if(v->r[i].casa == par){
+            impar = v->r[i].bar;
+        }
+    }
+    for(i=0;i<v->qtdBar;i++){
+        if(v->impar[i] == impar){
+            return i;
+        }
+    }
+    return -1;
+}
+
+int SolucaoEhInvalida(vizinhanca *v, int *solucao){
+    int i, j, indexPar, indexImpar, auxIndexPar, auxIndexImpar;
+    for(i=0;i<v->qtdBar;i++){
+        if(solucao[i] != -1){
+            indexImpar = retornaCorrespondenteImpar(v, v->par[i]);
+            indexPar = i;
+            for(j=0;j<v->qtdBar;j++){
+                if(j != i && solucao[j] != -1){
+                    auxIndexImpar = retornaCorrespondenteImpar(v, v->par[j]);
+                    auxIndexPar = j;
+
+                    if((auxIndexPar < indexPar && auxIndexImpar > indexImpar) || (auxIndexPar > indexPar && auxIndexImpar < indexImpar)){
+                        return 1;
+                    }
+                }
+            }
+        }
+    }
+    return 0;
 }
 
 void dinamica(vizinhanca *v){
@@ -62,5 +134,37 @@ void guloso(vizinhanca *v){
 }
 
 void bruta(vizinhanca *v){
-    printf("%d bares - tipo bruta\n", v->qtdBar);
+    int *possibilidadeAtual, maxBandeirolas = 0, count, aux = pow(2,v->qtdBar) - 1, i, j;
+    char *possibilidade;
+
+    possibilidade = (char*)malloc(sizeof(char) * v->qtdBar);
+    possibilidadeAtual = (int*)malloc(sizeof(int) * v->qtdBar);
+
+    while(aux >= 0){
+        converteParaDecimal(aux, possibilidade, v->qtdBar);
+        for(i=0;i<v->qtdBar;i++){
+            if(possibilidade[i] == '1'){
+                possibilidadeAtual[i] = v->par[i];
+            } else {
+                possibilidadeAtual[i] = -1;
+            }
+        }
+        if(SolucaoEhInvalida(v, possibilidadeAtual) == 0){
+            count = 0;
+            for(j=0;j<v->qtdBar;j++){
+                if(possibilidadeAtual[j] != -1){
+                    count++;
+                }
+            }
+            if(count > maxBandeirolas){
+                maxBandeirolas = count;
+            }
+        }
+        aux--;
+    }
+
+    free(possibilidade);
+    free(possibilidadeAtual);
+
+    printf("%d\n", maxBandeirolas);
 }
