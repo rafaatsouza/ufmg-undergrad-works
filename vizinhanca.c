@@ -85,11 +85,6 @@ void preencheVizinhanca(vizinhanca *v){
 
     ordenaRadixsort(v->par, v->qtdBar);
     ordenaRadixsort(v->impar, v->qtdBar);
-
-    // for(i=0;i<v->qtdBar;i++){ printf("%d-", v->par[i]); }
-    // printf("\n");
-    // for(i=0;i<v->qtdBar;i++){ printf("%d-", v->impar[i]); }
-    // printf("\n");
 }
 
 int retornaCorrespondenteImpar(vizinhanca *v, int par){
@@ -143,14 +138,21 @@ void dinamica(vizinhanca *v){
 }
 
 restricao* montaRestricoes(vizinhanca *v){
-    int indexImpar, i;
+    int indexImpar, auxIndexImpar, i, j;
     restricao *re = (restricao*)calloc(v->qtdBar, sizeof(restricao));
 
     for(i=0;i<v->qtdBar;i++){
         re[i].indexPar = i;
+        re[i].qtdRestricao = 0;
         indexImpar = retornaCorrespondenteImpar(v, v->par[i]);
-        re[i].qtdRestricao = (re[i].indexPar * ((v->qtdBar - indexImpar - 1))) + ((v->qtdBar - re[i].indexPar - 1) * indexImpar);
-        //printf("restricao p/ conjunto [%d,%d] - eh %d\n", v->par[re[i].indexPar], v->impar[indexImpar], re[i].qtdRestricao);
+        for(j=0;j<v->qtdBar;j++){
+            if(j != i){
+                auxIndexImpar = retornaCorrespondenteImpar(v, v->par[j]);
+                if((j > i && auxIndexImpar < indexImpar) || (j < i && auxIndexImpar > indexImpar)){
+                    re[i].qtdRestricao = re[i].qtdRestricao + 1;
+                }
+            }
+        }
     }
 
     return re;
@@ -169,17 +171,14 @@ void guloso(vizinhanca *v){
     for(i=0;i < v->qtdBar;i++){
         aux = -1;
         for(j=0;j<v->qtdBar;j++){
-            if(restricoes[j].indexPar >= 0 && (aux == -1 || restricoes[aux].qtdRestricao > restricoes[j].qtdRestricao)){
+            if(restricoes[j].indexPar >= 0 && (aux == -1 || restricoes[aux].qtdRestricao >= restricoes[j].qtdRestricao)){
                 aux = j;
             }
         }
         possibilidade[aux] = 1;
-        //printf("adicionou bandeirola ligando o %d c/ seu par\n", v->par[restricoes[aux].indexPar]);
         if(SolucaoEhInvalida(v, possibilidade) == 1){
             possibilidade[aux] = -1;
-            //printf("Remove\n");
         } else {
-            //printf("mantem bandeirola ligando o %d c/ seu par\n", v->par[restricoes[aux].indexPar]);
             count++;
         }
         restricoes[aux].indexPar = -1;
