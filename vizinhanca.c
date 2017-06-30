@@ -85,6 +85,11 @@ void preencheVizinhanca(vizinhanca *v){
 
     ordenaRadixsort(v->par, v->qtdBar);
     ordenaRadixsort(v->impar, v->qtdBar);
+
+    // for(i=0;i<v->qtdBar;i++){ printf("%d-", v->par[i]); }
+    // printf("\n");
+    // for(i=0;i<v->qtdBar;i++){ printf("%d-", v->impar[i]); }
+    // printf("\n");
 }
 
 int retornaCorrespondenteImpar(vizinhanca *v, int par){
@@ -106,6 +111,14 @@ int retornaCorrespondenteImpar(vizinhanca *v, int par){
 
 int SolucaoEhInvalida(vizinhanca *v, int *solucao){
     int i, j, indexPar, indexImpar, auxIndexPar, auxIndexImpar;
+
+    // for(i=0;i<v->qtdBar;i++){
+    //     if(solucao[i] != -1){
+    //         printf("[%d - %d] ", v->par[i], v->impar[retornaCorrespondenteImpar(v, v->par[i])]);
+    //     }
+    // }
+    // printf("\n");
+
     for(i=0;i<v->qtdBar;i++){
         if(solucao[i] != -1){
             indexImpar = retornaCorrespondenteImpar(v, v->par[i]);
@@ -129,12 +142,55 @@ void dinamica(vizinhanca *v){
     printf("%d bares - tipo dinamica\n", v->qtdBar);
 }
 
+restricao* montaRestricoes(vizinhanca *v){
+    int indexImpar, i;
+    restricao *re = (restricao*)calloc(v->qtdBar, sizeof(restricao));
+
+    for(i=0;i<v->qtdBar;i++){
+        re[i].indexPar = i;
+        indexImpar = retornaCorrespondenteImpar(v, v->par[i]);
+        re[i].qtdRestricao = (re[i].indexPar * ((v->qtdBar - indexImpar - 1))) + ((v->qtdBar - re[i].indexPar - 1) * indexImpar);
+        //printf("restricao p/ conjunto [%d,%d] - eh %d\n", v->par[re[i].indexPar], v->impar[indexImpar], re[i].qtdRestricao);
+    }
+
+    return re;
+}
+
 void guloso(vizinhanca *v){
-    printf("%d bares - tipo guloso\n", v->qtdBar);
+    int i, j, count = 0, aux;
+    int *possibilidade;
+    restricao *restricoes;
+
+    restricoes = montaRestricoes(v);
+    possibilidade = (int*)malloc(sizeof(int) * v->qtdBar);
+
+    for(i=0;i<v->qtdBar;i++){ possibilidade[i] = -1; }
+
+    for(i=0;i < v->qtdBar;i++){
+        aux = -1;
+        for(j=0;j<v->qtdBar;j++){
+            if(restricoes[j].indexPar >= 0 && (aux == -1 || restricoes[aux].qtdRestricao > restricoes[j].qtdRestricao)){
+                aux = j;
+            }
+        }
+        possibilidade[aux] = 1;
+        //printf("adicionou bandeirola ligando o %d c/ seu par\n", v->par[restricoes[aux].indexPar]);
+        if(SolucaoEhInvalida(v, possibilidade) == 1){
+            possibilidade[aux] = -1;
+            //printf("Remove\n");
+        } else {
+            //printf("mantem bandeirola ligando o %d c/ seu par\n", v->par[restricoes[aux].indexPar]);
+            count++;
+        }
+        restricoes[aux].indexPar = -1;
+    }
+
+    printf("%d\n", count);
 }
 
 void bruta(vizinhanca *v){
-    int *possibilidadeAtual, maxBandeirolas = 0, count, aux = pow(2,v->qtdBar) - 1, i, j;
+    int *possibilidadeAtual, maxBandeirolas = 0, count, i, j;
+    long long int aux = ((pow(2,v->qtdBar)) - 1);
     char *possibilidade;
 
     possibilidade = (char*)malloc(sizeof(char) * v->qtdBar);

@@ -1,3 +1,7 @@
+typedef struct re {
+    int indexPar, qtdRestricao;
+} restricao;
+
 typedef struct r {
     int bar, casa;
 } relacao;
