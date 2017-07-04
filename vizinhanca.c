@@ -107,13 +107,6 @@ int retornaCorrespondenteImpar(vizinhanca *v, int par){
 int SolucaoEhInvalida(vizinhanca *v, int *solucao){
     int i, j, indexPar, indexImpar, auxIndexPar, auxIndexImpar;
 
-    // for(i=0;i<v->qtdBar;i++){
-    //     if(solucao[i] != -1){
-    //         printf("[%d - %d] ", v->par[i], v->impar[retornaCorrespondenteImpar(v, v->par[i])]);
-    //     }
-    // }
-    // printf("\n");
-
     for(i=0;i<v->qtdBar;i++){
         if(solucao[i] != -1){
             indexImpar = retornaCorrespondenteImpar(v, v->par[i]);
@@ -185,6 +178,8 @@ void guloso(vizinhanca *v){
     }
 
     printf("%d\n", count);
+    free(restricoes);
+    free(possibilidade);
 }
 
 void bruta(vizinhanca *v){
