@@ -41,24 +41,29 @@ int main(int argc, char *argv[]){
     getchar();
 
     v = instanciaVizinhanca(qtdBar);
-    preencheVizinhanca(v);
 
     if(mostraTempo == 1){ tempo_exec = clock(); }
 
     if(forcaTipoAlgoritmo == 0){
         if(tipoAlgoritmo == 'd'){
+            preencheVizinhanca(v,1);
             dinamica(v);
         } else if(tipoAlgoritmo == 'g'){
+            preencheVizinhanca(v,0);
             guloso(v);
         } else if(tipoAlgoritmo == 'b'){
+            preencheVizinhanca(v,0);
             bruta(v);
         }
     } else {
         if(forcaTipoAlgoritmo == 1){
+            preencheVizinhanca(v,1);
             dinamica(v);
         } else if(forcaTipoAlgoritmo == 2){
+            preencheVizinhanca(v,0);
             guloso(v);
         } else if(forcaTipoAlgoritmo == 3){
+            preencheVizinhanca(v,0);
             bruta(v);
         }
     }

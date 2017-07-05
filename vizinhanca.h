@@ -12,7 +12,7 @@ typedef struct v {
 } vizinhanca;
 
 vizinhanca* instanciaVizinhanca(int qtdBar);
-void preencheVizinhanca(vizinhanca *v);
+void preencheVizinhanca(vizinhanca *v, int iDinamica);
 void liberaVizinhanca(vizinhanca *v);
 void dinamica(vizinhanca *v);
 void guloso(vizinhanca *v);

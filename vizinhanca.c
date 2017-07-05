@@ -67,7 +67,30 @@ void liberaVizinhanca(vizinhanca *v){
     free(v);
 }
 
-void preencheVizinhanca(vizinhanca *v){
+void ordenaDinamica(vizinhanca *v){
+    int chave, k, aux, i = (v->qtdBar - 1) / 2;
+
+    while(i != 0) {
+        do {
+            chave = 1;
+            for(k = 0; k < v->qtdBar - i; ++k) {
+                if(v->par[k] > v->par[k + i]) {
+                    aux = v->par[k];
+                    v->par[k] = v->par[k + i];
+                    v->par[k + i] = aux;
+
+                    aux = v->impar[k];
+                    v->impar[k] = v->impar[k + i];
+                    v->impar[k + i] = aux;
+                    chave = 0;
+                }
+            }
+        } while(chave == 0);
+        i = i / 2;
+    }
+}
+
+void preencheVizinhanca(vizinhanca *v, int iDinamica){
     int i, bar, casa;
 
     for(i=0;i<v->qtdBar;i++){
@@ -83,8 +106,12 @@ void preencheVizinhanca(vizinhanca *v){
         }
     }
 
-    ordenaRadixsort(v->par, v->qtdBar);
-    ordenaRadixsort(v->impar, v->qtdBar);
+    if(iDinamica){
+        ordenaDinamica(v);
+    } else {
+        ordenaRadixsort(v->par, v->qtdBar);
+        ordenaRadixsort(v->impar, v->qtdBar);
+    }
 }
 
 int retornaCorrespondenteImpar(vizinhanca *v, int par){
@@ -127,7 +154,24 @@ int SolucaoEhInvalida(vizinhanca *v, int *solucao){
 }
 
 void dinamica(vizinhanca *v){
-    printf("%d bares - tipo dinamica\n", v->qtdBar);
+    int i, j;
+    int *aux;
+
+    aux = (int*)malloc(sizeof(int) * v->qtdBar);
+    aux[0] = 1;
+
+    for(i=1;i<v->qtdBar;i++) {
+        aux[i] = 1;
+        for(j=0;j<i;j++) {
+            if (v->impar[i] >= v->impar[j] && aux[i] < 1 + aux[j]) {
+                aux[i] = aux[j] + 1;
+            }
+        }
+    }
+
+    printf("%d\n", retornaMax(aux, v->qtdBar));
+
+    free(aux);
 }
 
 restricao* montaRestricoes(vizinhanca *v){
