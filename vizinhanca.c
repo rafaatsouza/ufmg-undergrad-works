@@ -153,27 +153,6 @@ int SolucaoEhInvalida(vizinhanca *v, int *solucao){
     return 0;
 }
 
-void dinamica(vizinhanca *v){
-    int i, j;
-    int *aux;
-
-    aux = (int*)malloc(sizeof(int) * v->qtdBar);
-    aux[0] = 1;
-
-    for(i=1;i<v->qtdBar;i++) {
-        aux[i] = 1;
-        for(j=0;j<i;j++) {
-            if (v->impar[i] >= v->impar[j] && aux[i] < 1 + aux[j]) {
-                aux[i] = aux[j] + 1;
-            }
-        }
-    }
-
-    printf("%d\n", retornaMax(aux, v->qtdBar));
-
-    free(aux);
-}
-
 restricao* montaRestricoes(vizinhanca *v){
     int indexImpar, auxIndexImpar, i, j;
     restricao *re = (restricao*)calloc(v->qtdBar, sizeof(restricao));
@@ -195,11 +174,12 @@ restricao* montaRestricoes(vizinhanca *v){
     return re;
 }
 
-void guloso(vizinhanca *v){
+void guloso(vizinhanca *v, int iIdentificaTipo){
     int i, j, count = 0, aux;
     int *possibilidade;
     restricao *restricoes;
 
+    preencheVizinhanca(v, 0);
     restricoes = montaRestricoes(v);
     possibilidade = (int*)malloc(sizeof(int) * v->qtdBar);
 
@@ -221,18 +201,23 @@ void guloso(vizinhanca *v){
         restricoes[aux].indexPar = -1;
     }
 
+    if(iIdentificaTipo == 1){
+        printf("Metodo: Guloso - ");
+    }
     printf("%d\n", count);
     free(restricoes);
     free(possibilidade);
 }
 
-void bruta(vizinhanca *v){
+void bruta(vizinhanca *v, int iIdentificaTipo){
     int *possibilidadeAtual, maxBandeirolas = 0, count, i, j;
     long long int aux = ((pow(2,v->qtdBar)) - 1);
     char *possibilidade;
 
     possibilidade = (char*)malloc(sizeof(char) * v->qtdBar);
     possibilidadeAtual = (int*)malloc(sizeof(int) * v->qtdBar);
+
+    preencheVizinhanca(v, 0);
 
     while(aux >= 0){
         converteParaDecimal(aux, possibilidade, v->qtdBar);
@@ -260,5 +245,34 @@ void bruta(vizinhanca *v){
     free(possibilidade);
     free(possibilidadeAtual);
 
+    if(iIdentificaTipo == 1){
+        printf("Metodo: Forca Bruta - ");
+    }
     printf("%d\n", maxBandeirolas);
+}
+
+void dinamica(vizinhanca *v, int iIdentificaTipo){
+    int i, j;
+    int *aux;
+
+    aux = (int*)malloc(sizeof(int) * v->qtdBar);
+    aux[0] = 1;
+
+    preencheVizinhanca(v, 1);
+
+    for(i=1;i<v->qtdBar;i++) {
+        aux[i] = 1;
+        for(j=0;j<i;j++) {
+            if (v->impar[i] >= v->impar[j] && aux[i] < 1 + aux[j]) {
+                aux[i] = aux[j] + 1;
+            }
+        }
+    }
+
+    if(iIdentificaTipo == 1){
+        printf("Metodo: Prog. Dinamica - ");
+    }
+    printf("%d\n", retornaMax(aux, v->qtdBar));
+
+    free(aux);
 }

@@ -6,33 +6,18 @@
 int main(int argc, char *argv[]){
     clock_t tempo_exec;
     char tipoAlgoritmo;
+    int qtdBar, mostraTempo = 0;
     vizinhanca *v;
-    int qtdBar, mostraTempo = 0, forcaTipoAlgoritmo = 0;
 
     if(argc >= 2){
         if(strcmp(argv[1],"-t") == 0){
             mostraTempo = 1;
-        } else if(strcmp(argv[1],"-d") == 0){
-            forcaTipoAlgoritmo = 1;
-        } else if(strcmp(argv[1],"-g") == 0){
-            forcaTipoAlgoritmo = 2;
-        } else if(strcmp(argv[1],"-b") == 0){
-            forcaTipoAlgoritmo = 3;
-        }
-        if(argc >= 3){
-            if(strcmp(argv[2],"-d") == 0){
-                forcaTipoAlgoritmo = 1;
-            } else if(strcmp(argv[2],"-g") == 0){
-                forcaTipoAlgoritmo = 2;
-            } else if(strcmp(argv[2],"-b") == 0){
-                forcaTipoAlgoritmo = 3;
-            }
         }
     }
 
     tipoAlgoritmo = getchar();
 
-    if(tipoAlgoritmo != 'd' && tipoAlgoritmo != 'g' && tipoAlgoritmo != 'b' && forcaTipoAlgoritmo == 0){
+    if(tipoAlgoritmo != 'd' && tipoAlgoritmo != 'g' && tipoAlgoritmo != 'b'){
         fprintf(stderr, "Error - Tipo de algoritmo nao foi encontrado\n");
         exit(-1);
     }
@@ -44,28 +29,12 @@ int main(int argc, char *argv[]){
 
     if(mostraTempo == 1){ tempo_exec = clock(); }
 
-    if(forcaTipoAlgoritmo == 0){
-        if(tipoAlgoritmo == 'd'){
-            preencheVizinhanca(v,1);
-            dinamica(v);
-        } else if(tipoAlgoritmo == 'g'){
-            preencheVizinhanca(v,0);
-            guloso(v);
-        } else if(tipoAlgoritmo == 'b'){
-            preencheVizinhanca(v,0);
-            bruta(v);
-        }
-    } else {
-        if(forcaTipoAlgoritmo == 1){
-            preencheVizinhanca(v,1);
-            dinamica(v);
-        } else if(forcaTipoAlgoritmo == 2){
-            preencheVizinhanca(v,0);
-            guloso(v);
-        } else if(forcaTipoAlgoritmo == 3){
-            preencheVizinhanca(v,0);
-            bruta(v);
-        }
+    if(tipoAlgoritmo == 'd'){
+        dinamica(v, mostraTempo);
+    } else if(tipoAlgoritmo == 'g'){
+        guloso(v, mostraTempo);
+    } else if(tipoAlgoritmo == 'b'){
+        bruta(v, mostraTempo);
     }
 
     if(mostraTempo == 1){
