@@ -202,7 +202,7 @@ void guloso(vizinhanca *v, int iIdentificaTipo){
     }
 
     if(iIdentificaTipo == 1){
-        printf("Metodo: Guloso - ");
+        printf("Metodo: Guloso - Quantidade: %d - ", v->qtdBar);
     }
     printf("%d\n", count);
     free(restricoes);
@@ -220,22 +220,18 @@ void bruta(vizinhanca *v, int iIdentificaTipo){
     preencheVizinhanca(v, 0);
 
     while(aux >= 0){
+        count = 0;
         converteParaDecimal(aux, possibilidade, v->qtdBar);
         for(i=0;i<v->qtdBar;i++){
             if(possibilidade[i] == '1'){
                 possibilidadeAtual[i] = v->par[i];
+                count++;
             } else {
                 possibilidadeAtual[i] = -1;
             }
         }
-        if(SolucaoEhInvalida(v, possibilidadeAtual) == 0){
-            count = 0;
-            for(j=0;j<v->qtdBar;j++){
-                if(possibilidadeAtual[j] != -1){
-                    count++;
-                }
-            }
-            if(count > maxBandeirolas){
+        if(count > maxBandeirolas){
+            if(SolucaoEhInvalida(v, possibilidadeAtual) == 0){
                 maxBandeirolas = count;
             }
         }
@@ -246,33 +242,33 @@ void bruta(vizinhanca *v, int iIdentificaTipo){
     free(possibilidadeAtual);
 
     if(iIdentificaTipo == 1){
-        printf("Metodo: Forca Bruta - ");
+        printf("Metodo: Forca Bruta - Quantidade: %d - ", v->qtdBar);
     }
     printf("%d\n", maxBandeirolas);
 }
 
 void dinamica(vizinhanca *v, int iIdentificaTipo){
     int i, j;
-    int *aux;
+    int *sequencias;
 
-    aux = (int*)malloc(sizeof(int) * v->qtdBar);
-    aux[0] = 1;
+    sequencias = (int*)malloc(sizeof(int) * v->qtdBar);
+    sequencias[0] = 1;
 
     preencheVizinhanca(v, 1);
 
     for(i=1;i<v->qtdBar;i++) {
-        aux[i] = 1;
+        sequencias[i] = 1;
         for(j=0;j<i;j++) {
-            if (v->impar[i] >= v->impar[j] && aux[i] < 1 + aux[j]) {
-                aux[i] = aux[j] + 1;
+            if (v->impar[i] >= v->impar[j] && sequencias[i] <= sequencias[j]) {
+                sequencias[i] = sequencias[j] + 1;
             }
         }
     }
 
     if(iIdentificaTipo == 1){
-        printf("Metodo: Prog. Dinamica - ");
+        printf("Metodo: Prog. Dinamica - Quantidade: %d - ", v->qtdBar);
     }
-    printf("%d\n", retornaMax(aux, v->qtdBar));
+    printf("%d\n", retornaMax(sequencias, v->qtdBar));
 
-    free(aux);
+    free(sequencias);
 }
