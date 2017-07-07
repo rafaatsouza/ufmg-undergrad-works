@@ -259,7 +259,7 @@ void dinamica(vizinhanca *v, int iIdentificaTipo){
     for(i=1;i<v->qtdBar;i++) {
         sequencias[i] = 1;
         for(j=0;j<i;j++) {
-            if (v->impar[i] >= v->impar[j] && sequencias[i] <= sequencias[j]) {
+            if (v->impar[j] < v->impar[i] && sequencias[i] <= sequencias[j]) {
                 sequencias[i] = sequencias[j] + 1;
             }
         }
