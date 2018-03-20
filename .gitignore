@@ -1,5 +1,6 @@
 # others
 *.pdf
+*.csv
 
 # Prerequisites
 *.d
