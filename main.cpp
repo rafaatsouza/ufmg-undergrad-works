@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string.h>
+#include <vector>
 #include <stdlib.h>
-
-using namespace std;
+#include "movies.h"
 
 int main(int argc, char *argv[]){
   if(argc < 3){
