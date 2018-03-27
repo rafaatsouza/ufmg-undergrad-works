@@ -21,13 +21,11 @@ Movie* getsMovie(std::vector<Movie*> ml, char id[10]){
 }
 
 //adiciona um novo filme à lista
-void addsMovie(std::vector<Movie*> ml, char id[10]){
-  if(getsMovie(ml, id) == NULL){
-    Movie *m = (Movie*)malloc(sizeof(Movie));
-    strcpy(m->id, id);
+Movie getsNewMovie(std::vector<Movie*> ml, char id[10]){
+  Movie m;
+  strcpy(m.id, id);
 
-    ml.push_back(m);
-  }
+  return m;
 }
 
 //adiciona uma visualização à um filme

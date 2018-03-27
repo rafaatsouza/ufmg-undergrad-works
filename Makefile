@@ -1,7 +1,7 @@
 all: clean tp1.out
 
 tp1.out: movies.o
-	g++ -c main.cpp -o tp1.out movies.o
+	g++ main.cpp -o tp1.out movies.o
 
 movies.o: movies.cpp
 	g++ -c movies.cpp -o movies.o

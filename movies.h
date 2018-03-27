@@ -9,6 +9,5 @@ typedef struct m {
 } Movie;
 
 Movie* getsMovie(std::vector<Movie*> ml, char id[10]);
-void addsMovie(std::vector<Movie*> ml, char id[10]);
+Movie getsNewMovie(char id[10]);
 void addsView(Movie *m, char user[10], int rate);
-void freeMovies(std::vector<Movie*> ml);

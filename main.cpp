@@ -2,6 +2,7 @@
 #include <string.h>
 #include <vector>
 #include <stdlib.h>
+#include <stdio.h>
 #include "movies.h"
 
 int main(int argc, char *argv[]){
@@ -10,14 +11,19 @@ int main(int argc, char *argv[]){
     exit(EXIT_FAILURE);
   }
 
-  char ratingsFileName[20];
-  char targetsFileName[20];
+  char line[1024];
+  char* content;
 
-  strcpy(ratingsFileName, argv[1]);
-  strcpy(targetsFileName, argv[2]);
-
-  std::cout << ratingsFileName << '\n';
-  std::cout << targetsFileName << '\n';
+  FILE* stream = fopen(argv[1], "r"); //ratingsFileName
+  while (fgets(line, 1024, stream))
+    {
+        if (line[0] != '\n' && line[0] != ' '){
+          content = strtok(line,"");
+          printf("%s\n", content);
+        }
+    }
+    
+  //std::cout << "ID: " << movieList.size() << '\n';
 
   return 0;
 }
