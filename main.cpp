@@ -21,5 +21,8 @@ int main(int argc, char *argv[]){
   GetRatings(argv[1], &movies, &users);
   SetPredictions(argv[2], &movies, &users);
 
+  movies.clear();
+  users.clear();
+
   return 0;
 }

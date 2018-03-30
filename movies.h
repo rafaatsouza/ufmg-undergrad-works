@@ -1,18 +1,13 @@
 using namespace std;
 
-typedef struct vu {
-    string user;
-    int rate;
-} ViewByUser;
+typedef struct sm {
+  int rate;
+  double similarity;
+} SimilarityResume;
 
-typedef struct vm {
-    string movie;
-    int rate;
-} ViewByMovie;
-
-typedef map<string, vector<ViewByUser> > MovieList;
-
-typedef map<string, vector<ViewByMovie> > UserList;
+typedef map<string,int> View;
+typedef map<string, View> MovieList;
+typedef map<string, View> UserList;
 
 void GetRatings(string filename, MovieList *movies, UserList *users);
 void SetPredictions(string filename, MovieList *movies, UserList *users);

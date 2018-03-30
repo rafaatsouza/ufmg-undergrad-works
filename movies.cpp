@@ -21,33 +21,30 @@ void GetRatings(string filename, MovieList *movies, UserList *users){
     if(count > 0){
       string itemId;
       string userId;
-      ViewByUser vu;
-      ViewByMovie vm;
+      int rate;
       int firstCommaPosition = line.find(",");
       int dotsPosition = line.find(":");
 
       itemId = line.substr(dotsPosition + 1, firstCommaPosition - dotsPosition - 1);
       userId = line.substr(0,dotsPosition);
-      vm.movie = itemId;
-      vu.user = userId;
-      vu.rate = stoi(line.substr(firstCommaPosition + 1, 1),&size);
+      rate = stoi(line.substr(firstCommaPosition + 1, 1),&size);
 
       if((*movies).find(itemId) != (*movies).end()) {
-        (*movies)[itemId].push_back(vu);
+        ((*movies)[itemId])[userId] = rate;
       } else {
-        vector<ViewByUser> vvu;
-        vvu.push_back(vu);
+        View vu;
+        vu[userId] = rate;
 
-        (*movies)[itemId] = vvu;
+        (*movies)[itemId] = vu;
       }
 
       if((*users).find(userId) != (*users).end()){
-        (*users)[userId].push_back(vm);
+        ((*users)[userId])[itemId] = rate;
       } else {
-        vector<ViewByMovie> vvm;
-        vvm.push_back(vm);
+        View vm;
+        vm[itemId] = rate;
 
-        (*users)[userId] = vvm;
+        (*users)[userId] = vm;
       }
     }
 
