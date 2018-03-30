@@ -1,36 +1,23 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <string.h>
 #include <vector>
+#include <map>
 #include <stdlib.h>
-#include <stdio.h>
 #include "movies.h"
+
+using namespace std;
 
 int main(int argc, char *argv[]){
   if(argc < 3){
-    std::cout << "Error - Invalid arguments" << '\n';
+    cout << "Error - Invalid arguments" << '\n';
+    cout << "Error - Invalid arguments" << '\n';
     exit(EXIT_FAILURE);
   }
 
-  char line[1024];
-  char *content, *identifier, *prediction, *itemId, *userId;
+  MovieList movies = GetRatings(argv[1]);
 
-  FILE* stream = fopen(argv[1], "r"); //argv[1] = ratingsFileName
-  while (fgets(line, 1024, stream))
-  {
-      if (line[0] != '\n' && line[0] != ' '){
-        content = strtok(line,"");
-        
-        identifier = strtok(content,",");
-        prediction = strtok(NULL,",");
-
-        userId = strtok(identifier,":");
-        itemId = strtok(NULL,":");
-
-        std::cout << "Usuario " << userId << " - Item " << itemId << " - Prediction " << prediction << '\n';
-      }
-  }
-
+  std::cout << "Quantidade de filmes: " << movies.size() << '\n';
+  std::cout << "Quantidade de reviews do i2179136: " << movies["i2179136"].size() << '\n';
   return 0;
 }

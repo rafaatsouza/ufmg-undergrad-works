@@ -1,52 +1,42 @@
-#include <string.h>
+#include <string>
 #include <vector>
-#include <stdlib.h>
+#include <map>
+#include <fstream>
 #include "movies.h"
 
-//retorna um filme da lista
-Movie* getsMovie(std::vector<Movie*> ml, char id[10]){
-  if(ml.size() == 0){
-    return NULL;
-  }
+using namespace std;
 
-  std::vector<Movie*>::iterator it;
+MovieList GetRatings(string filename){
+  MovieList movies;
+  int count = 0;
+  string::size_type size;
+  ifstream file(filename.c_str());
+  string line = "";
 
-  for(it = ml.begin(); it != ml.end(); it++) {
-    if((*it)->id == id){
-      return *it;
+	while (getline(file, line)) {
+    if(count > 0){
+      string itemId;
+      View v;
+      int firstCommaPosition = line.find(",");
+      int dotsPosition = line.find(":");
+
+      itemId = line.substr(dotsPosition + 1, firstCommaPosition - dotsPosition - 1);
+      v.user = line.substr(0,dotsPosition);
+      v.rate = stoi(line.substr(firstCommaPosition + 1, 1),&size);
+
+      if(movies.find(itemId) != movies.end()) {
+        movies[itemId].push_back(v);
+      }
+      else {
+        vector<View> vv;
+        vv.push_back(v);
+
+        movies[itemId] = vv;
+      }
+
     }
+    count++;
   }
 
-  return NULL;
-}
-
-//adiciona um novo filme à lista
-Movie getsNewMovie(std::vector<Movie*> ml, char id[10]){
-  Movie m;
-  strcpy(m.id, id);
-
-  return m;
-}
-
-//adiciona uma visualização à um filme
-void addsView(Movie *m, char user[10], int rate){
-  View *v = (View*)malloc(sizeof(View));
-
-  strcpy(v->user, user);
-  v->rate = rate;
-
-  m->h.push_back(v);
-}
-
-//desaloca memória utilizada por uma lista de filmes
-void freeMovies(std::vector<Movie*> ml){
-  std::vector<Movie*>::iterator it;
-  std::vector<View*>::iterator jt;
-
-  for(it = ml.begin(); it != ml.end(); it++) {
-    for(jt = (*it)->h.begin(); jt != (*it)->h.end(); jt++) {
-      free(*jt);
-    }
-    free(*it);
-  }
+  return movies;
 }
