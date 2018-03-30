@@ -2,4 +2,4 @@
 
 i=0
 make
-./tp1.out Tests/ratings.csv Tests/targets.csv
+./tp1.out Tests/ratings.csv Tests/targets.csv > Tests/subsmission.csv

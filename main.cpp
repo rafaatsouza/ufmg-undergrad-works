@@ -19,8 +19,7 @@ int main(int argc, char *argv[]){
   UserList users;
 
   GetRatings(argv[1], &movies, &users);
+  SetPredictions(argv[2], &movies, &users);
 
-  std::cout << "Quantidade de filmes: " << movies.size() << '\n';
-  std::cout << "Quantidade de Usuários: " << users.size() << '\n';
   return 0;
 }

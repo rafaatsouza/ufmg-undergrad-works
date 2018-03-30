@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 #include <vector>
 #include <map>
@@ -5,6 +6,10 @@
 #include "movies.h"
 
 using namespace std;
+
+int getPrediction(string userId, string itemId, MovieList *movies, UserList *users){
+  return 5;
+}
 
 void GetRatings(string filename, MovieList *movies, UserList *users){
   int count = 0;
@@ -46,6 +51,31 @@ void GetRatings(string filename, MovieList *movies, UserList *users){
       }
     }
 
+    count++;
+  }
+}
+
+void SetPredictions(string filename, MovieList *movies, UserList *users){
+  int count = 0;
+  string::size_type size;
+  ifstream file(filename.c_str());
+  string line = "";
+
+	while (getline(file, line)) {
+    if(count > 0){
+      string itemId;
+      string userId;
+      int firstCommaPosition = line.find(",");
+      int dotsPosition = line.find(":");
+
+      itemId = line.substr(dotsPosition + 1, firstCommaPosition - dotsPosition - 1);
+      userId = line.substr(0,dotsPosition);
+
+
+      cout << line << "," << getPrediction(userId, itemId, movies, users) << '\n';
+    } else {
+      cout << "UserId:ItemId,Rating" << '\n';
+    }
     count++;
   }
 }
