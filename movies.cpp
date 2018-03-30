@@ -6,8 +6,7 @@
 
 using namespace std;
 
-MovieList GetRatings(string filename){
-  MovieList movies;
+void GetRatings(string filename, MovieList *movies, UserList *users){
   int count = 0;
   string::size_type size;
   ifstream file(filename.c_str());
@@ -16,27 +15,37 @@ MovieList GetRatings(string filename){
 	while (getline(file, line)) {
     if(count > 0){
       string itemId;
-      View v;
+      string userId;
+      ViewByUser vu;
+      ViewByMovie vm;
       int firstCommaPosition = line.find(",");
       int dotsPosition = line.find(":");
 
       itemId = line.substr(dotsPosition + 1, firstCommaPosition - dotsPosition - 1);
-      v.user = line.substr(0,dotsPosition);
-      v.rate = stoi(line.substr(firstCommaPosition + 1, 1),&size);
+      userId = line.substr(0,dotsPosition);
+      vm.movie = itemId;
+      vu.user = userId;
+      vu.rate = stoi(line.substr(firstCommaPosition + 1, 1),&size);
 
-      if(movies.find(itemId) != movies.end()) {
-        movies[itemId].push_back(v);
+      if((*movies).find(itemId) != (*movies).end()) {
+        (*movies)[itemId].push_back(vu);
+      } else {
+        vector<ViewByUser> vvu;
+        vvu.push_back(vu);
+
+        (*movies)[itemId] = vvu;
       }
-      else {
-        vector<View> vv;
-        vv.push_back(v);
 
-        movies[itemId] = vv;
+      if((*users).find(userId) != (*users).end()){
+        (*users)[userId].push_back(vm);
+      } else {
+        vector<ViewByMovie> vvm;
+        vvm.push_back(vm);
+
+        (*users)[userId] = vvm;
       }
-
     }
+
     count++;
   }
-
-  return movies;
 }

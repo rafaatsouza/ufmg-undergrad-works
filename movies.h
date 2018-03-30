@@ -1,10 +1,17 @@
 using namespace std;
 
-typedef struct v {
+typedef struct vu {
     string user;
     int rate;
-} View;
+} ViewByUser;
 
-typedef map<string, vector<View> > MovieList;
+typedef struct vm {
+    string movie;
+    int rate;
+} ViewByMovie;
 
-MovieList GetRatings(string filename);
+typedef map<string, vector<ViewByUser> > MovieList;
+
+typedef map<string, vector<ViewByMovie> > UserList;
+
+void GetRatings(string filename, MovieList *movies, UserList *users);

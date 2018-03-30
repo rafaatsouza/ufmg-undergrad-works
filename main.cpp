@@ -15,9 +15,12 @@ int main(int argc, char *argv[]){
     exit(EXIT_FAILURE);
   }
 
-  MovieList movies = GetRatings(argv[1]);
+  MovieList movies;
+  UserList users;
+
+  GetRatings(argv[1], &movies, &users);
 
   std::cout << "Quantidade de filmes: " << movies.size() << '\n';
-  std::cout << "Quantidade de reviews do i2179136: " << movies["i2179136"].size() << '\n';
+  std::cout << "Quantidade de Usuários: " << users.size() << '\n';
   return 0;
 }
