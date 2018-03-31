@@ -7,8 +7,60 @@
 
 using namespace std;
 
-int getPrediction(string userId, string itemId, MovieList *movies, UserList *users){
-  return 5;
+int GetMovieAverageRating(MovieList *movies, string movieId){
+  if((*movies).find(movieId) != (*movies).end() && (*movies)[movieId].size() > 0){
+    View::iterator it;
+    int count = 0;
+    int sum = 0;
+
+
+    for(it = (*movies)[movieId].begin(); it != (*movies)[movieId].end(); it++) {
+      sum += (*it).second;
+      count++;
+    }
+
+    return sum/count;
+  } else {
+    return 6; //TODO: Fix this
+  }
+}
+
+int GetSimilarity(MovieList *movies, string movieA, string movieB){
+  return 1;
+}
+
+vector<SimilarityResume> getSimilarityList(string userId, string movieId, MovieList *movies, UserList *users){
+  int count = 0;
+  vector<SimilarityResume> similarityList((*users)[userId].size());
+  View::iterator it;
+
+  for(it = (*users)[userId].begin(); it != (*users)[userId].end(); it++) {
+    similarityList[count].rate = (*it).second;
+    similarityList[count].similarity = GetSimilarity(movies, movieId, it->first);
+  }
+
+  return similarityList;
+}
+
+int getPrediction(string userId, string movieId, MovieList *movies, UserList *users){
+  if((*users).find(userId) != (*users).end() && (*users)[userId].size() > 0){
+    vector<SimilarityResume> similarityList = getSimilarityList(userId, movieId, movies, users);
+
+    int prediction = 0;
+    double weight = 0;
+    vector<SimilarityResume>::iterator it;
+
+    for(it = similarityList.begin(); it != similarityList.end(); it++) {
+      prediction += (((*it).rate) * ((*it).similarity));
+      weight += (*it).similarity;
+    }
+
+    similarityList.clear();
+
+    return prediction/weight;
+  } else {
+    return GetMovieAverageRating(movies, movieId);
+  }
 }
 
 void GetRatings(string filename, MovieList *movies, UserList *users){
