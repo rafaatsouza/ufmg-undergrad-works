@@ -25,13 +25,12 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
   int countReviewsA = (*movies)[movieA].views.size();
   int countReviewsB = (*movies)[movieB].views.size();
 
-  if(countReviewsA == 0 || countReviewsB == 0){
+  if(countReviewsA == 0 && countReviewsB == 0){
     (*movies)[movieA].similarities[movieB] = -1;
     (*movies)[movieB].similarities[movieA] = -1;
     return -1;
   }
 
-  int countMovies = 0;
   double similarity = 0;
   int productSum;
   int sumSquareA;
@@ -41,18 +40,21 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
   View::iterator it_b;
 
   for(it_a = (*movies)[movieA].views.begin(); it_a != (*movies)[movieA].views.end(); it_a++) {
-    for(it_b = (*movies)[movieB].views.begin(); it_b != (*movies)[movieB].views.end(); it_b++) {
-      if((*it_a).first == (*it_b).first){
-        productSum += ((*it_a).second * (*it_b).second);
-        sumSquareA += ((*it_a).second * (*it_a).second);
-        sumSquareB += ((*it_b).second * (*it_b).second);
-        countMovies++;
-      }
+    if((*movies)[movieB].views.find((*it_a).first) != (*movies)[movieB].views.end()){
+      productSum += ((*it_a).second * (*movies)[movieB].views[(*it_a).first]);
     }
+    sumSquareA += ((*it_a).second * (*it_a).second);
   }
 
-  if(countMovies > 0){
-    similarity = (productSum / (sqrt(sumSquareA) * sqrt(sumSquareB))) * ((double)(GetMin(countMovies,30))/(double)30);
+  for(it_b = (*movies)[movieB].views.begin(); it_b != (*movies)[movieB].views.end(); it_b++) {
+    if((*movies)[movieA].views.find((*it_b).first) == (*movies)[movieA].views.end()){
+      productSum += ((*it_b).second * (*movies)[movieB].views[(*it_b).first]);
+    }
+    sumSquareB += ((*it_b).second * (*it_b).second);
+  }
+
+  if(productSum > 0){
+    similarity = productSum / (sqrt(sumSquareA) * sqrt(sumSquareB));
 
     (*movies)[movieA].similarities[movieB] = similarity;
     (*movies)[movieB].similarities[movieA] = similarity;
