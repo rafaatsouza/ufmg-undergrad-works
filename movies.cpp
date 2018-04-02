@@ -47,24 +47,18 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
   }
 
   for(it_b = (*movies)[movieB].views.begin(); it_b != (*movies)[movieB].views.end(); it_b++) {
-    if((*movies)[movieA].views.find((*it_b).first) == (*movies)[movieA].views.end()){
-      productSum += ((*it_b).second * (*movies)[movieB].views[(*it_b).first]);
-    }
     sumSquareB += ((*it_b).second * (*it_b).second);
   }
 
   if(productSum > 0){
     similarity = productSum / (sqrt(sumSquareA) * sqrt(sumSquareB));
+  } else {
+    similarity = -1;
+  }
 
     (*movies)[movieA].similarities[movieB] = similarity;
     (*movies)[movieB].similarities[movieA] = similarity;
     return similarity;
-
-  } else {
-    (*movies)[movieA].similarities[movieB] = -1;
-    (*movies)[movieB].similarities[movieA] = -1;
-    return -1;
-  }
 }
 
 double getPrediction(string userId, string movieId, MovieList *movies, UserList *users){
@@ -141,8 +135,8 @@ void SetPredictions(string filename, MovieList *movies, UserList *users){
   ifstream file(filename.c_str());
   string line = "";
 
-	while (getline(file, line)) {
-    if(count > 0){
+	while (getline(file, line) && count < 190) {
+    if(count > 180){
       string movieId;
       string userId;
       int firstCommaPosition = line.find(",");
@@ -153,7 +147,7 @@ void SetPredictions(string filename, MovieList *movies, UserList *users){
 
 
       cout << line << "," << getPrediction(userId, movieId, movies, users) << '\n';
-    } else {
+    } else if(count == 0) {
       cout << "UserId:ItemId,Prediction" << '\n';
     }
     count++;
