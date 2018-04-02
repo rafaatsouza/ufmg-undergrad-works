@@ -109,7 +109,7 @@ void GetRatings(string filename, MovieList *movies, UserList *users){
 
       if((*movies).find(movieId) != (*movies).end()) {
         ((*movies)[movieId]).views[userId] = rate;
-        ((*movies)[movieId]).averageRate = (((*movies)[movieId]).averageRate * ((*movies)[movieId]).views.size() - 1 + rate)/((*movies)[movieId]).views.size();
+        ((*movies)[movieId]).averageRate = (((*movies)[movieId]).averageRate * ((*movies)[movieId].views.size() - 1) + rate)/((*movies)[movieId]).views.size();
       } else {
         (*movies)[movieId].views[userId] = rate;
         (*movies)[movieId].averageRate = rate;
@@ -135,8 +135,8 @@ void SetPredictions(string filename, MovieList *movies, UserList *users){
   ifstream file(filename.c_str());
   string line = "";
 
-	while (getline(file, line) && count < 190) {
-    if(count > 180){
+	while (getline(file, line)) {
+    if(count > 0){
       string movieId;
       string userId;
       int firstCommaPosition = line.find(",");
