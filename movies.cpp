@@ -154,7 +154,7 @@ void SetPredictions(string filename, MovieList *movies, UserList *users){
 
       cout << line << "," << getPrediction(userId, movieId, movies, users) << '\n';
     } else {
-      cout << "UserId:ItemId,Rating" << '\n';
+      cout << "UserId:ItemId,Prediction" << '\n';
     }
     count++;
   }
