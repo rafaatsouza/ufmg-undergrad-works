@@ -7,6 +7,8 @@
 
 using namespace std;
 
+double _totalAverage;
+
 //retorna o menor número
 int GetMin(int a, int b){
   if(a < b){
@@ -32,6 +34,7 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
   }
 
   double similarity = 0;
+  int countSharedReviews = 0;
   int productSum;
   int sumSquareA;
   int sumSquareB;
@@ -42,6 +45,7 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
   for(it_a = (*movies)[movieA].views.begin(); it_a != (*movies)[movieA].views.end(); it_a++) {
     if((*movies)[movieB].views.find((*it_a).first) != (*movies)[movieB].views.end()){
       productSum += ((*it_a).second * (*movies)[movieB].views[(*it_a).first]);
+      countSharedReviews++;
     }
     sumSquareA += ((*it_a).second * (*it_a).second);
   }
@@ -51,7 +55,7 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
   }
 
   if(productSum > 0){
-    similarity = productSum / (sqrt(sumSquareA) * sqrt(sumSquareB));
+    similarity = (productSum / (sqrt(sumSquareA) * sqrt(sumSquareB))) * (GetMin(countSharedReviews,50)/50);
   } else {
     similarity = -1;
   }
@@ -80,23 +84,24 @@ double getPrediction(string userId, string movieId, MovieList *movies, UserList 
     } else if((*movies).find(movieId) != (*movies).end() && (*movies)[movieId].views.size() > 0){
       return ((*movies)[movieId]).averageRate;
     } else {
-      return (double)6; //TODO: Fix this
+      return _totalAverage;
     }
   } else if((*movies).find(movieId) != (*movies).end() && (*movies)[movieId].views.size() > 0){
     return ((*movies)[movieId]).averageRate;
   } else {
-    return (double)6; //TODO: Fix this
+    return _totalAverage;
   }
 }
 
 void GetRatings(string filename, MovieList *movies, UserList *users){
+  _totalAverage = 0;
   int count = 0;
   string::size_type size;
   ifstream file(filename.c_str());
   string line = "";
 
 	while (getline(file, line)) {
-    if(count > 0){
+    if(count++ > 0){
       string movieId;
       string userId;
       int rate;
@@ -106,6 +111,12 @@ void GetRatings(string filename, MovieList *movies, UserList *users){
       movieId = line.substr(dotsPosition + 1, firstCommaPosition - dotsPosition - 1);
       userId = line.substr(0,dotsPosition);
       rate = stoi(line.substr(firstCommaPosition + 1, 1),&size);
+
+      if(_totalAverage == 0){
+        _totalAverage = (double)rate;
+      } else {
+        _totalAverage = ((_totalAverage * (count-1)) + (double)rate)/count;
+      }
 
       if((*movies).find(movieId) != (*movies).end()) {
         ((*movies)[movieId]).views[userId] = rate;
@@ -124,8 +135,6 @@ void GetRatings(string filename, MovieList *movies, UserList *users){
         (*users)[userId] = vm;
       }
     }
-
-    count++;
   }
 }
 
