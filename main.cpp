@@ -32,9 +32,6 @@ int main(int argc, char *argv[]){
     SetPredictions(argv[2], &movies, &users);
   }
 
-
-
-
   movies.clear();
   users.clear();
 

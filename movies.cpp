@@ -9,14 +9,6 @@ using namespace std;
 
 double _totalAverage;
 
-//retorna o menor número
-int GetMin(int a, int b){
-  if(a < b){
-    return a;
-  }
-  return b;
-}
-
 double GetSimilarity(MovieList *movies, string movieA, string movieB){
   if((*movies)[movieA].similarities.find(movieB) != (*movies)[movieA].similarities.end()){
     return (*movies)[movieA].similarities[movieB];
@@ -55,7 +47,7 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
   }
 
   if(productSum > 0){
-    similarity = (productSum / (sqrt(sumSquareA) * sqrt(sumSquareB))) * (GetMin(countSharedReviews,50)/50);
+    similarity = (productSum / (sqrt(sumSquareA) * sqrt(sumSquareB)));
   } else {
     similarity = -1;
   }
