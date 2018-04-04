@@ -16,8 +16,15 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
     return (*movies)[movieB].similarities[movieA];
   }
 
-  int countReviewsA = (*movies)[movieA].views.size();
-  int countReviewsB = (*movies)[movieB].views.size();
+  int countReviewsA = 0;
+  int countReviewsB = 0;
+
+  if((*movies).find(movieA) != (*movies).end()){
+    countReviewsA = (*movies)[movieA].views.size();
+  }
+  if((*movies).find(movieB) != (*movies).end()){
+   countReviewsB = (*movies)[movieB].views.size(); 
+  }
 
   if(countReviewsA == 0 && countReviewsB == 0){
     (*movies)[movieA].similarities[movieB] = -1;
