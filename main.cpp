@@ -1,11 +1,7 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
 #include <map>
 #include <chrono>
 #include <cstring>
-#include <stdlib.h>
+#include <stdio.h>
 #include "movies.h"
 
 using namespace std;
@@ -13,9 +9,8 @@ using namespace std::chrono;
 
 int main(int argc, char *argv[]){
   if(argc < 3){
-    cout << "Error - Invalid arguments" << '\n';
-    cout << "Error - Invalid arguments" << '\n';
-    exit(EXIT_FAILURE);
+    printf("Argumentos invalidos\n");
+    exit(-1);
   }
 
   MovieList movies;
@@ -26,7 +21,7 @@ int main(int argc, char *argv[]){
     GetRatings(argv[2], &movies, &users);
     SetPredictions(argv[3], &movies, &users);
     high_resolution_clock::time_point fim = high_resolution_clock::now();
-    cout << "Duração: " << ((double)duration_cast<microseconds>( fim - inicio ).count())/1000000 << '\n';
+    printf("Duação %lf\n", ((double)duration_cast<microseconds>( fim - inicio ).count())/1000000);
   } else {
     GetRatings(argv[1], &movies, &users);
     SetPredictions(argv[2], &movies, &users);

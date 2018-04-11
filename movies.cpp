@@ -34,9 +34,9 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
 
   double similarity = 0;
   int countSharedReviews = 0;
-  int productSum;
-  int sumSquareA;
-  int sumSquareB;
+  int productSum = 0;
+  int sumSquareA = 0;
+  int sumSquareB = 0;
 
   View::iterator it_a;
   View::iterator it_b;
@@ -164,7 +164,7 @@ void SetPredictions(string filename, MovieList *movies, UserList *users){
   ifstream file(filename.c_str());
   string line = "";
 
-	while (getline(file, line)) {
+	while (getline(file, line) && count < 10) {
     if(count > 0){
       string movieId;
       string userId;
