@@ -9,8 +9,13 @@ typedef struct mi {
   Similarities similarities;
 } MovieInfo;
 
+typedef struct ui {
+  View views;
+  double averageRate;
+} UserInfo;
+
 typedef map<string, MovieInfo> MovieList;
-typedef map<string, View> UserList;
+typedef map<string, UserInfo> UserList;
 
 void GetRatings(string filename, MovieList *movies, UserList *users);
 void SetPredictions(string filename, MovieList *movies, UserList *users);

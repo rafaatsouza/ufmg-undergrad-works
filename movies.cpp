@@ -42,7 +42,7 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
   View::iterator it_b;
 
   for(it_a = (*movies)[movieA].views.begin(); it_a != (*movies)[movieA].views.end(); it_a++) {
-    if((*movies)[movieB].views.find((*it_a).first) != (*movies)[movieB].views.end()){
+    if(countReviewsB > 0 && (*movies)[movieB].views.find((*it_a).first) != (*movies)[movieB].views.end()){
       productSum += ((*it_a).second * (*movies)[movieB].views[(*it_a).first]);
       countSharedReviews++;
     }
@@ -65,15 +65,17 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
 }
 
 double getPrediction(string userId, string movieId, MovieList *movies, UserList *users){
-  if((*users).find(userId) != (*users).end() && (*users)[userId].size() > 0){
+  if((*users).find(userId) != (*users).end() && (*users)[userId].views.size() > 0){
     double prediction = 0;
     double weight = 0;
     View::iterator it;
 
-    for(it = (*users)[userId].begin(); it != (*users)[userId].end(); it++) {
+    for(it = (*users)[userId].views.begin(); it != (*users)[userId].views.end(); it++) {
       double similarity = GetSimilarity(movies, movieId, it->first);
       if(similarity > -1){
-        prediction = prediction + ((*it).second * similarity);
+        int rate = ((*it).second - (*users)[userId].averageRate);
+        if(rate < 0) { rate *= -1; }
+        prediction = prediction + (similarity * rate);
         weight += similarity;
       }
     }
@@ -126,12 +128,11 @@ void GetRatings(string filename, MovieList *movies, UserList *users){
       }
 
       if((*users).find(userId) != (*users).end()){
-        ((*users)[userId])[movieId] = rate;
+        ((*users)[userId]).views[movieId] = rate;
+        ((*users)[userId]).averageRate = (((*users)[userId]).averageRate * ((*users)[userId].views.size() - 1) + rate)/((*users)[userId]).views.size();
       } else {
-        View vm;
-        vm[movieId] = rate;
-
-        (*users)[userId] = vm;
+        (*users)[userId].views[movieId] = rate;
+        (*users)[userId].averageRate = rate;
       }
     }
   }
