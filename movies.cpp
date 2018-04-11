@@ -41,16 +41,34 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
   View::iterator it_a;
   View::iterator it_b;
 
-  for(it_a = (*movies)[movieA].views.begin(); it_a != (*movies)[movieA].views.end(); it_a++) {
-    if(countReviewsB > 0 && (*movies)[movieB].views.find((*it_a).first) != (*movies)[movieB].views.end()){
-      productSum += ((*it_a).second * (*movies)[movieB].views[(*it_a).first]);
-      countSharedReviews++;
+  if(countReviewsA > 0){
+    for(it_a = (*movies)[movieA].views.begin(); it_a != (*movies)[movieA].views.end(); it_a++) {
+      if(countReviewsB > 0 && (*movies)[movieB].views.find((*it_a).first) != (*movies)[movieB].views.end()){
+        productSum += ((*it_a).second * (*movies)[movieB].views[(*it_a).first]);
+        countSharedReviews++;
+      }
+      sumSquareA += ((*it_a).second * (*it_a).second);
     }
-    sumSquareA += ((*it_a).second * (*it_a).second);
-  }
 
-  for(it_b = (*movies)[movieB].views.begin(); it_b != (*movies)[movieB].views.end(); it_b++) {
-    sumSquareB += ((*it_b).second * (*it_b).second);
+    if(countReviewsB > 0){
+      for(it_b = (*movies)[movieB].views.begin(); it_b != (*movies)[movieB].views.end(); it_b++) {
+        sumSquareB += ((*it_b).second * (*it_b).second);
+      }
+    }
+  } else {
+    for(it_b = (*movies)[movieB].views.begin(); it_b != (*movies)[movieB].views.end(); it_b++) {
+      if(countReviewsA > 0 && (*movies)[movieA].views.find((*it_b).first) != (*movies)[movieA].views.end()){
+        productSum += ((*it_b).second * (*movies)[movieA].views[(*it_b).first]);
+        countSharedReviews++;
+      }
+      sumSquareB += ((*it_b).second * (*it_b).second);
+    }
+
+    if(countReviewsA > 0){
+      for(it_a = (*movies)[movieA].views.begin(); it_a != (*movies)[movieA].views.end(); it_a++) {
+        sumSquareA += ((*it_a).second * (*it_a).second);
+      }
+    }
   }
 
   if(productSum > 0){
@@ -136,6 +154,8 @@ void GetRatings(string filename, MovieList *movies, UserList *users){
       }
     }
   }
+
+  file.close();
 }
 
 void SetPredictions(string filename, MovieList *movies, UserList *users){
@@ -161,4 +181,6 @@ void SetPredictions(string filename, MovieList *movies, UserList *users){
     }
     count++;
   }
+
+  file.close();
 }
