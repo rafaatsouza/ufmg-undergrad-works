@@ -9,6 +9,13 @@ using namespace std;
 
 double _totalAverage;
 
+int getMin(int a, int b){
+  if (a < b){
+    return a;
+  }
+  return b;
+}
+
 double GetSimilarity(MovieList *movies, string movieA, string movieB){
   if((*movies)[movieA].similarities.find(movieB) != (*movies)[movieA].similarities.end()){
     return (*movies)[movieA].similarities[movieB];
@@ -72,7 +79,7 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
   }
 
   if(productSum > 0){
-    similarity = (productSum / (sqrt(sumSquareA) * sqrt(sumSquareB)));
+    similarity = (getMin(20,countReviewsA)/20) * (productSum / (sqrt(sumSquareA) * sqrt(sumSquareB)));
   } else {
     similarity = -1;
   }
@@ -82,7 +89,7 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
   return similarity;
 }
 
-double getPrediction(string userId, string movieId, MovieList *movies, UserList *users){
+double GetPrediction(string userId, string movieId, MovieList *movies, UserList *users){
   if((*users).find(userId) != (*users).end() && (*users)[userId].views.size() > 0){
     double prediction = 0;
     double weight = 0;
@@ -172,7 +179,7 @@ void SetPredictions(string filename, MovieList *movies, UserList *users){
       userId = line.substr(0,dotsPosition);
 
 
-      cout << line << "," << getPrediction(userId, movieId, movies, users) << '\n';
+      cout << line << "," << GetPrediction(userId, movieId, movies, users) << '\n';
     } else if(count == 0) {
       cout << "UserId:ItemId,Prediction" << '\n';
     }
