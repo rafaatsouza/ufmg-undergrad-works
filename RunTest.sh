@@ -1,5 +1,4 @@
 #!/bin/bash
 
-i=0
 make
-./tp1.out Tests/ratings.csv Tests/targets.csv > Tests/subsmission.csv
+./tp1.out Tests/ratings.csv Tests/targets.csv > Tests/submission.csv
