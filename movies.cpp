@@ -91,20 +91,35 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
 
 double GetPrediction(string userId, string movieId, MovieList *movies, UserList *users){
   if((*users).find(userId) != (*users).end() && (*users)[userId].views.size() > 0){
+    int meanCentering = 0;
     double prediction = 0;
     double weight = 0;
     View::iterator it;
 
+    if((*movies).find(movieId) != (*movies).end() && (*movies)[movieId].views.size() > 0){
+      meanCentering = 1;
+    }
+
     for(it = (*users)[userId].views.begin(); it != (*users)[userId].views.end(); it++) {
       double similarity = GetSimilarity(movies, movieId, it->first);
       if(similarity > -1){
-        prediction += ((*it).second * similarity);
+        if(meanCentering == 1){
+          double rate = (double)(*it).second - (*movies)[movieId].averageRate;
+          if(rate < 0) { rate *= (double)-1; }
+          prediction += (similarity * rate);
+        } else {
+          prediction += ((double)(*it).second * similarity);
+        }
         weight += similarity;
       }
     }
 
     if(weight > 0){
-      return prediction/weight;
+      if(meanCentering == 1){
+        return (*movies)[movieId].averageRate + (prediction/weight);
+      } else {
+        return prediction/weight;
+      }
     } else if((*movies).find(movieId) != (*movies).end() && (*movies)[movieId].views.size() > 0){
       return ((*movies)[movieId]).averageRate;
     } else {
