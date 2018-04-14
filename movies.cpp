@@ -23,7 +23,7 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
     countReviewsA = (*movies)[movieA].views.size();
   }
   if((*movies).find(movieB) != (*movies).end()){
-   countReviewsB = (*movies)[movieB].views.size(); 
+    countReviewsB = (*movies)[movieB].views.size();
   }
 
   if(countReviewsA == 0 && countReviewsB == 0){
@@ -77,9 +77,9 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
     similarity = -1;
   }
 
-    (*movies)[movieA].similarities[movieB] = similarity;
-    (*movies)[movieB].similarities[movieA] = similarity;
-    return similarity;
+  (*movies)[movieA].similarities[movieB] = similarity;
+  (*movies)[movieB].similarities[movieA] = similarity;
+  return similarity;
 }
 
 double getPrediction(string userId, string movieId, MovieList *movies, UserList *users){
@@ -91,9 +91,7 @@ double getPrediction(string userId, string movieId, MovieList *movies, UserList 
     for(it = (*users)[userId].views.begin(); it != (*users)[userId].views.end(); it++) {
       double similarity = GetSimilarity(movies, movieId, it->first);
       if(similarity > -1){
-        int rate = ((*it).second - (*users)[userId].averageRate);
-        if(rate < 0) { rate *= -1; }
-        prediction = prediction + (similarity * rate);
+        prediction += ((*it).second * similarity);
         weight += similarity;
       }
     }
@@ -151,11 +149,10 @@ void GetRatings(string filename, MovieList *movies, UserList *users){
       } else {
         (*users)[userId].views[movieId] = rate;
         (*users)[userId].averageRate = rate;
+
       }
     }
   }
-
-  file.close();
 }
 
 void SetPredictions(string filename, MovieList *movies, UserList *users){
@@ -164,7 +161,7 @@ void SetPredictions(string filename, MovieList *movies, UserList *users){
   ifstream file(filename.c_str());
   string line = "";
 
-	while (getline(file, line) && count < 10) {
+	while (getline(file, line)) {
     if(count > 0){
       string movieId;
       string userId;
