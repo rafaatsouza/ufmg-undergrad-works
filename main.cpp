@@ -21,7 +21,7 @@ int main(int argc, char *argv[]){
     GetRatings(argv[2], &movies, &users);
     SetPredictions(argv[3], &movies, &users);
     high_resolution_clock::time_point fim = high_resolution_clock::now();
-    printf("Duação %lf\n", ((double)duration_cast<microseconds>( fim - inicio ).count())/1000000);
+    printf("Duração %lf\n", ((double)duration_cast<microseconds>( fim - inicio ).count())/1000000);
   } else {
     GetRatings(argv[1], &movies, &users);
     SetPredictions(argv[2], &movies, &users);
