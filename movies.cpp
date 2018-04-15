@@ -11,13 +11,6 @@ using namespace std;
 
 double _totalAverage;
 
-int getMin(int a, int b){
-  if (a < b){
-    return a;
-  }
-  return b;
-}
-
 double GetSimilarity(MovieList *movies, string movieA, string movieB){
   if((*movies)[movieA].similarities.find(movieB) != (*movies)[movieA].similarities.end()){
     return (*movies)[movieA].similarities[movieB];
@@ -43,9 +36,9 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
 
   double similarity = 0;
   int countSharedReviews = 0;
-  int productSum = 0;
-  int sumSquareA = 0;
-  int sumSquareB = 0;
+  double productSum = 0;
+  double sumSquareA = 0;
+  double sumSquareB = 0;
 
   View::iterator it_a;
   View::iterator it_b;
@@ -81,7 +74,7 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
   }
 
   if(productSum > 0){
-    similarity = (getMin(20,countReviewsA)/20) * (productSum / (sqrt(sumSquareA) * sqrt(sumSquareB)));
+    similarity = (productSum / (sqrt(sumSquareA) * sqrt(sumSquareB)));
   } else {
     similarity = -1;
   }
