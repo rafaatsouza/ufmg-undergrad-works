@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <vector>
 #include <iostream>
 #include <string>
 #include <map>
@@ -90,7 +92,7 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
 }
 
 double GetPrediction(string userId, string movieId, MovieList *movies, UserList *users){
-  if((*users).find(userId) != (*users).end() && (*users)[userId].views.size() > 0){
+  if((*users).find(userId) != (*users).end() && (*users)[userId].size() > 0){
     int meanCentering = 0;
     double prediction = 0;
     double weight = 0;
@@ -100,7 +102,7 @@ double GetPrediction(string userId, string movieId, MovieList *movies, UserList 
       meanCentering = 1;
     }
 
-    for(it = (*users)[userId].views.begin(); it != (*users)[userId].views.end(); it++) {
+    for(it = (*users)[userId].begin(); it != (*users)[userId].end(); it++) {
       double similarity = GetSimilarity(movies, movieId, it->first);
       if(similarity > -1){
         if(meanCentering == 1){
@@ -135,6 +137,7 @@ double GetPrediction(string userId, string movieId, MovieList *movies, UserList 
 void GetRatings(string filename, MovieList *movies, UserList *users){
   _totalAverage = 0;
   int count = 0;
+
   string::size_type size;
   ifstream file(filename.c_str());
   string line = "";
@@ -166,14 +169,18 @@ void GetRatings(string filename, MovieList *movies, UserList *users){
       }
 
       if((*users).find(userId) != (*users).end()){
-        ((*users)[userId]).views[movieId] = rate;
-        ((*users)[userId]).averageRate = (((*users)[userId]).averageRate * ((*users)[userId].views.size() - 1) + rate)/((*users)[userId]).views.size();
+        ((*users)[userId])[movieId] = rate;
       } else {
-        (*users)[userId].views[movieId] = rate;
-        (*users)[userId].averageRate = rate;
+        View vm;
+        vm[movieId] = rate;
+        (*users)[userId] = vm;
 
       }
     }
+  }
+
+  if(_totalAverage - (int)_totalAverage > 0){
+    _totalAverage = (double)((int)_totalAverage + 1);
   }
 }
 
