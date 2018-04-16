@@ -18,42 +18,16 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
     return (*movies)[movieB].similarities[movieA];
   }
 
-  int countReviewsA = 0;
-  int countReviewsB = 0;
-
-  if((*movies).find(movieA) != (*movies).end()){
-    countReviewsA = (*movies)[movieA].views.size();
-  }
-  if((*movies).find(movieB) != (*movies).end()){
-    countReviewsB = (*movies)[movieB].views.size();
-  }
-
-  if(countReviewsA == 0 && countReviewsB == 0){
-    (*movies)[movieA].similarities[movieB] = -1;
-    (*movies)[movieB].similarities[movieA] = -1;
-    return -1;
-  }
-
   double similarity = 0;
   int countSharedReviews = 0;
   double productSum = 0;
 
-  View::iterator it_a;
-  View::iterator it_b;
+  View::iterator it;
 
-  if(countReviewsA > 0){
-    for(it_a = (*movies)[movieA].views.begin(); it_a != (*movies)[movieA].views.end(); it_a++) {
-      if(countReviewsB > 0 && (*movies)[movieB].views.find((*it_a).first) != (*movies)[movieB].views.end()){
-        productSum += ((*it_a).second * (*movies)[movieB].views[(*it_a).first]);
-        countSharedReviews++;
-      }
-    }
-  } else {
-    for(it_b = (*movies)[movieB].views.begin(); it_b != (*movies)[movieB].views.end(); it_b++) {
-      if(countReviewsA > 0 && (*movies)[movieA].views.find((*it_b).first) != (*movies)[movieA].views.end()){
-        productSum += ((*it_b).second * (*movies)[movieA].views[(*it_b).first]);
-        countSharedReviews++;
-      }
+  for(it = (*movies)[movieA].views.begin(); it != (*movies)[movieA].views.end(); it++) {
+    if((*movies)[movieB].views.find((*it).first) != (*movies)[movieB].views.end()){
+      productSum += ((*it).second * (*movies)[movieB].views[(*it).first]);
+      countSharedReviews++;
     }
   }
 
@@ -69,36 +43,23 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
 }
 
 double GetPrediction(string userId, string movieId, MovieList *movies, UserList *users){
-  if((*users).find(userId) != (*users).end() && (*users)[userId].size() > 0){
-    int meanCentering = 0;
+  if((*users).find(userId) != (*users).end() && (*users)[userId].size() > 0 && (*movies).find(movieId) != (*movies).end() && (*movies)[movieId].views.size() > 0){
     double prediction = 0;
     double weight = 0;
     View::iterator it;
 
-    if((*movies).find(movieId) != (*movies).end() && (*movies)[movieId].views.size() > 0){
-      meanCentering = 1;
-    }
-
     for(it = (*users)[userId].begin(); it != (*users)[userId].end(); it++) {
       double similarity = GetSimilarity(movies, movieId, it->first);
       if(similarity > -1){
-        if(meanCentering == 1){
-          double rate = (double)(*it).second - (*movies)[movieId].averageRate;
-          if(rate < 0) { rate *= (double)-1; }
-          prediction += (similarity * rate);
-        } else {
-          prediction += ((double)(*it).second * similarity);
-        }
+        double rate = (double)(*it).second - (*movies)[movieId].averageRate;
+        if(rate < 0) { rate *= (double)-1; }
+        prediction += (similarity * rate);
         weight += similarity;
       }
     }
 
     if(weight > 0){
-      if(meanCentering == 1){
-        return (*movies)[movieId].averageRate + (prediction/weight);
-      } else {
-        return prediction/weight;
-      }
+      return (*movies)[movieId].averageRate + (prediction/weight);
     } else if((*movies).find(movieId) != (*movies).end() && (*movies)[movieId].views.size() > 0){
       return ((*movies)[movieId]).averageRate;
     } else {
@@ -153,7 +114,6 @@ void GetRatings(string filename, MovieList *movies, UserList *users){
         View vm;
         vm[movieId] = rate;
         (*users)[userId] = vm;
-
       }
     }
   }
