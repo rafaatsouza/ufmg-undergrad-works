@@ -6,6 +6,7 @@ typedef map<string,int> View;
 typedef struct mi {
   View views;
   double averageRate;
+  long int sumProductRate;
   Similarities similarities;
 } MovieInfo;
 

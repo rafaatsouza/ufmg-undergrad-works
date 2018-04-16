@@ -37,8 +37,6 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
   double similarity = 0;
   int countSharedReviews = 0;
   double productSum = 0;
-  double sumSquareA = 0;
-  double sumSquareB = 0;
 
   View::iterator it_a;
   View::iterator it_b;
@@ -49,13 +47,6 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
         productSum += ((*it_a).second * (*movies)[movieB].views[(*it_a).first]);
         countSharedReviews++;
       }
-      sumSquareA += ((*it_a).second * (*it_a).second);
-    }
-
-    if(countReviewsB > 0){
-      for(it_b = (*movies)[movieB].views.begin(); it_b != (*movies)[movieB].views.end(); it_b++) {
-        sumSquareB += ((*it_b).second * (*it_b).second);
-      }
     }
   } else {
     for(it_b = (*movies)[movieB].views.begin(); it_b != (*movies)[movieB].views.end(); it_b++) {
@@ -63,18 +54,11 @@ double GetSimilarity(MovieList *movies, string movieA, string movieB){
         productSum += ((*it_b).second * (*movies)[movieA].views[(*it_b).first]);
         countSharedReviews++;
       }
-      sumSquareB += ((*it_b).second * (*it_b).second);
-    }
-
-    if(countReviewsA > 0){
-      for(it_a = (*movies)[movieA].views.begin(); it_a != (*movies)[movieA].views.end(); it_a++) {
-        sumSquareA += ((*it_a).second * (*it_a).second);
-      }
     }
   }
 
   if(productSum > 0){
-    similarity = (productSum / (sqrt(sumSquareA) * sqrt(sumSquareB)));
+    similarity = (productSum / (sqrt((*movies)[movieA].sumProductRate) * sqrt((*movies)[movieB].sumProductRate)));
   } else {
     similarity = -1;
   }
@@ -156,9 +140,11 @@ void GetRatings(string filename, MovieList *movies, UserList *users){
       if((*movies).find(movieId) != (*movies).end()) {
         ((*movies)[movieId]).views[userId] = rate;
         ((*movies)[movieId]).averageRate = (((*movies)[movieId]).averageRate * ((*movies)[movieId].views.size() - 1) + rate)/((*movies)[movieId]).views.size();
+        (*movies)[movieId].sumProductRate += rate * rate;
       } else {
         (*movies)[movieId].views[userId] = rate;
         (*movies)[movieId].averageRate = rate;
+        (*movies)[movieId].sumProductRate = rate * rate;
       }
 
       if((*users).find(userId) != (*users).end()){
