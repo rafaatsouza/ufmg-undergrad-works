@@ -1,6 +1,7 @@
 #include <vector>
 #include <sstream>
 #include <string>
+#include <algorithm>
 #include "stringMethods.hpp"
 
 using namespace std;
@@ -39,4 +40,9 @@ vector<string> SplitStringByComma(string text, bool onlyName){
   }
 
   return splitted;
+}
+
+string RemoveComma(string text){
+    text.erase(std::remove(text.begin(), text.end(), ','), text.end());
+    return text;
 }
