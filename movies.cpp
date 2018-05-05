@@ -13,17 +13,29 @@ using namespace rapidjson;
 
 #define SIM_BASE_COUNTRY 1.0
 #define SIM_BASE_PERSON 1.0
+#define SIM_BASE_LANGUAGE 1.0
 #define SIM_BASE_GENRE 30.0
+#define YEAR_BOOST 1.2;
 #define MIN_IMDB_VOTES 300
 
 double _totalAverage;
 
 void SetsUserSimilarityMap(MovieList *movies, UserList *users, string userId){
-  if(((*users)[userId]).simGenre.size() == 0 || ((*users)[userId]).simCountry.size() == 0 || ((*users)[userId]).simPerson.size() == 0){
+  if(((*users)[userId]).simGenre.size() == 0 || ((*users)[userId]).simCountry.size() == 0 || ((*users)[userId]).simPerson.size() == 0 || (*users)[userId].averageYear < 0){
+    vector<int> years;
     viewIterator it;
     simIterator its;
     
     for(it = (*users)[userId].views.begin(); it != (*users)[userId].views.end(); it++){
+      if((*movies)[it->first].content.Year > 0){
+        years.push_back((*movies)[it->first].content.Year);
+        if(years.size() == 1){
+          (*users)[userId].averageYear = (*movies)[it->first].content.Year;
+        } else {
+          (*users)[userId].averageYear = ((years.size() - 1) * (*users)[userId].averageYear + (*movies)[it->first].content.Year)/years.size();
+        }
+      }
+
       for(its = (*movies)[it->first].simGenre.begin(); its != (*movies)[it->first].simGenre.end(); its++){
         if(((*users)[userId]).simGenre.find(its->first) != ((*users)[userId]).simGenre.end()){
           ((*users)[userId]).simGenre[its->first] += its->second;
@@ -40,6 +52,14 @@ void SetsUserSimilarityMap(MovieList *movies, UserList *users, string userId){
         }
       }
 
+      for(its = (*movies)[it->first].simLanguage.begin(); its != (*movies)[it->first].simLanguage.end(); its++){
+        if(((*users)[userId]).simLanguage.find(its->first) != ((*users)[userId]).simLanguage.end()){
+          ((*users)[userId]).simLanguage[its->first] += its->second;
+        } else {
+          ((*users)[userId]).simLanguage[its->first] = its->second;
+        }
+      }
+
       for(its = (*movies)[it->first].simPerson.begin(); its != (*movies)[it->first].simPerson.end(); its++){
         if(((*users)[userId]).simPerson.find(its->first) != ((*users)[userId]).simPerson.end()){
           ((*users)[userId]).simPerson[its->first] += its->second;
@@ -47,6 +67,15 @@ void SetsUserSimilarityMap(MovieList *movies, UserList *users, string userId){
           ((*users)[userId]).simPerson[its->first] = its->second;
         }
       }
+    }
+
+    if(years.size() > 0){
+      double sum = 0;
+      vector<int>::iterator it;
+      for(it = years.begin(); it != years.end(); it++){
+        sum = ((*it) - (*users)[userId].averageYear) * ((*it) - (*users)[userId].averageYear);
+      }
+      (*users)[userId].yearDeviation = sum/years.size();
     }
   }
 }
@@ -92,6 +121,22 @@ double GetContentBaseRating(MovieList *movies, UserList *users, string movieId, 
 
   result += (sum/(sqrt(sqrti) * sqrt(sqrtu))) * SIM_BASE_GENRE;
 
+  for(it = (*movies)[movieId].simLanguage.begin(); it != (*movies)[movieId].simLanguage.end(); it++){
+    if((*users)[userId].simLanguage.find(it->first) != (*users)[userId].simLanguage.end()){
+      sum += it->second * (*users)[userId].simLanguage[it->first];
+      sqrtu += (*users)[userId].simLanguage[it->first] * (*users)[userId].simLanguage[it->first];
+    }
+    sqrti += it->second * it->second;
+  }
+
+  for(it = (*users)[userId].simLanguage.begin(); it != (*users)[userId].simLanguage.end(); it++){
+    if((*movies)[movieId].simLanguage.find(it->first) == (*movies)[movieId].simLanguage.end()){
+      sqrtu += it->second * it->second; 
+    }
+  }
+
+  result += (sum/(sqrt(sqrti) * sqrt(sqrtu))) * SIM_BASE_LANGUAGE;
+
   for(it = (*movies)[movieId].simPerson.begin(); it != (*movies)[movieId].simPerson.end(); it++){
     if((*users)[userId].simPerson.find(it->first) != (*users)[userId].simPerson.end()){
       sum += it->second * (*users)[userId].simPerson[it->first];
@@ -108,10 +153,21 @@ double GetContentBaseRating(MovieList *movies, UserList *users, string movieId, 
 
   result += (sum/(sqrt(sqrti) * sqrt(sqrtu))) * SIM_BASE_PERSON;
 
+  result = ((double)10) * (result/(SIM_BASE_COUNTRY + SIM_BASE_GENRE + SIM_BASE_PERSON + SIM_BASE_LANGUAGE));
+
+  if((*movies)[movieId].content.Year > 0 && (*users)[userId].averageYear > 0){
+    double bottom = (*users)[userId].averageYear - (*users)[userId].yearDeviation;
+    double top = (*users)[userId].averageYear + (*users)[userId].yearDeviation;
+
+    if(bottom <= (*movies)[movieId].content.Year && top >= (*movies)[movieId].content.Year){
+      result *= YEAR_BOOST;
+    }
+  }
+
   if(((*movies)[movieId]).content.imdbRating > 0){
-    return (((*movies)[movieId]).content.imdbRating + ((double)10) * (result/(SIM_BASE_COUNTRY + SIM_BASE_GENRE + SIM_BASE_PERSON)))/2;
+    return ((*movies)[movieId].content.imdbRating + result)/2;
   } else {
-    return ((double)10) * (result/(SIM_BASE_COUNTRY + SIM_BASE_GENRE + SIM_BASE_PERSON));
+    return result;
   }
 }
 
@@ -188,6 +244,13 @@ void GetMoviesContent(MovieList *movies, string contentFileName){
             }
           }
 
+          if(((string)document["Language"].GetString()).compare("N/A")){
+            for(string& s: (SplitStringByComma(document["Language"].GetString(), false))){
+              ((*movies)[movieId]).content.Language.push_back(s);
+              ((*movies)[movieId]).simLanguage[s] = 1.0;
+            }
+          }
+
           if(((string)document["Director"].GetString()).compare("N/A")){
             for(string& s: (SplitStringByComma(document["Director"].GetString(), true))){
               ((*movies)[movieId]).content.Persons.push_back(s);
@@ -209,6 +272,11 @@ void GetMoviesContent(MovieList *movies, string contentFileName){
             }
           }
 
+          if(!((string)document["Year"].GetString()).compare("N/A")){
+            ((*movies)[movieId]).content.Year = -1;  
+          } else {
+            ((*movies)[movieId]).content.Year = stoi(document["Year"].GetString());
+          }
           if(((string)document["imdbRating"].GetString()).compare("N/A") && ((string)document["imdbVotes"].GetString()).compare("N/A")){
             imdbVotes = stoi(RemoveComma(document["imdbVotes"].GetString()));
           }
@@ -263,6 +331,7 @@ void GetMoviesInfo(string ratingsFileName, string contentFileName, MovieList *mo
       }
 
       ((*users)[userId]).views[movieId] = rate;
+      ((*users)[userId]).averageYear = -1;
     }
   }
 

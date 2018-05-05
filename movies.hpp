@@ -12,7 +12,8 @@ typedef map<string,int> TermQuantity;
 
 typedef struct mc {
   TermQuantity plot;
-  std::vector<string> Genre, Country, Persons;
+  int Year;
+  std::vector<string> Genre, Country, Language, Persons;
   bool Response;
   double imdbRating;
 } MovieContent;
@@ -21,13 +22,15 @@ typedef struct mi {
   View views;
   double averageRate;
   long int sumProductRate;
-  Similarities simGenre, simCountry, simPerson;
+  Similarities simGenre, simCountry, simLanguage, simPerson;
   MovieContent content;
 } MovieInfo;
 
 typedef struct ui {
   View views;
-  Similarities simGenre, simCountry, simPerson;
+  Similarities simGenre, simCountry, simLanguage, simPerson;
+  int averageYear;
+  double yearDeviation;
 } UserInfo;
 
 typedef map<string, MovieInfo> MovieList;
