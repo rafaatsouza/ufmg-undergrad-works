@@ -37,4 +37,4 @@ typedef map<string, MovieInfo> MovieList;
 typedef map<string, UserInfo> UserList;
 
 void GetMoviesInfo(string ratingsFileName, string contentFileName, MovieList *movies, UserList *users);
-void SetPredictions(string filename, MovieList *movies, UserList *users);
+void PrintPredictions(string filename, MovieList *movies, UserList *users);

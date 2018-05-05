@@ -186,7 +186,7 @@ double GetPrediction(MovieList *movies, UserList *users, string movieId, string 
   }
 }
 
-void SetPredictions(string filename, MovieList *movies, UserList *users){
+void PrintPredictions(string filename, MovieList *movies, UserList *users){
   int count = 0;
   string::size_type size;
   ifstream file(filename.c_str());
@@ -203,7 +203,6 @@ void SetPredictions(string filename, MovieList *movies, UserList *users){
       userId = line.substr(0,dotsPosition);
 
       cout << line << "," << GetPrediction(movies, users, movieId, userId) << '\n';
-      //printMovieString(movies, movieId);
     } else if(count == 0) {
       cout << "UserId:ItemId,Prediction" << '\n';
     }
