@@ -5,11 +5,9 @@
 #include <fstream>
 #include <math.h>
 #include "movies.hpp"
-#include "rapidjson/document.h"
-#include "stringMethods.hpp"
+#include "movieJson.hpp"
 
 using namespace std;
-using namespace rapidjson;
 
 #define SIM_BASE_COUNTRY 1.0
 #define SIM_BASE_PERSON 1.0
@@ -220,87 +218,46 @@ void GetMoviesContent(MovieList *movies, string contentFileName){
   string line = "";
 
 	while (getline(file, line)) {
-    Value::ConstMemberIterator itr;
     int firstCommaPosition = line.find(",");
     
     string movieId = line.substr(0, firstCommaPosition);
     string jsonText = line.substr(firstCommaPosition + 1);
     
     if((*movies).find(movieId) != (*movies).end()) {
-        Document document;
-        document.Parse(jsonText.c_str());
-        
-        if(!((string)document["Response"].GetString()).compare("True")){
-          int imdbVotes = -1;
+      if(GetMovieResponse(jsonText) == true){
+        vector<string>::iterator it;
 
-          ((*movies)[movieId]).content.Response = true;
+        ((*movies)[movieId]).content.Response = true;
 
-          if(((string)document["Genre"].GetString()).compare("N/A")){
-            for(string& s: (SplitStringByComma(document["Genre"].GetString(), false))){
-              ((*movies)[movieId]).content.Genre.push_back(s);
-              ((*movies)[movieId]).simGenre[s] = 1.0;
-            }
-          }
+        ((*movies)[movieId]).content.Year = GetMovieYear(jsonText);
+        ((*movies)[movieId]).content.imdbRating = GetMovieImdbRating(jsonText, MIN_IMDB_VOTES);
+        ((*movies)[movieId]).content.hasAwardsWin = GetMovieAwards(jsonText);
 
-          if(((string)document["Country"].GetString()).compare("N/A")){
-            for(string& s: (SplitStringByComma(document["Country"].GetString(), false))){
-              ((*movies)[movieId]).content.Country.push_back(s);
-              ((*movies)[movieId]).simCountry[s] = 1.0;
-            }
-          }
+        ((*movies)[movieId]).content.Genre = GetMovieGenreVector(jsonText);
+        ((*movies)[movieId]).content.Country = GetMovieCountryVector(jsonText);
+        ((*movies)[movieId]).content.Language = GetMovieLanguageVector(jsonText);
+        ((*movies)[movieId]).content.Persons = GetMoviePersonVector(jsonText);
 
-          if(((string)document["Language"].GetString()).compare("N/A")){
-            for(string& s: (SplitStringByComma(document["Language"].GetString(), false))){
-              ((*movies)[movieId]).content.Language.push_back(s);
-              ((*movies)[movieId]).simLanguage[s] = 1.0;
-            }
-          }
-
-          if(((string)document["Director"].GetString()).compare("N/A")){
-            for(string& s: (SplitStringByComma(document["Director"].GetString(), true))){
-              ((*movies)[movieId]).content.Persons.push_back(s);
-              ((*movies)[movieId]).simPerson[s] = 1.0;
-            }
-          }
-
-          if(((string)document["Writer"].GetString()).compare("N/A")){
-            for(string& s: (SplitStringByComma(document["Writer"].GetString(), true))){
-              ((*movies)[movieId]).content.Persons.push_back(s);
-              ((*movies)[movieId]).simPerson[s] = 1.0;
-            }
-          }
-
-          if(((string)document["Actors"].GetString()).compare("N/A")){
-            for(string& s: (SplitStringByComma(document["Actors"].GetString(), true))){
-              ((*movies)[movieId]).content.Persons.push_back(s);
-              ((*movies)[movieId]).simPerson[s] = 1.0;
-            }
-          }
-
-          if(!((string)document["Year"].GetString()).compare("N/A")){
-            ((*movies)[movieId]).content.Year = -1;  
-          } else {
-            ((*movies)[movieId]).content.Year = stoi(document["Year"].GetString());
-          }
-          if(((string)document["imdbRating"].GetString()).compare("N/A") && ((string)document["imdbVotes"].GetString()).compare("N/A")){
-            imdbVotes = stoi(RemoveComma(document["imdbVotes"].GetString()));
-          }
-
-          if(!((string)document["Awards"].GetString()).compare("N/A")){
-            ((*movies)[movieId]).content.hasAwardsWin = false;  
-          } else {
-            ((*movies)[movieId]).content.hasAwardsWin = true;
-          }
-
-          if(imdbVotes >= MIN_IMDB_VOTES){
-             ((*movies)[movieId]).content.imdbRating = stod(document["imdbRating"].GetString());
-          } else {
-            ((*movies)[movieId]).content.imdbRating = -1.0;
-          }
-        } else {
-          ((*movies)[movieId]).content.Response = false;
+        for(it = ((*movies)[movieId]).content.Genre.begin(); it != ((*movies)[movieId]).content.Genre.end(); it++){
+          ((*movies)[movieId]).simGenre[(*it)] = 1.0;
         }
+
+        for(it = ((*movies)[movieId]).content.Country.begin(); it != ((*movies)[movieId]).content.Country.end(); it++){
+          ((*movies)[movieId]).simCountry[(*it)] = 1.0;
+        }
+
+        for(it = ((*movies)[movieId]).content.Language.begin(); it != ((*movies)[movieId]).content.Language.end(); it++){
+          ((*movies)[movieId]).simLanguage[(*it)] = 1.0;
+        }
+
+        for(it = ((*movies)[movieId]).content.Persons.begin(); it != ((*movies)[movieId]).content.Persons.end(); it++){
+          ((*movies)[movieId]).simPerson[(*it)] = 1.0;
+        }
+
+      } else {
+        ((*movies)[movieId]).content.Response = false;
       }
+    }
   }
 }
 
