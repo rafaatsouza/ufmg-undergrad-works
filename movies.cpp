@@ -16,6 +16,7 @@ using namespace rapidjson;
 #define SIM_BASE_LANGUAGE 1.0
 #define SIM_BASE_GENRE 30.0
 #define YEAR_BOOST 1.2;
+#define AWARDS_BOOST 1.2;
 #define MIN_IMDB_VOTES 300
 
 double _totalAverage;
@@ -164,6 +165,10 @@ double GetContentBaseRating(MovieList *movies, UserList *users, string movieId, 
     }
   }
 
+  if((*movies)[movieId].content.hasAwardsWin == true){
+    result *= AWARDS_BOOST;
+  }
+
   if(((*movies)[movieId]).content.imdbRating > 0){
     return ((*movies)[movieId].content.imdbRating + result)/2;
   } else {
@@ -279,6 +284,12 @@ void GetMoviesContent(MovieList *movies, string contentFileName){
           }
           if(((string)document["imdbRating"].GetString()).compare("N/A") && ((string)document["imdbVotes"].GetString()).compare("N/A")){
             imdbVotes = stoi(RemoveComma(document["imdbVotes"].GetString()));
+          }
+
+          if(!((string)document["Awards"].GetString()).compare("N/A")){
+            ((*movies)[movieId]).content.hasAwardsWin = false;  
+          } else {
+            ((*movies)[movieId]).content.hasAwardsWin = true;
           }
 
           if(imdbVotes >= MIN_IMDB_VOTES){

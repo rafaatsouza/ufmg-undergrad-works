@@ -14,7 +14,7 @@ typedef struct mc {
   TermQuantity plot;
   int Year;
   std::vector<string> Genre, Country, Language, Persons;
-  bool Response;
+  bool Response, hasAwardsWin;
   double imdbRating;
 } MovieContent;
 
