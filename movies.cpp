@@ -12,6 +12,7 @@ using namespace std;
 #define SIM_BASE_COUNTRY 1.0
 #define SIM_BASE_PERSON 1.0
 #define SIM_BASE_LANGUAGE 1.0
+#define SIM_BASE_PLOT 128.0
 #define SIM_BASE_GENRE 30.0
 #define YEAR_BOOST 1.2;
 #define AWARDS_BOOST 1.2;
@@ -20,11 +21,14 @@ using namespace std;
 double _totalAverage;
 
 void SetsUserSimilarityMap(MovieList *movies, UserList *users, string userId){
-  if(((*users)[userId]).simGenre.size() == 0 || ((*users)[userId]).simCountry.size() == 0 || ((*users)[userId]).simPerson.size() == 0 || (*users)[userId].averageYear < 0){
+  if(((*users)[userId]).simGenre.size() == 0 || ((*users)[userId]).simCountry.size() == 0
+      || ((*users)[userId]).simPerson.size() == 0 || (*users)[userId].averageYear < 0
+      || ((*users)[userId]).plot.size() == 0){
     vector<int> years;
     viewIterator it;
     simIterator its;
-    
+    TermQuantityIterator itt;
+
     for(it = (*users)[userId].views.begin(); it != (*users)[userId].views.end(); it++){
       if((*movies)[it->first].content.Year > 0){
         years.push_back((*movies)[it->first].content.Year);
@@ -66,6 +70,15 @@ void SetsUserSimilarityMap(MovieList *movies, UserList *users, string userId){
           ((*users)[userId]).simPerson[its->first] = its->second;
         }
       }
+
+      for(itt = (*movies)[it->first].content.plot.begin(); itt != (*movies)[it->first].content.plot.end(); itt++){
+        if(((*users)[userId]).plot.find(itt->first) != ((*users)[userId]).plot.end()){
+          ((*users)[userId]).plot[itt->first] += itt->second;
+        } else {
+          ((*users)[userId]).plot[itt->first] = itt->second;
+        }
+      }
+
     }
 
     if(years.size() > 0){
@@ -79,10 +92,11 @@ void SetsUserSimilarityMap(MovieList *movies, UserList *users, string userId){
   }
 }
 
-double GetContentBaseRating(MovieList *movies, UserList *users, string movieId, string userId){  
+double GetContentBaseRating(MovieList *movies, UserList *users, string movieId, string userId){
   double result = 0;
-  double sum = 0.0, sqrtu = 0.0, sqrti = 0.0;
+  double sum = 0.0, sumd = 0.0, sqrtu = 0.0, sqrti = 0.0;
   simIterator it;
+  TermQuantityIterator itt;
 
   SetsUserSimilarityMap(movies, users, userId);
 
@@ -97,62 +111,106 @@ double GetContentBaseRating(MovieList *movies, UserList *users, string movieId, 
 
     for(it = (*users)[userId].simCountry.begin(); it != (*users)[userId].simCountry.end(); it++){
       if((*movies)[movieId].simCountry.find(it->first) == (*movies)[movieId].simCountry.end()){
-        sqrtu += it->second * it->second; 
+        sqrtu += it->second * it->second;
       }
     }
 
-    result += (sum/(sqrt(sqrti) * sqrt(sqrtu))) * SIM_BASE_COUNTRY; 
+    result += (sum/(sqrt(sqrti) * sqrt(sqrtu))) * SIM_BASE_COUNTRY;
+    sumd += SIM_BASE_COUNTRY;
+    sum = 0.0;
+    sqrtu = 0.0;
+    sqrti = 0.0;
   }
 
-  for(it = (*movies)[movieId].simGenre.begin(); it != (*movies)[movieId].simGenre.end(); it++){
-    if((*users)[userId].simGenre.find(it->first) != (*users)[userId].simGenre.end()){
-      sum += it->second * (*users)[userId].simGenre[it->first];
-      sqrtu += (*users)[userId].simGenre[it->first] * (*users)[userId].simGenre[it->first];
+  if((*movies)[movieId].content.Genre.size() > 0){
+    for(it = (*movies)[movieId].simGenre.begin(); it != (*movies)[movieId].simGenre.end(); it++){
+      if((*users)[userId].simGenre.find(it->first) != (*users)[userId].simGenre.end()){
+        sum += it->second * (*users)[userId].simGenre[it->first];
+        sqrtu += (*users)[userId].simGenre[it->first] * (*users)[userId].simGenre[it->first];
+      }
+      sqrti += it->second * it->second;
     }
-    sqrti += it->second * it->second;
-  }
 
-  for(it = (*users)[userId].simGenre.begin(); it != (*users)[userId].simGenre.end(); it++){
-    if((*movies)[movieId].simGenre.find(it->first) == (*movies)[movieId].simGenre.end()){
-      sqrtu += it->second * it->second; 
+    for(it = (*users)[userId].simGenre.begin(); it != (*users)[userId].simGenre.end(); it++){
+      if((*movies)[movieId].simGenre.find(it->first) == (*movies)[movieId].simGenre.end()){
+        sqrtu += it->second * it->second;
+      }
     }
+
+    sumd += SIM_BASE_GENRE;
+    result += (sum/(sqrt(sqrti) * sqrt(sqrtu))) * SIM_BASE_GENRE;
+    sum = 0.0;
+    sqrtu = 0.0;
+    sqrti = 0.0;
   }
 
-  result += (sum/(sqrt(sqrti) * sqrt(sqrtu))) * SIM_BASE_GENRE;
-
-  for(it = (*movies)[movieId].simLanguage.begin(); it != (*movies)[movieId].simLanguage.end(); it++){
-    if((*users)[userId].simLanguage.find(it->first) != (*users)[userId].simLanguage.end()){
-      sum += it->second * (*users)[userId].simLanguage[it->first];
-      sqrtu += (*users)[userId].simLanguage[it->first] * (*users)[userId].simLanguage[it->first];
+  if((*movies)[movieId].content.Language.size() > 0){
+    for(it = (*movies)[movieId].simLanguage.begin(); it != (*movies)[movieId].simLanguage.end(); it++){
+      if((*users)[userId].simLanguage.find(it->first) != (*users)[userId].simLanguage.end()){
+        sum += it->second * (*users)[userId].simLanguage[it->first];
+        sqrtu += (*users)[userId].simLanguage[it->first] * (*users)[userId].simLanguage[it->first];
+      }
+      sqrti += it->second * it->second;
     }
-    sqrti += it->second * it->second;
-  }
 
-  for(it = (*users)[userId].simLanguage.begin(); it != (*users)[userId].simLanguage.end(); it++){
-    if((*movies)[movieId].simLanguage.find(it->first) == (*movies)[movieId].simLanguage.end()){
-      sqrtu += it->second * it->second; 
+    for(it = (*users)[userId].simLanguage.begin(); it != (*users)[userId].simLanguage.end(); it++){
+      if((*movies)[movieId].simLanguage.find(it->first) == (*movies)[movieId].simLanguage.end()){
+        sqrtu += it->second * it->second;
+      }
     }
+
+    sumd += SIM_BASE_LANGUAGE;
+    result += (sum/(sqrt(sqrti) * sqrt(sqrtu))) * SIM_BASE_LANGUAGE;
+    sum = 0.0;
+    sqrtu = 0.0;
+    sqrti = 0.0;
   }
 
-  result += (sum/(sqrt(sqrti) * sqrt(sqrtu))) * SIM_BASE_LANGUAGE;
-
-  for(it = (*movies)[movieId].simPerson.begin(); it != (*movies)[movieId].simPerson.end(); it++){
-    if((*users)[userId].simPerson.find(it->first) != (*users)[userId].simPerson.end()){
-      sum += it->second * (*users)[userId].simPerson[it->first];
-      sqrtu += (*users)[userId].simPerson[it->first] * (*users)[userId].simPerson[it->first];
+  if((*movies)[movieId].content.Persons.size() > 0){
+    for(it = (*movies)[movieId].simPerson.begin(); it != (*movies)[movieId].simPerson.end(); it++){
+      if((*users)[userId].simPerson.find(it->first) != (*users)[userId].simPerson.end()){
+        sum += it->second * (*users)[userId].simPerson[it->first];
+        sqrtu += (*users)[userId].simPerson[it->first] * (*users)[userId].simPerson[it->first];
+      }
+      sqrti += it->second * it->second;
     }
-    sqrti += it->second * it->second;
-  }
 
-  for(it = (*users)[userId].simPerson.begin(); it != (*users)[userId].simPerson.end(); it++){
-    if((*movies)[movieId].simPerson.find(it->first) == (*movies)[movieId].simPerson.end()){
-      sqrtu += it->second * it->second; 
+    for(it = (*users)[userId].simPerson.begin(); it != (*users)[userId].simPerson.end(); it++){
+      if((*movies)[movieId].simPerson.find(it->first) == (*movies)[movieId].simPerson.end()){
+        sqrtu += it->second * it->second;
+      }
     }
+
+    sumd += SIM_BASE_PERSON;
+    result += (sum/(sqrt(sqrti) * sqrt(sqrtu))) * SIM_BASE_PERSON;
+    sum = 0.0;
+    sqrtu = 0.0;
+    sqrti = 0.0;
   }
 
-  result += (sum/(sqrt(sqrti) * sqrt(sqrtu))) * SIM_BASE_PERSON;
+  if((*movies)[movieId].content.plot.size() > 0){
+    for(itt = (*movies)[movieId].content.plot.begin(); itt != (*movies)[movieId].content.plot.end(); itt++){
+      if((*users)[userId].plot.find(itt->first) != (*users)[userId].plot.end()){
+        sum += itt->second * (*users)[userId].plot[itt->first];
+        sqrtu += (*users)[userId].plot[itt->first] * (*users)[userId].plot[itt->first];
+      }
+      sqrti += itt->second * itt->second;
+    }
 
-  result = ((double)10) * (result/(SIM_BASE_COUNTRY + SIM_BASE_GENRE + SIM_BASE_PERSON + SIM_BASE_LANGUAGE));
+    for(itt = (*users)[userId].plot.begin(); itt != (*users)[userId].plot.end(); itt++){
+      if((*movies)[movieId].content.plot.find(itt->first) == (*movies)[movieId].content.plot.end()){
+        sqrtu += itt->second * itt->second;
+      }
+    }
+
+    sumd += SIM_BASE_PLOT;
+    result += (sum/(sqrt(sqrti) * sqrt(sqrtu))) * SIM_BASE_PLOT;
+    sum = 0.0;
+    sqrtu = 0.0;
+    sqrti = 0.0;
+  }
+
+  result = ((double)10) * (result/sumd);
 
   if((*movies)[movieId].content.Year > 0 && (*users)[userId].averageYear > 0){
     double bottom = (*users)[userId].averageYear - (*users)[userId].yearDeviation;
@@ -178,7 +236,7 @@ double GetPrediction(MovieList *movies, UserList *users, string movieId, string 
   if((*users).find(userId) != (*users).end() && (*users)[userId].views.size() > 0
     && (*movies).find(movieId) != (*movies).end() && ((*movies)[movieId]).content.Response == true){
     return GetContentBaseRating(movies, users, movieId, userId);
-  } else if((*movies).find(movieId) != (*movies).end() && ((*movies)[movieId]).content.Response == true 
+  } else if((*movies).find(movieId) != (*movies).end() && ((*movies)[movieId]).content.Response == true
             && ((*movies)[movieId]).content.imdbRating > 0){
     return ((*movies)[movieId]).content.imdbRating;
   } else {
@@ -218,10 +276,10 @@ void GetMoviesContent(MovieList *movies, string contentFileName){
 
 	while (getline(file, line)) {
     int firstCommaPosition = line.find(",");
-    
+
     string movieId = line.substr(0, firstCommaPosition);
     string jsonText = line.substr(firstCommaPosition + 1);
-    
+
     if((*movies).find(movieId) != (*movies).end()) {
       if(GetMovieResponse(jsonText) == true){
         vector<string>::iterator it;
@@ -235,6 +293,7 @@ void GetMoviesContent(MovieList *movies, string contentFileName){
         ((*movies)[movieId]).content.Genre = GetMovieGenreVector(jsonText);
         ((*movies)[movieId]).content.Country = GetMovieCountryVector(jsonText);
         ((*movies)[movieId]).content.Language = GetMovieLanguageVector(jsonText);
+        ((*movies)[movieId]).content.plot = GetMoviePlotTermVector(jsonText);
         ((*movies)[movieId]).content.Persons = GetMoviePersonVector(jsonText);
 
         for(it = ((*movies)[movieId]).content.Genre.begin(); it != ((*movies)[movieId]).content.Genre.end(); it++){

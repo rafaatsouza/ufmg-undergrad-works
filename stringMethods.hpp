@@ -1,4 +1,4 @@
 using namespace std;
 
-vector<string> SplitStringByComma(string text, bool onlyName);
+vector<string> SplitString(string text, bool onlyName, char separator);
 string RemoveComma(string text);

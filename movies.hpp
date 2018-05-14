@@ -9,6 +9,7 @@ typedef map<string,int>::iterator viewIterator;
 typedef map<string,int> View;
 
 typedef map<string,int> TermQuantity;
+typedef map<string,int>::iterator TermQuantityIterator;
 
 typedef struct mc {
   TermQuantity plot;
@@ -27,6 +28,7 @@ typedef struct mi {
 } MovieInfo;
 
 typedef struct ui {
+  TermQuantity plot;
   View views;
   Similarities simGenre, simCountry, simLanguage, simPerson;
   int averageYear;
