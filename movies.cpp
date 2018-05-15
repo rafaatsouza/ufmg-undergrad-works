@@ -234,9 +234,6 @@ double GetPrediction(MovieList *movies, UserList *users, string movieId, string 
   if((*users).find(userId) != (*users).end() && (*users)[userId].views.size() > 0
     && (*movies).find(movieId) != (*movies).end() && ((*movies)[movieId]).Response == true){
     return GetContentBaseRating(movies, users, movieId, userId);
-  } else if((*movies).find(movieId) != (*movies).end() && ((*movies)[movieId]).Response == true
-            && ((*movies)[movieId]).imdbRating > 0){
-    return ((*movies)[movieId]).imdbRating;
   } else {
     return _totalAverage;
   }
