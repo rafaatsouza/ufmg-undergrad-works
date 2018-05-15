@@ -21,61 +21,60 @@ using namespace std;
 double _totalAverage;
 
 void SetsUserSimilarityMap(MovieList *movies, UserList *users, string userId){
-  if(((*users)[userId]).simGenre.size() == 0 || ((*users)[userId]).simCountry.size() == 0
-      || ((*users)[userId]).simPerson.size() == 0 || (*users)[userId].averageYear < 0
-      || ((*users)[userId]).plot.size() == 0){
+  if(((*users)[userId]).Genre.size() == 0 || ((*users)[userId]).Country.size() == 0
+      || ((*users)[userId]).Person.size() == 0 || (*users)[userId].averageYear < 0
+      || ((*users)[userId]).Plot.size() == 0){
     vector<int> years;
     viewIterator it;
-    simIterator its;
-    TermQuantityIterator itt;
+    TermQuantityIterator its;
 
     for(it = (*users)[userId].views.begin(); it != (*users)[userId].views.end(); it++){
-      if((*movies)[it->first].content.Year > 0){
-        years.push_back((*movies)[it->first].content.Year);
+      if((*movies)[it->first].Year > 0){
+        years.push_back((*movies)[it->first].Year);
         if(years.size() == 1){
-          (*users)[userId].averageYear = (*movies)[it->first].content.Year;
+          (*users)[userId].averageYear = (*movies)[it->first].Year;
         } else {
-          (*users)[userId].averageYear = ((years.size() - 1) * (*users)[userId].averageYear + (*movies)[it->first].content.Year)/years.size();
+          (*users)[userId].averageYear = ((years.size() - 1) * (*users)[userId].averageYear + (*movies)[it->first].Year)/years.size();
         }
       }
 
-      for(its = (*movies)[it->first].simGenre.begin(); its != (*movies)[it->first].simGenre.end(); its++){
-        if(((*users)[userId]).simGenre.find(its->first) != ((*users)[userId]).simGenre.end()){
-          ((*users)[userId]).simGenre[its->first] += its->second;
+      for(its = (*movies)[it->first].Genre.begin(); its != (*movies)[it->first].Genre.end(); its++){
+        if(((*users)[userId]).Genre.find(its->first) != ((*users)[userId]).Genre.end()){
+          ((*users)[userId]).Genre[its->first] += its->second;
         } else {
-          ((*users)[userId]).simGenre[its->first] = its->second;
+          ((*users)[userId]).Genre[its->first] = its->second;
         }
       }
 
-      for(its = (*movies)[it->first].simCountry.begin(); its != (*movies)[it->first].simCountry.end(); its++){
-        if(((*users)[userId]).simCountry.find(its->first) != ((*users)[userId]).simCountry.end()){
-          ((*users)[userId]).simCountry[its->first] += its->second;
+      for(its = (*movies)[it->first].Country.begin(); its != (*movies)[it->first].Country.end(); its++){
+        if(((*users)[userId]).Country.find(its->first) != ((*users)[userId]).Country.end()){
+          ((*users)[userId]).Country[its->first] += its->second;
         } else {
-          ((*users)[userId]).simCountry[its->first] = its->second;
+          ((*users)[userId]).Country[its->first] = its->second;
         }
       }
 
-      for(its = (*movies)[it->first].simLanguage.begin(); its != (*movies)[it->first].simLanguage.end(); its++){
-        if(((*users)[userId]).simLanguage.find(its->first) != ((*users)[userId]).simLanguage.end()){
-          ((*users)[userId]).simLanguage[its->first] += its->second;
+      for(its = (*movies)[it->first].Language.begin(); its != (*movies)[it->first].Language.end(); its++){
+        if(((*users)[userId]).Language.find(its->first) != ((*users)[userId]).Language.end()){
+          ((*users)[userId]).Language[its->first] += its->second;
         } else {
-          ((*users)[userId]).simLanguage[its->first] = its->second;
+          ((*users)[userId]).Language[its->first] = its->second;
         }
       }
 
-      for(its = (*movies)[it->first].simPerson.begin(); its != (*movies)[it->first].simPerson.end(); its++){
-        if(((*users)[userId]).simPerson.find(its->first) != ((*users)[userId]).simPerson.end()){
-          ((*users)[userId]).simPerson[its->first] += its->second;
+      for(its = (*movies)[it->first].Person.begin(); its != (*movies)[it->first].Person.end(); its++){
+        if(((*users)[userId]).Person.find(its->first) != ((*users)[userId]).Person.end()){
+          ((*users)[userId]).Person[its->first] += its->second;
         } else {
-          ((*users)[userId]).simPerson[its->first] = its->second;
+          ((*users)[userId]).Person[its->first] = its->second;
         }
       }
 
-      for(itt = (*movies)[it->first].content.plot.begin(); itt != (*movies)[it->first].content.plot.end(); itt++){
-        if(((*users)[userId]).plot.find(itt->first) != ((*users)[userId]).plot.end()){
-          ((*users)[userId]).plot[itt->first] += itt->second;
+      for(its = (*movies)[it->first].Plot.begin(); its != (*movies)[it->first].Plot.end(); its++){
+        if(((*users)[userId]).Plot.find(its->first) != ((*users)[userId]).Plot.end()){
+          ((*users)[userId]).Plot[its->first] += its->second;
         } else {
-          ((*users)[userId]).plot[itt->first] = itt->second;
+          ((*users)[userId]).Plot[its->first] = its->second;
         }
       }
 
@@ -95,22 +94,21 @@ void SetsUserSimilarityMap(MovieList *movies, UserList *users, string userId){
 double GetContentBaseRating(MovieList *movies, UserList *users, string movieId, string userId){
   double result = 0;
   double sum = 0.0, sumd = 0.0, sqrtu = 0.0, sqrti = 0.0;
-  simIterator it;
-  TermQuantityIterator itt;
+  TermQuantityIterator it;
 
   SetsUserSimilarityMap(movies, users, userId);
 
-  if((*movies)[movieId].content.Country.size() > 0){
-    for(it = (*movies)[movieId].simCountry.begin(); it != (*movies)[movieId].simCountry.end(); it++){
-      if((*users)[userId].simCountry.find(it->first) != (*users)[userId].simCountry.end()){
-        sum += it->second * (*users)[userId].simCountry[it->first];
-        sqrtu += (*users)[userId].simCountry[it->first] * (*users)[userId].simCountry[it->first];
+  if((*movies)[movieId].Country.size() > 0){
+    for(it = (*movies)[movieId].Country.begin(); it != (*movies)[movieId].Country.end(); it++){
+      if((*users)[userId].Country.find(it->first) != (*users)[userId].Country.end()){
+        sum += it->second * (*users)[userId].Country[it->first];
+        sqrtu += (*users)[userId].Country[it->first] * (*users)[userId].Country[it->first];
       }
       sqrti += it->second * it->second;
     }
 
-    for(it = (*users)[userId].simCountry.begin(); it != (*users)[userId].simCountry.end(); it++){
-      if((*movies)[movieId].simCountry.find(it->first) == (*movies)[movieId].simCountry.end()){
+    for(it = (*users)[userId].Country.begin(); it != (*users)[userId].Country.end(); it++){
+      if((*movies)[movieId].Country.find(it->first) == (*movies)[movieId].Country.end()){
         sqrtu += it->second * it->second;
       }
     }
@@ -122,17 +120,17 @@ double GetContentBaseRating(MovieList *movies, UserList *users, string movieId, 
     sqrti = 0.0;
   }
 
-  if((*movies)[movieId].content.Genre.size() > 0){
-    for(it = (*movies)[movieId].simGenre.begin(); it != (*movies)[movieId].simGenre.end(); it++){
-      if((*users)[userId].simGenre.find(it->first) != (*users)[userId].simGenre.end()){
-        sum += it->second * (*users)[userId].simGenre[it->first];
-        sqrtu += (*users)[userId].simGenre[it->first] * (*users)[userId].simGenre[it->first];
+  if((*movies)[movieId].Genre.size() > 0){
+    for(it = (*movies)[movieId].Genre.begin(); it != (*movies)[movieId].Genre.end(); it++){
+      if((*users)[userId].Genre.find(it->first) != (*users)[userId].Genre.end()){
+        sum += it->second * (*users)[userId].Genre[it->first];
+        sqrtu += (*users)[userId].Genre[it->first] * (*users)[userId].Genre[it->first];
       }
       sqrti += it->second * it->second;
     }
 
-    for(it = (*users)[userId].simGenre.begin(); it != (*users)[userId].simGenre.end(); it++){
-      if((*movies)[movieId].simGenre.find(it->first) == (*movies)[movieId].simGenre.end()){
+    for(it = (*users)[userId].Genre.begin(); it != (*users)[userId].Genre.end(); it++){
+      if((*movies)[movieId].Genre.find(it->first) == (*movies)[movieId].Genre.end()){
         sqrtu += it->second * it->second;
       }
     }
@@ -144,17 +142,17 @@ double GetContentBaseRating(MovieList *movies, UserList *users, string movieId, 
     sqrti = 0.0;
   }
 
-  if((*movies)[movieId].content.Language.size() > 0){
-    for(it = (*movies)[movieId].simLanguage.begin(); it != (*movies)[movieId].simLanguage.end(); it++){
-      if((*users)[userId].simLanguage.find(it->first) != (*users)[userId].simLanguage.end()){
-        sum += it->second * (*users)[userId].simLanguage[it->first];
-        sqrtu += (*users)[userId].simLanguage[it->first] * (*users)[userId].simLanguage[it->first];
+  if((*movies)[movieId].Language.size() > 0){
+    for(it = (*movies)[movieId].Language.begin(); it != (*movies)[movieId].Language.end(); it++){
+      if((*users)[userId].Language.find(it->first) != (*users)[userId].Language.end()){
+        sum += it->second * (*users)[userId].Language[it->first];
+        sqrtu += (*users)[userId].Language[it->first] * (*users)[userId].Language[it->first];
       }
       sqrti += it->second * it->second;
     }
 
-    for(it = (*users)[userId].simLanguage.begin(); it != (*users)[userId].simLanguage.end(); it++){
-      if((*movies)[movieId].simLanguage.find(it->first) == (*movies)[movieId].simLanguage.end()){
+    for(it = (*users)[userId].Language.begin(); it != (*users)[userId].Language.end(); it++){
+      if((*movies)[movieId].Language.find(it->first) == (*movies)[movieId].Language.end()){
         sqrtu += it->second * it->second;
       }
     }
@@ -166,17 +164,17 @@ double GetContentBaseRating(MovieList *movies, UserList *users, string movieId, 
     sqrti = 0.0;
   }
 
-  if((*movies)[movieId].content.Persons.size() > 0){
-    for(it = (*movies)[movieId].simPerson.begin(); it != (*movies)[movieId].simPerson.end(); it++){
-      if((*users)[userId].simPerson.find(it->first) != (*users)[userId].simPerson.end()){
-        sum += it->second * (*users)[userId].simPerson[it->first];
-        sqrtu += (*users)[userId].simPerson[it->first] * (*users)[userId].simPerson[it->first];
+  if((*movies)[movieId].Person.size() > 0){
+    for(it = (*movies)[movieId].Person.begin(); it != (*movies)[movieId].Person.end(); it++){
+      if((*users)[userId].Person.find(it->first) != (*users)[userId].Person.end()){
+        sum += it->second * (*users)[userId].Person[it->first];
+        sqrtu += (*users)[userId].Person[it->first] * (*users)[userId].Person[it->first];
       }
       sqrti += it->second * it->second;
     }
 
-    for(it = (*users)[userId].simPerson.begin(); it != (*users)[userId].simPerson.end(); it++){
-      if((*movies)[movieId].simPerson.find(it->first) == (*movies)[movieId].simPerson.end()){
+    for(it = (*users)[userId].Person.begin(); it != (*users)[userId].Person.end(); it++){
+      if((*movies)[movieId].Person.find(it->first) == (*movies)[movieId].Person.end()){
         sqrtu += it->second * it->second;
       }
     }
@@ -188,18 +186,18 @@ double GetContentBaseRating(MovieList *movies, UserList *users, string movieId, 
     sqrti = 0.0;
   }
 
-  if((*movies)[movieId].content.plot.size() > 0){
-    for(itt = (*movies)[movieId].content.plot.begin(); itt != (*movies)[movieId].content.plot.end(); itt++){
-      if((*users)[userId].plot.find(itt->first) != (*users)[userId].plot.end()){
-        sum += itt->second * (*users)[userId].plot[itt->first];
-        sqrtu += (*users)[userId].plot[itt->first] * (*users)[userId].plot[itt->first];
+  if((*movies)[movieId].Plot.size() > 0){
+    for(it = (*movies)[movieId].Plot.begin(); it != (*movies)[movieId].Plot.end(); it++){
+      if((*users)[userId].Plot.find(it->first) != (*users)[userId].Plot.end()){
+        sum += it->second * (*users)[userId].Plot[it->first];
+        sqrtu += (*users)[userId].Plot[it->first] * (*users)[userId].Plot[it->first];
       }
-      sqrti += itt->second * itt->second;
+      sqrti += it->second * it->second;
     }
 
-    for(itt = (*users)[userId].plot.begin(); itt != (*users)[userId].plot.end(); itt++){
-      if((*movies)[movieId].content.plot.find(itt->first) == (*movies)[movieId].content.plot.end()){
-        sqrtu += itt->second * itt->second;
+    for(it = (*users)[userId].Plot.begin(); it != (*users)[userId].Plot.end(); it++){
+      if((*movies)[movieId].Plot.find(it->first) == (*movies)[movieId].Plot.end()){
+        sqrtu += it->second * it->second;
       }
     }
 
@@ -212,21 +210,21 @@ double GetContentBaseRating(MovieList *movies, UserList *users, string movieId, 
 
   result = ((double)10) * (result/sumd);
 
-  if((*movies)[movieId].content.Year > 0 && (*users)[userId].averageYear > 0){
+  if((*movies)[movieId].Year > 0 && (*users)[userId].averageYear > 0){
     double bottom = (*users)[userId].averageYear - (*users)[userId].yearDeviation;
     double top = (*users)[userId].averageYear + (*users)[userId].yearDeviation;
 
-    if(bottom <= (*movies)[movieId].content.Year && top >= (*movies)[movieId].content.Year){
+    if(bottom <= (*movies)[movieId].Year && top >= (*movies)[movieId].Year){
       result *= YEAR_BOOST;
     }
   }
 
-  if((*movies)[movieId].content.hasAwardsWin == true){
+  if((*movies)[movieId].hasAwardsWin == true){
     result *= AWARDS_BOOST;
   }
 
-  if(((*movies)[movieId]).content.imdbRating > 0){
-    return ((*movies)[movieId].content.imdbRating + result)/2;
+  if(((*movies)[movieId]).imdbRating > 0){
+    return ((*movies)[movieId].imdbRating + result)/2;
   } else {
     return result;
   }
@@ -234,11 +232,11 @@ double GetContentBaseRating(MovieList *movies, UserList *users, string movieId, 
 
 double GetPrediction(MovieList *movies, UserList *users, string movieId, string userId){
   if((*users).find(userId) != (*users).end() && (*users)[userId].views.size() > 0
-    && (*movies).find(movieId) != (*movies).end() && ((*movies)[movieId]).content.Response == true){
+    && (*movies).find(movieId) != (*movies).end() && ((*movies)[movieId]).Response == true){
     return GetContentBaseRating(movies, users, movieId, userId);
-  } else if((*movies).find(movieId) != (*movies).end() && ((*movies)[movieId]).content.Response == true
-            && ((*movies)[movieId]).content.imdbRating > 0){
-    return ((*movies)[movieId]).content.imdbRating;
+  } else if((*movies).find(movieId) != (*movies).end() && ((*movies)[movieId]).Response == true
+            && ((*movies)[movieId]).imdbRating > 0){
+    return ((*movies)[movieId]).imdbRating;
   } else {
     return _totalAverage;
   }
@@ -282,38 +280,38 @@ void GetMoviesContent(MovieList *movies, string contentFileName){
 
     if((*movies).find(movieId) != (*movies).end()) {
       if(GetMovieResponse(jsonText) == true){
+        vector<string> tempVector;
         vector<string>::iterator it;
 
-        ((*movies)[movieId]).content.Response = true;
+        ((*movies)[movieId]).Response = true;
 
-        ((*movies)[movieId]).content.Year = GetMovieYear(jsonText);
-        ((*movies)[movieId]).content.imdbRating = GetMovieImdbRating(jsonText, MIN_IMDB_VOTES);
-        ((*movies)[movieId]).content.hasAwardsWin = GetMovieAwards(jsonText);
+        ((*movies)[movieId]).Year = GetMovieYear(jsonText);
+        ((*movies)[movieId]).imdbRating = GetMovieImdbRating(jsonText, MIN_IMDB_VOTES);
+        ((*movies)[movieId]).hasAwardsWin = GetMovieAwards(jsonText);
+        ((*movies)[movieId]).Plot = GetMoviePlotTermVector(jsonText);
 
-        ((*movies)[movieId]).content.Genre = GetMovieGenreVector(jsonText);
-        ((*movies)[movieId]).content.Country = GetMovieCountryVector(jsonText);
-        ((*movies)[movieId]).content.Language = GetMovieLanguageVector(jsonText);
-        ((*movies)[movieId]).content.plot = GetMoviePlotTermVector(jsonText);
-        ((*movies)[movieId]).content.Persons = GetMoviePersonVector(jsonText);
-
-        for(it = ((*movies)[movieId]).content.Genre.begin(); it != ((*movies)[movieId]).content.Genre.end(); it++){
-          ((*movies)[movieId]).simGenre[(*it)] = 1.0;
+        tempVector = GetMovieGenreVector(jsonText);
+        for(it = tempVector.begin(); it != tempVector.end(); it++){
+          ((*movies)[movieId]).Genre[(*it)] = 1.0;
         }
 
-        for(it = ((*movies)[movieId]).content.Country.begin(); it != ((*movies)[movieId]).content.Country.end(); it++){
-          ((*movies)[movieId]).simCountry[(*it)] = 1.0;
+        tempVector = GetMovieCountryVector(jsonText);
+        for(it = tempVector.begin(); it != tempVector.end(); it++){
+          ((*movies)[movieId]).Country[(*it)] = 1.0;
         }
 
-        for(it = ((*movies)[movieId]).content.Language.begin(); it != ((*movies)[movieId]).content.Language.end(); it++){
-          ((*movies)[movieId]).simLanguage[(*it)] = 1.0;
+        tempVector = GetMovieLanguageVector(jsonText);
+        for(it = tempVector.begin(); it != tempVector.end(); it++){
+          ((*movies)[movieId]).Language[(*it)] = 1.0;
         }
 
-        for(it = ((*movies)[movieId]).content.Persons.begin(); it != ((*movies)[movieId]).content.Persons.end(); it++){
-          ((*movies)[movieId]).simPerson[(*it)] = 1.0;
+        tempVector = GetMoviePersonVector(jsonText);;
+        for(it = tempVector.begin(); it != tempVector.end(); it++){
+          ((*movies)[movieId]).Person[(*it)] = 1.0;
         }
 
       } else {
-        ((*movies)[movieId]).content.Response = false;
+        ((*movies)[movieId]).Response = false;
       }
     }
   }
@@ -345,16 +343,11 @@ void GetMoviesInfo(string ratingsFileName, string contentFileName, MovieList *mo
         _totalAverage = ((_totalAverage * (count-1)) + (double)rate)/count;
       }
 
-      if((*movies).find(movieId) != (*movies).end()) {
-        ((*movies)[movieId]).views[userId] = rate;
-        ((*movies)[movieId]).averageRate = (((*movies)[movieId]).averageRate * ((*movies)[movieId].views.size() - 1) + rate)/((*movies)[movieId]).views.size();
-        (*movies)[movieId].sumProductRate += rate * rate;
-      } else {
-        (*movies)[movieId].views[userId] = rate;
-        (*movies)[movieId].averageRate = rate;
-        (*movies)[movieId].sumProductRate = rate * rate;
-        (*movies)[movieId].content.Response = false;
+      if((*movies).find(movieId) == (*movies).end()) {
+        (*movies)[movieId].Response = false;
       }
+
+      (*movies)[movieId].views[userId] = rate;
 
       ((*users)[userId]).views[movieId] = rate;
       ((*users)[userId]).averageYear = -1;
