@@ -16,7 +16,6 @@ using namespace std;
 #define SIM_BASE_GENRE 30.0
 #define YEAR_BOOST 1.2;
 #define AWARDS_BOOST 1.2;
-#define MIN_IMDB_VOTES 300
 
 double _totalAverage;
 
@@ -234,6 +233,9 @@ double GetPrediction(MovieList *movies, UserList *users, string movieId, string 
   if((*users).find(userId) != (*users).end() && (*users)[userId].views.size() > 0
     && (*movies).find(movieId) != (*movies).end() && ((*movies)[movieId]).Response == true){
     return GetContentBaseRating(movies, users, movieId, userId);
+  } else if((*movies).find(movieId) != (*movies).end() && ((*movies)[movieId]).Response == true
+            && ((*movies)[movieId]).imdbRating > 0){
+    return ((*movies)[movieId]).imdbRating;
   } else {
     return _totalAverage;
   }
@@ -283,7 +285,7 @@ void GetMoviesContent(MovieList *movies, string contentFileName){
         ((*movies)[movieId]).Response = true;
 
         ((*movies)[movieId]).Year = GetMovieYear(jsonText);
-        ((*movies)[movieId]).imdbRating = GetMovieImdbRating(jsonText, MIN_IMDB_VOTES);
+        ((*movies)[movieId]).imdbRating = GetMovieImdbRating(jsonText);
         ((*movies)[movieId]).hasAwardsWin = GetMovieAwards(jsonText);
         ((*movies)[movieId]).Plot = GetMoviePlotTermVector(jsonText);
 

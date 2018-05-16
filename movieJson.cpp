@@ -100,20 +100,14 @@ vector<string> GetMoviePersonVector(string json){
     return result;
 }
 
-double GetMovieImdbRating(string json, int minVotes){
-    int imdbVotes = 0;
-
+double GetMovieImdbRating(string json){
     Document document;
     document.Parse(json.c_str());
 
-    if(((string)document["imdbRating"].GetString()).compare("N/A") && ((string)document["imdbVotes"].GetString()).compare("N/A")){
-        imdbVotes = stoi(RemoveComma(document["imdbVotes"].GetString()));
-    }
-
-    if(imdbVotes >= minVotes){
-        return stod(document["imdbRating"].GetString());
-    } else {
+    if(!((string)document["imdbRating"].GetString()).compare("N/A")){
         return -1.0;
+    } else {
+        return stod(document["imdbRating"].GetString());
     }
 }
 
