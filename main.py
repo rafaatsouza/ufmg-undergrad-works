@@ -1,12 +1,21 @@
 from gensim.models import Word2Vec
 import gensim
-from nltk.tokenize import word_tokenize
-from itertools import chain
-from glob import glob
-from nltk.tokenize import word_tokenize
 import os,logging
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
+
+def IgnoreCorpus(original, new, percentage):
+    file = open(original, 'r')
+    for line in file:
+        words = line.split(' ')
+        limit = len(words)/100*percentage
+        count = 0
+        for word in words:
+            if(count <= limit):
+                with open(new, ('w' if count == 0 else 'a')) as out:
+                     out.write((word.lower() if count == 0 else ' ' + word.lower()))
+                count = count + 1
+
 
 def CorpusToLower(original, new):
     file = open(original, 'r')
@@ -15,7 +24,7 @@ def CorpusToLower(original, new):
          out.write(lines)
 
 
-def InsereLinhaPath(path, msg):
+def InsereLinha(path, msg):
     openMode = 'w'
     try:
         if os.path.exists(path):
@@ -28,12 +37,12 @@ def InsereLinhaPath(path, msg):
          out.writelines(msg + '\n')
 
 
-def FazTodaDesgraca(corpusPath, windowSize, modelSg, basicLogOutputhPath, basicModelOutputhPath, basicResultOutputhPath, wordsPath): #modelSg: 1 for Skip-gram, 0 for CBOW
-    basicName = '100_' + str(windowSize) + '_' + str(modelSg)
-    logName = 'log_' + basicName
+def FazTodaDesgraca(corpusPath, windowSize, modelSg, basicLogOutputhPath, basicModelOutputhPath, basicResultOutputhPath, wordsPath, percentage): #modelSg: 1 for Skip-gram, 0 for CBOW
+    basicName = str(percentage) + '_' + str(windowSize) + '_' + str(modelSg)
+    logName = basicLogOutputhPath + 'log_' + basicName
     logging.basicConfig(filename=logName,format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
     corpus = gensim.models.word2vec.Text8Corpus(corpusPath, max_sentence_length=10000)
-    model = gensim.models.Word2Vec(corpus, window=windowSize, workers=8, min_count=100, iter=5,sg=modelSg)
+    model = gensim.models.Word2Vec(corpus, window=windowSize, min_count=100, iter=5,sg=modelSg)
     model.save(basicModelOutputhPath + basicName)
 
     words = open(wordsPath, 'r')
@@ -41,16 +50,12 @@ def FazTodaDesgraca(corpusPath, windowSize, modelSg, basicLogOutputhPath, basicM
         try:
             similarities = model.wv.most_similar(positive=[words[1], words[2]],negative=[words[0]], topn=50)
             i = 0
-            findedIndex = -1
             while i <= (len(similarities) - 1):
                 if(str(similarities[i][0]) == words[3]):
-                    findedIndex = i
+                    InsereLinha((basicResultOutputhPath + basicName + '.csv'), (words[3] + '<->' + str(similarities[0][0])) + ';' + str(float(similarities[0][1]) - float(similarities[i][1])).replace('.', ','))
                     i = len(similarities) + 1
                 else:
                     i = i + 1
-
-            if findedIndex > 0 :
-                InsereLinhaPath((basicResultOutputhPath + basicName + '.csv'), (words[3] + ',' + str(similarities[findedIndex][0])) + ';' + str(float(similarities[0][1]) - float(similarities[findedIndex][1])))
         except:
             pass
 
@@ -62,22 +67,4 @@ def FazTodaDesgraca(corpusPath, windowSize, modelSg, basicLogOutputhPath, basicM
 #
 # CorpusToLower(originalTextPath, lowerCaseTextPath)
 
-FazTodaDesgraca('dataset/newText8', 1, 1, 'log/', 'model/', 'output/' , 'dataset/questions-words.txt')
-FazTodaDesgraca('dataset/newText8', 2, 1, 'log/', 'model/', 'output/' , 'dataset/questions-words.txt')
-FazTodaDesgraca('dataset/newText8', 4, 1, 'log/', 'model/', 'output/' , 'dataset/questions-words.txt')
-FazTodaDesgraca('dataset/newText8', 6, 1, 'log/', 'model/', 'output/' , 'dataset/questions-words.txt')
-FazTodaDesgraca('dataset/newText8', 8, 1, 'log/', 'model/', 'output/' , 'dataset/questions-words.txt')
-FazTodaDesgraca('dataset/newText8', 10, 1, 'log/', 'model/', 'output/' , 'dataset/questions-words.txt')
-FazTodaDesgraca('dataset/newText8', 1, 2, 'log/', 'model/', 'output/' , 'dataset/questions-words.txt')
-FazTodaDesgraca('dataset/newText8', 2, 2, 'log/', 'model/', 'output/' , 'dataset/questions-words.txt')
-FazTodaDesgraca('dataset/newText8', 4, 2, 'log/', 'model/', 'output/' , 'dataset/questions-words.txt')
-FazTodaDesgraca('dataset/newText8', 6, 2, 'log/', 'model/', 'output/' , 'dataset/questions-words.txt')
-FazTodaDesgraca('dataset/newText8', 8, 2, 'log/', 'model/', 'output/' , 'dataset/questions-words.txt')
-FazTodaDesgraca('dataset/newText8', 10, 2, 'log/', 'model/', 'output/' , 'dataset/questions-words.txt')
-
-# corpus = gensim.models.word2vec.Text8Corpus('dataset/text8', max_sentence_length=10000)
-# model = gensim.models.Word2Vec(corpus,size=tng_size, window=tng_window, min_count=tng_min_count, workers=tng_workers, iter=tng_iter,sg=tng_sg)
-# model.save(output_path)
-# similarities = model.wv.most_similar(positive=[word_tokens[1], word_tokens[2]],negative=[word_tokens[0]], topn=50)
-#
-# model.wv.accuracy('questions-words.txt')#resulta em estatisticas no log criado
+FazTodaDesgraca('dataset/newText8', 1, 0, 'log/', 'model/', 'output/' , 'dataset/questions-words.txt', 100)
