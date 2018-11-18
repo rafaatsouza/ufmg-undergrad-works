@@ -9,14 +9,16 @@ train_size = 21000
 test_size = 9000
 vector_size = 512
 word2vecIterations = 50
-max_length = 15
+max_length = 18
 
 np.random.seed(1000)
 
 tweetsDataSet = td.TweetsDataSet('dataset/emotions_tweets.csv', train_size + test_size)
-word2vec = w2c.getWord2VecModel('model/{}-{}/word2vec.model'.format(word2vecIterations, vector_size), vector_size, tweetsDataSet.tokenized_corpus, word2vecIterations)
+word2vec = w2c.getWord2VecModel('model/{}-{}/word2vec.model'.format(word2vecIterations, vector_size), 
+                                vector_size, tweetsDataSet.tokenized_corpus, 
+                                word2vecIterations)
 
-X_vecs = word2vec.wv
+tweets_word2vec = word2vec.wv
 del word2vec
 
 indexes = set(np.random.choice(len(tweetsDataSet.tokenized_corpus), train_size + test_size, replace=False))
@@ -31,13 +33,13 @@ for i, index in enumerate(indexes):
         if t >= max_length:
             break
 
-        if token not in X_vecs:
+        if token not in tweets_word2vec:
             continue
 
         if i < train_size:
-            tweets_treino[i, t, :] = X_vecs[token][:vector_size]
+            tweets_treino[i, t, :] = tweets_word2vec[token][:vector_size]
         else:
-            tweets_test[i - train_size, t, :] = X_vecs[token][:vector_size]
+            tweets_test[i - train_size, t, :] = tweets_word2vec[token][:vector_size]
 
     if i < train_size:
         classes_treino[i, :] = [0.0, 1.0] if tweetsDataSet.labels[index] == 0 else [1.0, 0.0]
@@ -48,6 +50,7 @@ del indexes
 del train_size
 del test_size
 del tweetsDataSet
+del tweets_word2vec
 
 model = kn.KerasNetwork(max_length, vector_size, tweets_treino, classes_treino)
 

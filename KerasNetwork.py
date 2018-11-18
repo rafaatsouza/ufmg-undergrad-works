@@ -1,7 +1,6 @@
 import multiprocessing
 import tensorflow as tf
 import keras.backend as K
-from keras.callbacks import EarlyStopping
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Flatten
 from keras.layers.convolutional import Conv1D
