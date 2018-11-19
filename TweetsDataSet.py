@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import StopWords as st
 
 from nltk.stem.lancaster import LancasterStemmer
 from nltk.tokenize import RegexpTokenizer
@@ -29,13 +30,15 @@ class TweetsDataSet:
             tweet = line[5][1:] if line[5].startswith('"') else (line[5][::-1] if line[5].endswith('"') else line[5])
             self.corpus.append(tweet.strip().lower())
 
-            
+        stopWords = st.StopWords().list
+
         for i, tweet in enumerate(self.corpus):
-            tokens = [stemmer.stem(t) for t in tokenizer.tokenize(tweet) if not t.startswith('@')]
+            tokens = [stemmer.stem(t) for t in tokenizer.tokenize(tweet) if (not t.startswith('@'))]
+            tokens = [t for t in tokens if not t.strip().lower() in stopWords]
             self.tokenized_corpus.append(tokens)
 
+        del stopWords
         del emotions_tweets
         del stemmer
         del tokenizer
         del indexes
-
