@@ -44,9 +44,13 @@ def saveAllTotalValuesGraph(values):
     plt.savefig('graphs/allTotalValues.png')
 
 totalValues = {}
-for n in range(3,16):
+for n in range(3,11):
+    print('Iniciando com janela igual à {}'.format(n))
     neural = kn.KerasNetwork(trainFileName, testFileName, n)
     result = neural.evaluateModel()
     totalValues[n] = (neural.allModelEvaluate)
     saveClassesGraph(result, neural)
+    print('Fim da janela')
+print('Salvando gráfico referente à acurácia total variando janelas')
 saveAllTotalValuesGraph(totalValues)
+print('Fim do programa')

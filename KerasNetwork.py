@@ -30,7 +30,7 @@ class KerasNetwork:
         self.model.add(Dense(25,activation='relu'))
         self.model.add(Dense(26, activation='sigmoid'))
         self.model.compile(loss='binary_crossentropy',optimizer ='adam',metrics=['accuracy'])
-        self.model.fit(knownTrainData,predictedTrainData,epochs=2, batch_size=20,validation_split=0.2,verbose=0)
+        self.model.fit(knownTrainData,predictedTrainData,epochs=10, batch_size=20,validation_split=0.2,verbose=0)
 
         del knownTrainData
         del predictedTrainData
