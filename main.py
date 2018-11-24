@@ -1,50 +1,52 @@
+import os
 import numpy as np
-from keras import initializers
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import LSTM
-from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import OneHotEncoder
-from VectorizedData import VectorizedData as vd
+import KerasNetwork as kn
+import matplotlib.pyplot as plt
 
 np.random.seed(1000)
-trainData = (vd.getVectorizedData('dataset/macmorpho/macmorpho-train.txt')).toarray()
-testData = (vd.getVectorizedData('dataset/macmorpho/macmorpho-test.txt')).toarray()
+trainFileName = 'dataset/macmorpho/macmorpho-train.txt'
+testFileName = 'dataset/macmorpho/macmorpho-test.txt'
 
-n = 10
+def saveClassesGraph(result, neural):
+    plt.rcdefaults()
+    fig, ax = plt.subplots()
+    keys = [(k) for k,v in sorted(result.items())]
+    y_pos = np.arange(len(np.array(keys)))
+    ax.barh(y_pos, np.array([(v) for k,v in sorted(result.items())]), align='center', color='blue', ecolor='black')
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(np.array(keys))
+    ax.invert_yaxis()
+    ax.set_xlabel('Accuracy')
+    ax.set_title('Accuracy by Class')
+    ax.grid(True)
 
-knownTrainData = []
-predictedTrainData = []
-knownTestData = []
-predictedTestData = []
+    plt.xlim(0.9, 1.005)
 
-for index in range(len(trainData) - n):
-    knownTrainData.append(trainData[index:(index+n)])
-    predictedTrainData.append(trainData[(index+n)])
-    
-knownTrainData = np.array(knownTrainData)
-predictedTrainData = np.array(predictedTrainData)
+    if not os.path.exists('graphs'):
+        os.makedirs('graphs')
 
-for index in range(len(testData) - n):
-    knownTestData.append(testData[index:(index+n)])
-    predictedTestData.append(testData[(index+n)])
-    
-knownTestData = np.array(knownTestData)
-predictedTestData = np.array(predictedTestData)
+    plt.savefig('graphs/accuracyByClass_{}.png'.format(n))
 
-del trainData
-del testData
+    del keys
 
-model = Sequential()
-model.add(LSTM(50,input_shape=(n,26)))
-model.add(Dense(25,activation='relu'))
-model.add(Dense(26, activation='sigmoid'))
-model.compile(loss='binary_crossentropy',optimizer ='adam',metrics=['accuracy'])
+def saveAllTotalValuesGraph(values):
+    plt.title('Acurácia de acordo com o tamanho da janela')
+    plt.grid(True)
+    plt.xlabel('Tamanho da janela')
+    plt.ylabel('Acurácia')
+    plt.plot(np.array([values[key] for key in values]))
+    plt.legend()
+    plt.tight_layout()
 
-model.fit(knownTrainData,predictedTrainData,epochs=2, batch_size=20,validation_split=0.2,verbose=1)
+    if not os.path.exists('graphs'):
+        os.makedirs('graphs')
 
-del knownTrainData
-del predictedTrainData
+    plt.savefig('graphs/allTotalValues.png')
 
-score = model.evaluate(knownTestData,predictedTestData,batch_size=20,verbose=0)
-print('Accurracy: {}'.format(score[1]))
+totalValues = {}
+for n in range(3,16):
+    neural = kn.KerasNetwork(trainFileName, testFileName, n)
+    result = neural.evaluateModel()
+    totalValues[n] = (neural.allModelEvaluate)
+    saveClassesGraph(result, neural)
+saveAllTotalValuesGraph(totalValues)
