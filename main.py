@@ -20,7 +20,7 @@ def saveClassesGraph(result, neural):
     ax.set_title('Accuracy by Class')
     ax.grid(True)
 
-    plt.xlim(0.9, 1.005)
+    plt.xlim(0.92, 1.005)
 
     if not os.path.exists('graphs'):
         os.makedirs('graphs')
