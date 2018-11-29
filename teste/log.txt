@@ -1,0 +1,67 @@
+Teste com 10 épocas
+Neural Accurracy: 0.7101110816001892
+Teste com 20 épocas
+Neural Accurracy: 0.7127777934074402
+Teste com 30 épocas
+Neural Accurracy: 0.7099999785423279
+Teste com 40 épocas
+Neural Accurracy: 0.7068889141082764
+Teste com 50 épocas
+Neural Accurracy: 0.7144444584846497
+Teste com 60 épocas
+Neural Accurracy: 0.7142221927642822
+Teste com 70 épocas
+Neural Accurracy: 0.711222231388092
+Teste com 80 épocas
+Neural Accurracy: 0.7105555534362793
+Teste com 90 épocas
+Neural Accurracy: 0.7121111154556274
+Teste com 100 épocas
+Neural Accurracy: 0.7102222442626953
+Teste com 110 épocas
+Neural Accurracy: 0.7096666693687439
+Teste com 120 épocas
+Neural Accurracy: 0.7136666774749756
+Teste com 130 épocas
+Neural Accurracy: 0.7068889141082764
+Teste com 140 épocas
+Neural Accurracy: 0.7082222104072571
+Teste com 150 épocas
+Neural Accurracy: 0.7088888883590698
+Teste com 160 épocas
+Neural Accurracy: 0.7108888626098633
+Teste com 170 épocas
+Neural Accurracy: 0.7087777853012085
+Teste com 180 épocas
+Neural Accurracy: 0.711555540561676
+Teste com 190 épocas
+Neural Accurracy: 0.7123333215713501
+Teste com 200 épocas
+Neural Accurracy: 0.7131111025810242
+Teste com 210 épocas
+Neural Accurracy: 0.7097777724266052
+Teste com 220 épocas
+Neural Accurracy: 0.7080000042915344
+Teste com 230 épocas
+Neural Accurracy: 0.7123333215713501
+Teste com 240 épocas
+Neural Accurracy: 0.7105555534362793
+Teste com 250 épocas
+Neural Accurracy: 0.7099999785423279
+Teste com 260 épocas
+Neural Accurracy: 0.7110000252723694
+Teste com 270 épocas
+Neural Accurracy: 0.7098888754844666
+Teste com 280 épocas
+Neural Accurracy: 0.7157777547836304
+Teste com 290 épocas
+Neural Accurracy: 0.7072222232818604
+Teste com 300 épocas
+Neural Accurracy: 0.714555561542511
+Teste com 310 épocas
+Neural Accurracy: 0.7108888626098633
+Teste com 320 épocas
+Neural Accurracy: 0.7124444246292114
+Teste com 330 épocas
+Neural Accurracy: 0.711555540561676
+Teste com 340 épocas

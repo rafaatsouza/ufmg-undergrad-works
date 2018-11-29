@@ -12,7 +12,7 @@ from keras.optimizers import Adam
 from Word2VecModel import Word2VecModel as w2c
 
 class KerasNetwork:
-    def __init__(self, max_length, vector_size, train_size, test_size, word2vecIterations, tweetsDataSet):
+    def __init__(self, max_length, vector_size, train_size, test_size, word2vecIterations, countEppochs, tweetsDataSet):
         config = tf.ConfigProto(intra_op_parallelism_threads=multiprocessing.cpu_count(), 
                         inter_op_parallelism_threads=multiprocessing.cpu_count(), 
                         allow_soft_placement=True, device_count = {'CPU' : 1, 'GPU' : 1})
@@ -21,6 +21,7 @@ class KerasNetwork:
         self.test_size = test_size
         self.max_length = max_length
         self.vector_size = vector_size
+        self.countEppochs = countEppochs
 
         session = tf.Session(config=config)
         K.set_session(session)

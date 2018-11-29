@@ -24,10 +24,10 @@ class TweetsDataSet:
 
         emotions_tweets = pd.read_csv(self.datasetPath, encoding="ISO-8859-1")
         indexes = set(np.random.choice(len(emotions_tweets), size, replace=False))
-        i = 0
+        count = 0
 
         for index in indexes:
-            i+=1
+            count+= 1
             line = emotions_tweets.iloc[index]
             classe = int(line[0])
             if(classe == 4):
@@ -36,7 +36,7 @@ class TweetsDataSet:
             tweet = line[5][1:] if line[5].startswith('"') else (line[5][::-1] if line[5].endswith('"') else line[5])
             self.corpus.append(tweet.strip().lower())
             #bayes vvvvvvv
-            if(i <= train_size):
+            if(count <= train_size):
                 self.bayes_no_of_items.setdefault(classe,0)
                 self.bayes_no_of_items[classe]+=1
                 self.bayes_dataset.setdefault(classe,{})
@@ -48,7 +48,7 @@ class TweetsDataSet:
                         self.bayes_feature_set[i.lower()].setdefault(classe,0)
                         self.bayes_feature_set[i.lower()][classe]+=1
             else:
-                self.bayes_test.append(tweet.strip().lower())
+                self.bayes_test.append((tweet.strip().lower(), classe))
 
         stopWords = st.StopWords().list
 

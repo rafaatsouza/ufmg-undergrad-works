@@ -27,8 +27,7 @@ class Bayes:
         # (weight*assumedprobability + total_no_of_appearances*basic_probability)/(total_no_of_appearances+weight)
         # weight by default is taken as 1.0
         # assumed probability is 0.5 here
-        weight_prob=((1.0*0.5)+(tot*basic_prob))/(1.0+tot)
-        return weight_prob
+        return (((1.0*0.5)+(tot*basic_prob))/(1.0+tot))
 
 
     # To get probability of the test data for the given category
@@ -72,3 +71,13 @@ class Bayes:
             results[i]=test_prob1*cat_prob
 
         return results
+
+    def getBayesPredict(self):
+        predict = []
+        for tweet_Class in self.tds.bayes_test:
+            result = self.naive_bayes(tweet_Class[0])
+            if result[1] > result[0]:
+                predict.append([1.0, 0.0])
+            else:
+                predict.append([0.0, 1.0])
+        return predict
