@@ -12,7 +12,7 @@ from keras.optimizers import Adam
 from Word2VecModel import Word2VecModel as w2c
 
 class KerasNetwork:
-    def __init__(self, max_length, vector_size, train_size, test_size, word2vecIterations, countEppochs, tweetsDataSet):
+    def __init__(self, max_length, vector_size, train_size, test_size, word2vecIterations, tweetsDataSet):
         config = tf.ConfigProto(intra_op_parallelism_threads=multiprocessing.cpu_count(), 
                         inter_op_parallelism_threads=multiprocessing.cpu_count(), 
                         allow_soft_placement=True, device_count = {'CPU' : 1, 'GPU' : 1})
@@ -21,7 +21,6 @@ class KerasNetwork:
         self.test_size = test_size
         self.max_length = max_length
         self.vector_size = vector_size
-        self.countEppochs = countEppochs
 
         session = tf.Session(config=config)
         K.set_session(session)
@@ -64,20 +63,21 @@ class KerasNetwork:
         del indexes
         del tweets_word2vec
 
-    def TrainModel(self):
+    def TrainModel(self, countEppochs):
         self.model = Sequential()
 
-        self.model.add(Conv1D(32, kernel_size=3, activation='elu', padding='same', input_shape=(self.max_length, self.vector_size)))
-        self.model.add(Conv1D(32, kernel_size=3, activation='elu', padding='same'))
-        self.model.add(Conv1D(32, kernel_size=3, activation='elu', padding='same'))
+        self.model.add(Conv1D(32, kernel_size=3, activation='elu', padding='same', \
+                                    input_shape=(self.max_length, self.vector_size)))
+        #self.model.add(Conv1D(32, kernel_size=3, activation='elu', padding='same'))
+        #self.model.add(Conv1D(32, kernel_size=3, activation='elu', padding='same'))
         self.model.add(Conv1D(32, kernel_size=3, activation='elu', padding='same'))
         self.model.add(Dropout(0.25))
 
-        self.model.add(Conv1D(32, kernel_size=2, activation='elu', padding='same'))
-        self.model.add(Conv1D(32, kernel_size=2, activation='elu', padding='same'))
-        self.model.add(Conv1D(32, kernel_size=2, activation='elu', padding='same'))
-        self.model.add(Conv1D(32, kernel_size=2, activation='elu', padding='same'))
-        self.model.add(Dropout(0.25))
+        #self.model.add(Conv1D(32, kernel_size=2, activation='elu', padding='same'))
+        #self.model.add(Conv1D(32, kernel_size=2, activation='elu', padding='same'))
+        #self.model.add(Conv1D(32, kernel_size=2, activation='elu', padding='same'))
+        #self.model.add(Conv1D(32, kernel_size=2, activation='elu', padding='same'))
+        #self.model.add(Dropout(0.25))
 
         self.model.add(Flatten())
 
@@ -95,7 +95,7 @@ class KerasNetwork:
         self.model.fit(self.trainData,self.trainClassData,
                 batch_size=len(self.trainData),
                 shuffle=True,
-                epochs=100, 
+                epochs=countEppochs, 
                 validation_split=0.2,verbose=0)
 
         self.KerasPredict = self.model.predict(self.testData)
