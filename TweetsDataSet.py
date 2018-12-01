@@ -15,7 +15,7 @@ class TweetsDataSet:
         self.bayes_dataset = {}
         self.bayes_no_of_items = {}
         self.bayes_feature_set = {}
-        self.bayes_test = []
+        self.testData = []
         self.process(size, train_size)
 
     def process(self, size, train_size):
@@ -48,7 +48,7 @@ class TweetsDataSet:
                         self.bayes_feature_set[i.lower()].setdefault(classe,0)
                         self.bayes_feature_set[i.lower()][classe]+=1
             else:
-                self.bayes_test.append((tweet.strip().lower(), classe))
+                self.testData.append((tweet.strip().lower(), classe))
 
         stopWords = st.StopWords().list
 

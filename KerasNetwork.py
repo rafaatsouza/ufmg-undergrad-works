@@ -63,42 +63,60 @@ class KerasNetwork:
         del indexes
         del tweets_word2vec
 
-    def TrainModel(self, countEppochs):
-        self.model = Sequential()
+    def GetModel(self):
+        model = Sequential()
 
-        self.model.add(Conv1D(32, kernel_size=3, activation='elu', padding='same', \
+        model.add(Conv1D(32, kernel_size=3, activation='elu', padding='same', \
                                     input_shape=(self.max_length, self.vector_size)))
-        #self.model.add(Conv1D(32, kernel_size=3, activation='elu', padding='same'))
-        #self.model.add(Conv1D(32, kernel_size=3, activation='elu', padding='same'))
-        self.model.add(Conv1D(32, kernel_size=3, activation='elu', padding='same'))
-        self.model.add(Dropout(0.25))
+        model.add(Conv1D(32, kernel_size=3, activation='elu', padding='same'))
+        model.add(Conv1D(32, kernel_size=3, activation='elu', padding='same'))
+        model.add(Conv1D(32, kernel_size=3, activation='elu', padding='same'))
+        model.add(Dropout(0.25))
 
-        #self.model.add(Conv1D(32, kernel_size=2, activation='elu', padding='same'))
-        #self.model.add(Conv1D(32, kernel_size=2, activation='elu', padding='same'))
-        #self.model.add(Conv1D(32, kernel_size=2, activation='elu', padding='same'))
-        #self.model.add(Conv1D(32, kernel_size=2, activation='elu', padding='same'))
-        #self.model.add(Dropout(0.25))
+        model.add(Conv1D(32, kernel_size=2, activation='elu', padding='same'))
+        model.add(Conv1D(32, kernel_size=2, activation='elu', padding='same'))
+        model.add(Conv1D(32, kernel_size=2, activation='elu', padding='same'))
+        model.add(Conv1D(32, kernel_size=2, activation='elu', padding='same'))
+        model.add(Dropout(0.25))
 
-        self.model.add(Flatten())
+        model.add(Flatten())
 
-        self.model.add(Dense(256, activation='tanh'))
-        self.model.add(Dense(256, activation='tanh'))
-        self.model.add(Dropout(0.5))
+        model.add(Dense(256, activation='tanh'))
+        model.add(Dense(256, activation='tanh'))
+        model.add(Dropout(0.5))
 
-        self.model.add(Dense(2, activation='softmax'))
+        model.add(Dense(2, activation='softmax'))
 
-        self.model.compile(loss='binary_crossentropy',
-              optimizer=Adam(lr=0.0001, decay=1e-6),
-              metrics=['accuracy'])
+        model.compile(loss='binary_crossentropy', optimizer=Adam(lr=0.0001, decay=1e-6), metrics=['accuracy'])
 
+        return model
 
+    def getScoreDefaultByEppochs(self, countEppochs):
+        self.model = self.GetModel()
+        
         self.model.fit(self.trainData,self.trainClassData,
                 batch_size=len(self.trainData),
                 shuffle=True,
                 epochs=countEppochs, 
                 validation_split=0.2,verbose=0)
 
-        self.KerasPredict = self.model.predict(self.testData)
+        score = (self.model.evaluate(self.testData,self.testClassData,batch_size=len(self.testData),verbose=0))[1]
 
-    def getScores(self):
-        return self.model.evaluate(self.testData,self.testClassData,batch_size=len(self.testData),verbose=0)
+        del self.model
+
+        return score
+
+    def getScoresByEppochCountAndBatchs(self, countEppochs):
+        accuracies = {}
+
+        trintaDois = self.GetModel()
+        trintaDois.fit(self.trainData,self.trainClassData, shuffle=True, epochs=countEppochs, validation_split=0.2,verbose=0)
+        accuracies['trintaDois'] = (trintaDois.evaluate(self.testData,self.testClassData,batch_size=len(self.testData),verbose=0))[1]
+        del trintaDois
+
+        trainDataSize = self.GetModel()
+        trainDataSize.fit(self.trainData,self.trainClassData, batch_size=len(self.trainData), shuffle=True, epochs=countEppochs, validation_split=0.2,verbose=0)
+        accuracies['trainDataSize'] = (trainDataSize.evaluate(self.testData,self.testClassData,batch_size=len(self.testData),verbose=0))[1]
+        del trainDataSize
+
+        return accuracies

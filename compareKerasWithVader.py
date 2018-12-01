@@ -1,6 +1,7 @@
 import numpy as np
 import TweetsDataSet as td
 import KerasNetwork as kn
+import Vader as vd
 import numpy as np
 import Utils as ut
         
@@ -17,6 +18,7 @@ print('Iniciando')
 
 tweetsDataSet = td.TweetsDataSet(datasetFilePath, (train_size + test_size), train_size)
 kerasModel = kn.KerasNetwork(max_length, vector_size, train_size, test_size, word2vecIterations, tweetsDataSet)
+vader = vd.Vader()
 
 del train_size
 del test_size
@@ -24,11 +26,14 @@ del vector_size
 del word2vecIterations
 del max_length
 del datasetFilePath
+
+scores = {}
+scores['Vader'] = vader.getVaderScore(tweetsDataSet.testData)
 del tweetsDataSet
 
-for i in range(1,16):
-    print('Teste com {} épocas'.format((i * 10)))
-    scores = kerasModel.getScoresByEppochCountAndBatchs((i*10))
-    
-    ut.Utils.registerToFile('{};{};{}\n'.format((i*10), 'default', scores['trintaDois']), 'csv', 'accuracyByEppochCount.csv')
-    ut.Utils.registerToFile('{};{};{}\n'.format((i*10), 'train_size', scores['trainDataSize']), 'csv', 'accuracyByEppochCount.csv')
+print(scores['Vader'])
+
+#scores['Neural'] = kerasModel.getScoreDefaultByEppochs(100)
+
+#ut.Utils.registerToFile('{};{};{}\n'.format(100, 'keras', scores['Neural']), 'csv', 'KerasVaderCompare.csv')
+#ut.Utils.registerToFile('{};{};{}\n'.format(100, 'vader', scores['Vader']), 'csv', 'KerasVaderCompare.csv')
