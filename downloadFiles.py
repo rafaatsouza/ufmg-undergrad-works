@@ -17,7 +17,5 @@ for index, row in df.iterrows():
         if(row['name'] not in imagesNameList):
             urllib.request.urlretrieve(row['link'], folderName + '/' + filename)
             imagesNameList.append(row['name'])
-        else:
-            print('what')
     except:
         print('Error with {}'.format(filename))
