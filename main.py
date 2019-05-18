@@ -2,7 +2,12 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import cross_val_score
 from sklearn.naive_bayes import GaussianNB
+from sklearn.model_selection import GridSearchCV
+from sklearn import tree
+from sklearn.metrics import confusion_matrix
+import warnings
 
+warnings.simplefilter(action='ignore', category=FutureWarning)
 np.random.seed(1000)
 testSize = 0.7
 folds = 5
@@ -26,7 +31,19 @@ def naiveBayes(df, output, folds):
     model = GaussianNB()
     return cross_val_score(model, df, output, cv=folds)
 
+def decisionTree(df, output, trainExamples, trainLabels, maxDepth, folds):
+    parameters = {'max_depth':maxDepth}
+    
+    model = GridSearchCV(tree.DecisionTreeClassifier(), parameters)
+    model = model.fit(trainExamples, trainLabels)
+
+    return cross_val_score(model, df, output, cv=folds)
+
 ds = DataSet('dataset.csv', ['kepoi_name'], testSize)
 
 naiveBayesScore = naiveBayes(ds.examples['full'], ds.labels['full'], folds)
 naiveBayesScore
+
+decisionTreeScore = decisionTree(ds.examples['full'], ds.labels['full'], ds.examples['train'], 
+                                 ds.labels['train'], range(3,20), folds)
+decisionTreeScore
