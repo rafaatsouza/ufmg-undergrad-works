@@ -17,60 +17,81 @@ np.random.seed(1000)
 
 class DataSet:
     def __init__(self, ignoreColumns):
-        self.df = (pd.read_csv(DATASET_NAME)).drop(columns=ignoreColumns)
-        
-        self.target = (self.df['koi_disposition'] == 'CONFIRMED').astype(int)
-        self.df = self.df.drop(columns=['koi_disposition'])
-        
-        self.features = self.df.shape[1]
-                
-        self.df = pd.DataFrame(preprocessing.MinMaxScaler().fit_transform(self.df.values))
-        
-        msk = np.random.rand(len(self.df)) < TEST_SIZE
-        self.trainDf = self.df[msk]
-        self.trainTarget = self.target[msk]
-        
-def naiveBayesClassifier(df, output):
-    return (cross_val_score(GaussianNB(), df, output, cv=FOLDS_COUNT)).mean()
+        df = (pd.read_csv(DATASET_NAME)).drop(columns=['kepoi_name'])
+        target = (df['koi_disposition'] == 'CONFIRMED').astype(int)
+        df = df.drop(columns=['koi_disposition'])
+        df = pd.DataFrame(preprocessing.MinMaxScaler().fit_transform(df.values))
+        df = shuffle(pd.concat([df, target], axis=1))
 
-def decisionTreeClassifier(df, output, maxDepth):
-    clf = tree.DecisionTreeClassifier(max_depth=maxDepth)
-    return (cross_val_score(clf, df, output, cv=FOLDS_COUNT)).mean()
+        self.features = df.shape[1]
+        
+        foldSize = round(len(df) / FOLDS_COUNT)
+        folds = [df[x:x+foldSize] for x in range(0, len(df), foldSize)]
+        lastFold = folds.pop()
+        folds[4] = folds[4].append(lastFold)
+
+        self.kfolds = []
+        for i in range(0, FOLDS_COUNT):
+            self.kfolds.append({ 'trainDf': None, 'trainTarget': None, 'testDf': None, 'testTarget': None })
+
+            self.kfolds[i]['testTarget'] = folds[i]['koi_disposition']
+            self.kfolds[i]['testDf'] =  folds[i].drop(columns=['koi_disposition'])
+            self.kfolds[i]['trainDf'] = None
+            self.kfolds[i]['trainTarget'] = None
+
+            for j in [x for x in range(0, FOLDS_COUNT) if x!=i]:
+                if(self.kfolds[i]['trainDf'] is None):
+                    self.kfolds[i]['trainTarget'] = folds[j]['koi_disposition']
+                    self.kfolds[i]['trainDf'] = folds[j].drop(columns=['koi_disposition'])
+                else:
+                    self.kfolds[i]['trainTarget'] = self.kfolds[i]['trainTarget'].append(folds[j]['koi_disposition'])
+                    self.kfolds[i]['trainDf'] = self.kfolds[i]['trainDf'].append(folds[j].drop(columns=['koi_disposition']))
+
+        del df
+        del target
+        del foldSize
+        del folds
+        del lastFold
+        
+def KFoldCrossValidation(clf, ds):
+    scores = []
+    for i in range(0, FOLDS_COUNT):
+        kclf = clf.fit(ds.kfolds[i]['trainDf'], ds.kfolds[i]['trainTarget'])
+        predicts = kclf.predict(ds.kfolds[i]['testDf'])
+        scores.append(metrics.accuracy_score(ds.kfolds[i]['testTarget'], predicts))
+    return (np.array([score for score in scores])).mean()
+        
+def naiveBayesClassifier(ds):
+    return KFoldCrossValidation(GaussianNB(), ds)
+
+def decisionTreeClassifier(ds, max_depth):
+    return KFoldCrossValidation(tree.DecisionTreeClassifier(max_depth=max_depth), ds)
     
-def randomForestClassifier(df, output, trainExamples, trainLabels, features, maxDepth):
-    clf = ensemble.RandomForestClassifier(n_estimators=features, max_depth=maxDepth)
-    clf = clf.fit(trainExamples, trainLabels)
-    return (cross_val_score(clf, df, output, cv=FOLDS_COUNT)).mean()
+def randomForestClassifier(ds, features, maxDepth):
+    return KFoldCrossValidation(ensemble.RandomForestClassifier(n_estimators=features, max_depth=maxDepth), ds)
 
-def adaboostClassifier(df, output, trainExamples, trainLabels, estimatorsCount):
-    clf = ensemble.AdaBoostClassifier(n_estimators=estimatorsCount)
-    clf = clf.fit(trainExamples, trainLabels)
-    return (cross_val_score(clf, df, output, cv=FOLDS_COUNT)).mean()
+def adaboostClassifier(ds, estimatorsCount):
+    return KFoldCrossValidation(ensemble.AdaBoostClassifier(n_estimators=estimatorsCount), ds)
 
-def knnClassifier(df, output, trainExamples, trainLabels, k):
-    clf = (neighbors.KNeighborsClassifier(n_neighbors=k)).fit(trainExamples, trainLabels)
-    return (cross_val_score(clf, df, output, cv=FOLDS_COUNT)).mean()
+def knnClassifier(ds, k):
+    return KFoldCrossValidation(neighbors.KNeighborsClassifier(n_neighbors=k), ds)
     
-def svmLinearClassifier(df, output, trainExamples, trainLabels, C):
-    clf = (svm.SVC(C, kernel='linear', gamma='auto')).fit(trainExamples, trainLabels)
-    return (cross_val_score(clf, df, output, cv=FOLDS_COUNT)).mean()
+def svmLinearClassifier(ds, C):
+    return KFoldCrossValidation(svm.SVC(C, kernel='linear', gamma='auto'), ds)
 
-def svmRbfClassifier(df, output, trainExamples, trainLabels, C):
-    clf = (svm.SVC(C, kernel='rbf', gamma='auto')).fit(trainExamples, trainLabels)
-    return (cross_val_score(clf, df, output, cv=FOLDS_COUNT)).mean()
+def svmRbfClassifier(ds, C):
+    return KFoldCrossValidation(svm.SVC(C, kernel='rbf', gamma='auto'), ds)
 
-def svmSigmoidClassifier(df, output, trainExamples, trainLabels, C):
-    clf = (svm.SVC(C, kernel='sigmoid', gamma='auto')).fit(trainExamples, trainLabels)
-    return (cross_val_score(clf, df, output, cv=FOLDS_COUNT)).mean()
+def svmSigmoidClassifier(ds, C):
+    return KFoldCrossValidation(svm.SVC(C, kernel='sigmoid', gamma='auto'), ds)
 
-def svmPolyClassifier(df, output, trainExamples, trainLabels, C):
-    clf = (svm.SVC(C, kernel='poly', gamma='auto')).fit(trainExamples, trainLabels)
-    return (cross_val_score(clf, df, output, cv=FOLDS_COUNT)).mean()
+def svmPolyClassifier(ds, C):
+    return KFoldCrossValidation(svm.SVC(C, kernel='poly', gamma='auto'), ds)
 
-def showDecisionTreeStats(maxDepth):
+def showDecisionTreeStats():
     decisionTreeScores = [0]
-    for i in range(1,maxDepth+1):
-        decisionTreeScores.append(decisionTreeClassifier(ds.df, ds.target, i))
+    for i in range(1,MAX_DEPTH+1):
+        decisionTreeScores.append(decisionTreeClassifier(ds, i))
 
     gs = gridspec.GridSpec(1, 1, figure=plt.figure(num=None, figsize=(8, 5)))
     ax = plt.subplot(gs[0])
@@ -78,23 +99,23 @@ def showDecisionTreeStats(maxDepth):
     ax.grid(True)
     ax.set_xlabel('Altura')
     ax.set_ylabel('Acurácia')
-    ax.set_xlim([1, maxDepth])
+    ax.set_xlim([1, MAX_DEPTH])
     ax.set_ylim([0.7, 1])
     ax.plot(np.array([score for score in decisionTreeScores]), label="Decision Tree")
     ax.plot(np.array([naiveBayesMeanScore for i in range(0, len(decisionTreeScores))]), label="Naive Bayes")
     ax.legend()
     plt.show()
     
-def showRandomForestStats(maxDepth):
+def showRandomForestStats():
     randomForestUnlimtdDepthScores = [0]
     for i in range(1,ds.features + 1):
-        randomForestUnlimtdDepthScores.append(randomForestClassifier(ds.df, ds.target, ds.trainDf, ds.trainTarget, i, None))
+        randomForestUnlimtdDepthScores.append(randomForestClassifier(ds, i, None))
 
     randomForestDepthByFeaturesScores = {}
-    for i in range(1, maxDepth + 1):
+    for i in range(1, MAX_DEPTH + 1):
         randomForestDepthByFeaturesScores[i] = [0]
         for j in range(1, ds.features + 1):
-            randomForestDepthByFeaturesScores[i].append(randomForestClassifier(ds.df, ds.target, ds.trainDf, ds.trainTarget, j, i))
+            randomForestDepthByFeaturesScores[i].append(randomForestClassifier(ds, j, i))
 
     gs = gridspec.GridSpec(4, 1, figure=plt.figure(num=None, figsize=(16, 22)), height_ratios=[3,8,8,8])
     ax1 = plt.subplot(gs[0])
@@ -126,7 +147,7 @@ def showRandomForestStats(maxDepth):
     ax3.set_xlabel('Features')
     ax3.set_ylabel('Acurácia')
     ax3.set_xlim([1, ds.features])
-    ax3.set_ylim([0.905, 0.97])
+    ax3.set_ylim([0.91, 0.98])
     for j in range(6, 11):
         ax3.plot(np.array([score for score in randomForestDepthByFeaturesScores[j]]), label="RF Depth={}".format(j))
     ax3.plot(np.array([naiveBayesMeanScore for j in range(0, len(randomForestUnlimtdDepthScores))]), label="Naive Bayes")
@@ -138,7 +159,7 @@ def showRandomForestStats(maxDepth):
     ax4.set_xlabel('Features')
     ax4.set_ylabel('Acurácia')
     ax4.set_xlim([1, ds.features])
-    ax4.set_ylim([0.91, 0.97])
+    ax4.set_ylim([0.91, 0.98])
     for j in range(11, 15):
         ax4.plot(np.array([score for score in randomForestDepthByFeaturesScores[j]]), label="RF Depth={}".format(j))
     ax4.plot(np.array([naiveBayesMeanScore for j in range(0, len(randomForestUnlimtdDepthScores))]), label="Naive Bayes")
@@ -151,7 +172,7 @@ def showRandomForestStats(maxDepth):
 def showAdaboostStats():
     adaboostScores = [0]
     for i in range(1, ds.features + 1):
-        adaboostScores.append(adaboostClassifier(ds.df, ds.target, ds.trainDf, ds.trainTarget, i))
+        adaboostScores.append(adaboostClassifier(ds, i))
 
     gs = gridspec.GridSpec(1, 1, figure=plt.figure(num=None, figsize=(8, 5)))
     ax = plt.subplot(gs[0])
@@ -170,7 +191,7 @@ def showKnnStats(kValues):
     knnScores = {}
 
     for i in range(0,len(kValues)):
-        knnScores[kValues[i]] = knnClassifier(ds.df, ds.target, ds.trainDf, ds.trainTarget, kValues[i])
+        knnScores[kValues[i]] = knnClassifier(ds, kValues[i])
 
     fig, ax = plt.subplots(figsize=(8,8))
     sns.lineplot(x=kValues, y=[v for k,v in knnScores.items()], color='r', ax=ax)
@@ -191,10 +212,10 @@ def showSvmStats():
     svmScores['poly'] = [0]
 
     for i in penalties:
-        svmScores['linear'].append(svmLinearClassifier(ds.df, ds.target, ds.trainDf, ds.trainTarget, i))
-        svmScores['rbf'].append(svmRbfClassifier(ds.df, ds.target, ds.trainDf, ds.trainTarget, i))
-        svmScores['sigmoid'].append(svmSigmoidClassifier(ds.df, ds.target, ds.trainDf, ds.trainTarget, i))
-        svmScores['poly'].append(svmPolyClassifier(ds.df, ds.target, ds.trainDf, ds.trainTarget, i))
+        svmScores['linear'].append(svmLinearClassifier(ds, i))
+        svmScores['rbf'].append(svmRbfClassifier(ds, i))
+        svmScores['sigmoid'].append(svmSigmoidClassifier(ds, i))
+        svmScores['poly'].append(svmPolyClassifier(ds, i))
 
     gs = gridspec.GridSpec(1, 1, figure=plt.figure(num=None, figsize=(8, 5)))
     ax = plt.subplot(gs[0])
@@ -212,40 +233,11 @@ def showSvmStats():
     ax.plot(np.array([naiveBayesMeanScore for i in range(0, (len(penalties) +1))]), label="Naive Bayes")
     ax.legend()
     plt.show()
-    
-def showConfusionMatrix():
-    cm = metrics.confusion_matrix(y_val, y_pred)
-
-    fig, ax = plt.subplots(figsize=(7, 7))
-    im = ax.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
-    ax.figure.colorbar(im, ax=ax)
-    ax.set(xticks=np.arange(cm.shape[1]),
-           yticks=np.arange(cm.shape[0]),
-           xticklabels=classes, yticklabels=classes,
-           title="Matriz de Confusão",
-           ylabel="Real",
-           xlabel="Predito")
-
-    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
-             rotation_mode="anchor")
-
-    for i in range(cm.shape[0]):
-        for j in range(cm.shape[1]):
-            ax.text(j, i, format(cm[i, j], "d"),
-                    ha="center", va="center",
-                    color="white" if cm[i, j] > cm.max()/2. else "black")
-    fig.tight_layout()
-    plt.show()
 
 ds = DataSet(['kepoi_name'])
-naiveBayesMeanScore = naiveBayesClassifier(ds.df, ds.target)
-
-showDecisionTreeStats(MAX_DEPTH)
-
-showRandomForestStats(MAX_DEPTH)
-
+naiveBayesMeanScore = naiveBayesClassifier(ds)
+showDecisionTreeStats()
+showRandomForestStats()
 showAdaboostStats()
-
 showKnnStats([1,3,5,7,9,11,13,15,17,19,21,23,25,27,29])
-
 showSvmStats()
