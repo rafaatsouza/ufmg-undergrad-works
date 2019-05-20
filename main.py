@@ -89,10 +89,6 @@ def svmPolyClassifier(ds, C):
     return KFoldCrossValidation(svm.SVC(C, kernel='poly', gamma='auto'), ds)
 
 def showDecisionTreeStats():
-    decisionTreeScores = [0]
-    for i in range(1,MAX_DEPTH+1):
-        decisionTreeScores.append(decisionTreeClassifier(ds, i))
-
     gs = gridspec.GridSpec(1, 1, figure=plt.figure(num=None, figsize=(8, 5)))
     ax = plt.subplot(gs[0])
     ax.title.set_text('Acurácia de acordo com o aumento da altura da arvore')
@@ -101,16 +97,12 @@ def showDecisionTreeStats():
     ax.set_ylabel('Acurácia')
     ax.set_xlim([1, MAX_DEPTH])
     ax.set_ylim([0.7, 1])
-    ax.plot(np.array([score for score in decisionTreeScores]), label="Decision Tree")
-    ax.plot(np.array([naiveBayesMeanScore for i in range(0, len(decisionTreeScores))]), label="Naive Bayes")
+    ax.plot(np.array(([0] + [decisionTreeClassifier(ds, i) for i in range(1,MAX_DEPTH+1)])), label="Decision Tree")
+    ax.plot(np.array([naiveBayesMeanScore for i in range(0, MAX_DEPTH+1)]), label="Naive Bayes")
     ax.legend()
     plt.show()
     
-def showRandomForestStats():
-    randomForestUnlimtdDepthScores = [0]
-    for i in range(1,ds.features + 1):
-        randomForestUnlimtdDepthScores.append(randomForestClassifier(ds, i, None))
-
+def showRandomForestStats():        
     randomForestDepthByFeaturesScores = {}
     for i in range(1, MAX_DEPTH + 1):
         randomForestDepthByFeaturesScores[i] = [0]
@@ -125,8 +117,8 @@ def showRandomForestStats():
     ax1.set_xlim([1, ds.features])
     ax1.set_yticks([0.91, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98])
     ax1.set_ylim([0.91, 0.98])
-    ax1.plot(np.array([score for score in randomForestUnlimtdDepthScores]), label="Random Forest")
-    ax1.plot(np.array([naiveBayesMeanScore for i in range(0, len(randomForestUnlimtdDepthScores))]), label="Naive Bayes")
+    ax1.plot(np.array(([0] + [randomForestClassifier(ds, i, None) for i in range(1,ds.features+1)])), label="Random Forest")
+    ax1.plot(np.array([naiveBayesMeanScore for i in range(0, ds.features+1)]), label="Naive Bayes")
     ax1.legend()
     ax1.grid(True)
 
@@ -138,7 +130,7 @@ def showRandomForestStats():
     ax2.set_ylim([0.67, 0.98])
     for j in range(1, 6):
         ax2.plot(np.array([score for score in randomForestDepthByFeaturesScores[j]]), label="RF Depth={}".format(j))
-    ax2.plot(np.array([naiveBayesMeanScore for j in range(0, len(randomForestUnlimtdDepthScores))]), label="Naive Bayes")
+    ax2.plot(np.array([naiveBayesMeanScore for j in range(0, ds.features + 1)]), label="Naive Bayes")
     ax2.legend()
     ax2.grid(True)
 
@@ -150,7 +142,7 @@ def showRandomForestStats():
     ax3.set_ylim([0.91, 0.98])
     for j in range(6, 11):
         ax3.plot(np.array([score for score in randomForestDepthByFeaturesScores[j]]), label="RF Depth={}".format(j))
-    ax3.plot(np.array([naiveBayesMeanScore for j in range(0, len(randomForestUnlimtdDepthScores))]), label="Naive Bayes")
+    ax3.plot(np.array([naiveBayesMeanScore for j in range(0, ds.features + 1)]), label="Naive Bayes")
     ax3.legend()
     ax3.grid(True)
 
@@ -162,7 +154,7 @@ def showRandomForestStats():
     ax4.set_ylim([0.91, 0.98])
     for j in range(11, 15):
         ax4.plot(np.array([score for score in randomForestDepthByFeaturesScores[j]]), label="RF Depth={}".format(j))
-    ax4.plot(np.array([naiveBayesMeanScore for j in range(0, len(randomForestUnlimtdDepthScores))]), label="Naive Bayes")
+    ax4.plot(np.array([naiveBayesMeanScore for j in range(0, ds.features + 1)]), label="Naive Bayes")
     ax4.legend()
     ax4.grid(True)
 
@@ -170,10 +162,6 @@ def showRandomForestStats():
     plt.show()
     
 def showAdaboostStats():
-    adaboostScores = [0]
-    for i in range(1, ds.features + 1):
-        adaboostScores.append(adaboostClassifier(ds, i))
-
     gs = gridspec.GridSpec(1, 1, figure=plt.figure(num=None, figsize=(8, 5)))
     ax = plt.subplot(gs[0])
     ax.title.set_text('Acurácia de acordo com o aumento features')
@@ -182,8 +170,8 @@ def showAdaboostStats():
     ax.set_ylabel('Acurácia')
     ax.set_xlim([1, ds.features + 1])
     ax.set_ylim([0.7, 1])
-    ax.plot(np.array([score for score in adaboostScores]), label="Adaboost")
-    ax.plot(np.array([naiveBayesMeanScore for i in range(0, len(adaboostScores))]), label="Naive Bayes")
+    ax.plot(np.array(([0] + [adaboostClassifier(ds, i) for i in range(1,ds.features + 1)])), label="Adaboost")
+    ax.plot(np.array([naiveBayesMeanScore for i in range(0, ds.features + 1)]), label="Naive Bayes")
     ax.legend()
     plt.show()
     
