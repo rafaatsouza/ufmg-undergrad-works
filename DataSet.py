@@ -1,7 +1,10 @@
+import os
 from keras.preprocessing.image import ImageDataGenerator
 
 class DataSet:
     def __init__(self, trainFolderPath, testFolderPath):
+        self.num_samples = sum([len(files) for r, d, files in os.walk(trainFolderPath)])
+
         train_datagen = ImageDataGenerator(rescale=1./255, 
                         shear_range=0.2, 
                         zoom_range=0.2, 
@@ -12,6 +15,6 @@ class DataSet:
 
         self.training_set = train_datagen.flow_from_directory(trainFolderPath, target_size=(64, 64), class_mode='binary', subset='training')
         self.test_set = test_datagen.flow_from_directory(testFolderPath, target_size=(64, 64), class_mode='binary', subset='validation')
-
+        
         del train_datagen
         del test_datagen
