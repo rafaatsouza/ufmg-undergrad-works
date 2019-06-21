@@ -5,10 +5,12 @@ from keras.layers import Flatten
 from keras.layers import Dense
 
 import DataSet as ds
+import os
 
 class Classifier:
-    def __init__(self, trainFolderPath, testFolderPath):
-        self.ds = ds.DataSet('dataset/train','dataset/test')
+    def __init__(self, trainFolderPath, testFolderPath, batchSize):
+        self.batchSize = batchSize
+        self.ds = ds.DataSet('dataset/train','dataset/test',self.batchSize)
 
         self.classifier = Sequential()
         self.classifier.add(Convolution2D(32, (3, 3), input_shape = (64, 64, 3), activation = 'relu'))
@@ -21,8 +23,13 @@ class Classifier:
 
         self.classifier.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
 
-    def fitGenerator(self, eppochs, stepsPerEppoch, validationSteps):
-        score = self.classifier.fit_generator(self.ds.training_set, steps_per_epoch=stepsPerEppoch,epochs=eppochs,validation_data=self.ds.test_set, validation_steps=validationSteps, verbose=0)
+    def fitGenerator(self, eppochs):
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+        score = self.classifier.fit_generator(
+                self.ds.training_set, 
+                steps_per_epoch=(self.ds.train_num_samples/self.batchSize), 
+                validation_steps=(self.ds.train_num_samples/self.batchSize),
+                validation_data=self.ds.test_set, epochs=eppochs, verbose=0)
         result = {'loss': score.history['loss'][0], 'accuracy': score.history['acc'][0] }
         del score
         return result
