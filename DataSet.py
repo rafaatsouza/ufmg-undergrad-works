@@ -7,12 +7,7 @@ class DataSet:
     def __init__(self, spamFolderPath, notSpamFolderPath, batchSize, foldsCount):
         df = shuffle(self.GetDataFrame(spamFolderPath, notSpamFolderPath))
 
-        foldSize = round(df.shape[0] / foldsCount)
-        folds = [df[x:x+foldSize] for x in range(0, len(df), foldSize)]
-        if(len(folds) > foldsCount):
-            lastFold = folds.pop()
-            folds[foldSize-1] = folds[foldSize-1].append(lastFold)
-            del lastFold
+        folds = self.GetEqualDataFrameFolds(df, foldsCount)
 
         train_datagen = ImageDataGenerator(rescale=1./255, 
                         shear_range=0.2, 
@@ -49,18 +44,24 @@ class DataSet:
             del testDf
 
         del df
-        del foldSize
         del folds
         del train_datagen
         del test_datagen
 
+    def GetEqualDataFrameFolds(self, df, foldsCount):
+        foldSize = round(df.shape[0] / foldsCount)
+        folds = [df[x:x+foldSize] for x in range(0, df.shape[0], foldSize)]
+        if(len(folds) > foldsCount):
+            lastPart = folds.pop()
+            folds[foldSize-1] = folds[foldSize-1].append(lastPart)
+            del lastPart
+        del foldSize
+        return folds
+
     def GetDataFrame(self, spamFolderPath, notSpamFolderPath):
         data = []
-
         for filename in os.listdir(spamFolderPath):
             data.append(['{}{}'.format(spamFolderPath,filename), '1'])
-
         for filename in os.listdir(notSpamFolderPath):
             data.append(['{}{}'.format(notSpamFolderPath,filename), '0'])
-
         return pd.DataFrame(data, columns = ['id', 'label'])
