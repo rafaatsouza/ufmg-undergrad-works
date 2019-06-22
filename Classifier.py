@@ -5,12 +5,15 @@ from keras.layers import Flatten
 from keras.layers import Dense
 
 import DataSet as ds
+import numpy as np
 import os
 
 class Classifier:
-    def __init__(self, trainFolderPath, testFolderPath, batchSize):
+    def __init__(self, spamFolderPath, notSpamFolderPath, batchSize, foldsCount):
         self.batchSize = batchSize
-        self.ds = ds.DataSet('dataset/train','dataset/test',self.batchSize)
+        self.foldsCount = foldsCount
+
+        self.ds = ds.DataSet(spamFolderPath, notSpamFolderPath, self.batchSize, self.foldsCount)
 
         self.classifier = Sequential()
         self.classifier.add(Convolution2D(32, (3, 3), input_shape = (64, 64, 3), activation = 'relu'))
@@ -25,11 +28,14 @@ class Classifier:
 
     def fitGenerator(self, eppochs):
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-        score = self.classifier.fit_generator(
-                self.ds.training_set, 
-                steps_per_epoch=(self.ds.train_num_samples/self.batchSize), 
-                validation_steps=(self.ds.train_num_samples/self.batchSize),
-                validation_data=self.ds.test_set, epochs=eppochs, verbose=0)
-        result = {'loss': score.history['loss'][0], 'accuracy': score.history['acc'][0] }
-        del score
-        return result
+        k_accuracy = []
+        k_loss = []
+        for i in range(0, self.foldsCount):
+            score = self.classifier.fit_generator(
+                        self.ds.kfolds[i]['trainDataAug'], 
+                        steps_per_epoch=(len(self.ds.kfolds[i]['trainDataAug'])/self.batchSize), 
+                        validation_steps=(len(self.ds.kfolds[i]['trainDataAug'])/self.batchSize),
+                        validation_data=self.ds.kfolds[i]['testDataAug'], epochs=eppochs, verbose=0)
+            k_accuracy.append(score.history['acc'][0])
+            k_loss.append(score.history['loss'][0])
+        return {'loss': (np.array([loss for loss in k_loss])).mean(), 'accuracy': (np.array([accuracy for accuracy in k_accuracy])).mean() }
