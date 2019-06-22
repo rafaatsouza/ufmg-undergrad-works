@@ -16,13 +16,15 @@ class DataSet:
                         horizontal_flip=True)
         
         test_datagen = ImageDataGenerator(rescale=1./255)
+        validation_datagen = ImageDataGenerator(rescale=1./255)
 
         self.kfolds = []
         for i in range(0, foldsCount):
-            self.kfolds.append({ 'trainDataAug': None, 'testDataAug': None })
+            self.kfolds.append({ 'trainDataAug': None, 'testDataAug': None, 'validationDataAug': None })
 
-            testDf = folds[i]
             trainDf = None
+            testDf = None
+            validationDf = folds[i]
 
             for j in [x for x in range(0, foldsCount) if x!=i]:
                 if(trainDf is None):
@@ -30,23 +32,42 @@ class DataSet:
                 else:
                     trainDf = trainDf.append(folds[j])
 
+            trainFolds = self.GetEqualDataFrameFolds(trainDf, foldsCount)
+            
+            trainDf = None
+            testDf = trainFolds[0]
+            for x in range(1, len(trainFolds)):
+                if(trainDf is None):
+                    trainDf = trainFolds[x]
+                else:
+                    trainDf = trainDf.append(trainFolds[x])
+
             self.kfolds[i]['trainDataAug'] = train_datagen.flow_from_dataframe(
                                                 trainDf, x_col='id', y_col='label', 
                                                 target_size=(64, 64), batch_size=batchSize,
                                                 class_mode='binary')
-            
-            self.kfolds[i]['testDataAug'] = test_datagen.flow_from_dataframe(
+
+            self.kfolds[i]['testDataAug'] = validation_datagen.flow_from_dataframe(
                                                 testDf, x_col='id', y_col='label', 
                                                 target_size=(64, 64), batch_size=batchSize,
                                                 class_mode='binary')
+
+            self.kfolds[i]['validationDataAug'] = test_datagen.flow_from_dataframe(
+                                                validationDf, x_col='id', y_col='label', 
+                                                target_size=(64, 64), batch_size=batchSize,
+                                                class_mode='binary')
+
+            self.kfolds[i]['validationLabels'] = validationDf['label']
             
             del trainDf
             del testDf
+            del validationDf
 
         del df
         del folds
         del train_datagen
         del test_datagen
+        del validation_datagen
 
     def GetEqualDataFrameFolds(self, df, foldsCount):
         foldSize = round(df.shape[0] / foldsCount)
