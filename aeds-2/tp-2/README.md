@@ -2,8 +2,6 @@
 
 Practical assignment that consists in a module of array sorting algorithm's. You can choose the algorithm and the element quantity to be sorted. At the end, it shows the time wasted with sorting, and the movements and comparison quantities.
 
-Assignment instruction availabe at file [**assignment-spec.pdf**](assignment-spec.pdf)
-
 #### Build
 Generates executable file using *Makefile*.
 
