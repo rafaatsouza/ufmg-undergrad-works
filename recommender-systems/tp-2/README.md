@@ -1,2 +1,3 @@
-# recsys_tp2
-RecSys - TP2
+# Recommender Systems - 2nd Assignment
+
+Instructions availabe at file [**assignment-spec.pdf**](assignment-spec.pdf)
