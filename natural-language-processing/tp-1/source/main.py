@@ -37,7 +37,7 @@ def InsereLinha(path, msg):
          out.writelines(msg + '\n')
 
 
-def FazTodaDesgraca(corpusPath, windowSize, modelSg, basicLogOutputhPath, basicModelOutputhPath, basicResultOutputhPath, wordsPath, percentage): #modelSg: 1 for Skip-gram, 0 for CBOW
+def Process(corpusPath, windowSize, modelSg, basicLogOutputhPath, basicModelOutputhPath, basicResultOutputhPath, wordsPath, percentage): #modelSg: 1 for Skip-gram, 0 for CBOW
     basicName = str(percentage) + '_' + str(windowSize) + '_' + str(modelSg)
     logName = basicLogOutputhPath + 'log_' + basicName
     logging.basicConfig(filename=logName,format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
@@ -62,9 +62,4 @@ def FazTodaDesgraca(corpusPath, windowSize, modelSg, basicLogOutputhPath, basicM
     model.wv.accuracy(wordsPath)#resulta em estatisticas no log criado
 
 
-# originalTextPath = 'dataset/text8'
-# lowerCaseTextPath = 'dataset/newText8'
-#
-# CorpusToLower(originalTextPath, lowerCaseTextPath)
-
-FazTodaDesgraca('dataset/newText8', 1, 0, 'log/', 'model/', 'output/' , 'dataset/questions-words.txt', 100)
+Process('dataset/newText8', 1, 0, 'log/', 'model/', 'output/' , 'dataset/questions-words.txt', 100)
