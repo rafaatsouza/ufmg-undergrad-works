@@ -1,6 +1,8 @@
-# TP 3 - AEDS 3
+# AEDS (Algorithms and data structure) III - 4th Assignment
 
-Trabalho prático com a finalidade de encontrar a maior subsequência crescente. Exemplos e instruções para esse trabalho prático podem ser vistos no arquivo **tp3.pdf**.
+Practical assignment with pourpose of gets the greatest increasing subsequence.
+
+Examples and instructions availabe at file [**assignment-spec.pdf**](assignment-spec.pdf)
 
 #### Build
-Makefile contém as instruções necessárias para gerar o executável (sistema Linux)
+Generates executable file using *Makefile*.

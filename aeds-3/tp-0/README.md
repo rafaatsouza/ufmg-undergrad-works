@@ -1,6 +1,16 @@
-# TP 0 - AEDS 3
+# AEDS (Algorithms and data structure) III - 1st Assignment
 
-Trabalho prático com a finalidade de "decifrar" equações corrompidas ('?' no lugar dos operadores) escritas em notação polonesa (notação reversa) tendo disponível o resultado da equação. Ao executar o programa, deve ser informado a equação corrompida (*ex: '2 2 ?'*), e na linha abaixo, o resultado da equação. Após o resultado ser informado, o programa retorna todos os possíveis. Exemplos e instruções para esse trabalho prático podem ser vistos no arquivo **tp0.pdf**.
+Practical assignment with pourpose of unscramble corrupted equations ('?' at sign's and operation's locations) writed with polonese notation.
+
+Example:
+```
+./tp0.out
+2 4 ?
+8
+```
+Will returns the answer "*".
+
+Assignment instruction availabe at file [**assignment-spec.pdf**](assignment-spec.pdf)
 
 #### Build
-Makefile contém as instruções necessárias para gerar o executável (sistema Linux)
+Generates executable file using *Makefile*.

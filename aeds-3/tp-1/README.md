@@ -1,6 +1,8 @@
-# TP 1 - AEDS 3
+# AEDS (Algorithms and data structure) III - 2nd Assignment
 
-Trabalho prático com a finalidade de encontrar o fluxo máximo de um grafo. Exemplos e instruções para esse trabalho prático podem ser vistos no arquivo **tp1.pdf**.
+Practical assignment with pourpose of gets graph maximum flow.
+
+Examples and instructions availabe at file [**assignment-spec.pdf**](assignment-spec.pdf)
 
 #### Build
-Makefile contém as instruções necessárias para gerar o executável (sistema Linux)
+Generates executable file using *Makefile*.

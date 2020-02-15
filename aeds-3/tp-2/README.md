@@ -1,2 +1,4 @@
-# aeds3_tp2
-AEDS3 - TP 2
+# AEDS (Algorithms and data structure) III - 3rd Assignment
+
+#### Build
+Generates executable file using *Makefile*.
