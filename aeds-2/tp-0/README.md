@@ -1,6 +1,10 @@
-# TP 0 - AEDS 2
+# AEDS (Algorithms and data structure) II - 1st Assignment
 
-Trabalho prático com finalidade de simular uma versão simplificada de um jogo de Pokemons. Um arquivo de entrada informa a dimensão e os valores do mapa, a quantidade de jogadores e suas posições iniciais. Com isso, o programa deve realizar todas as jogadas de cada um dos jogadores de acordo com as regras impostas, e informar num arquivo de saida o trajeto de cada um deles, assim como informar o vencedor do jogo. As istruções para o trabalho estão no arquivo **instrucoes.pdf**
+Practical assignment which simulates a resumed version of a Pokemon game. A input file informs the map size and map value, player count and players initial positions.
+
+The algorithm executes all players moves and generates output file with all player history and winner player name. 
+
+Assignment instruction availabe at file [**assignment-spec.pdf**](assignment-spec.pdf)
 
 #### Build
-Makefile contém as instruções necessárias para gerar o executável (sistema Linux)
+Generates executable file using *Makefile*.

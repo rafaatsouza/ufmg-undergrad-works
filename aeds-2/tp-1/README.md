@@ -1,7 +1,10 @@
-# TP 1 - AEDS 2
+# AEDS (Algorithms and data structure) II - 2nd Assignment
 
-Trabalho prático com finalidade de simular uma versão simplificada de uma rede social. Um arquivo de  entrada  informa  a  quantidade  de  usuários,  onde  cada  usuário  tem  seu  número identificador, nome,  e uma relação de quais  outros  usuários são seus amigos,  e também infoma  todas  as  ações  que  foram  executadas  na  rede  social  (mensagem  postada, mensagem  curtida,  amizades  iniciadas  e  canceladas,  e  exibir  mensagens).  O  programa deve processar todas as ações informadas no arquivo  de  entrada, e  gerar um arquivo  de saida  que  mostre  a  timeline  visualizada  de  cada  usuário no  momento  que  o  programa 
-exibiu  a  timeline. As instruções para o trabalho estão no arquivo **instrucoes.pdf**
+Practical assignment which simulates a simplified version of a social network. A input file informs users count, and users attributes (identifier and name) and relations with another users, also gets all social network events ocurred (new posts, likes, new friendships)
+
+The algorithm executes all social network events and generates output file with all users timeline. 
+
+Assignment instruction availabe at file [**assignment-spec.pdf**](assignment-spec.pdf)
 
 #### Build
-Makefile contém as instruções necessárias para gerar o executável (sistema Linux)
+Generates executable file using *Makefile*.

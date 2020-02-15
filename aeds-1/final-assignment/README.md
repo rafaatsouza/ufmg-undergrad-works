@@ -1,19 +1,24 @@
-# TP Allegro - AEDS 1
+# AEDS (Algorithms and data structure) I
 
-Trabalho prático com finalidade de simular o jogo "Bomberman" usando a linguagem de programação C com a biblioteca Allegro.
+Practical assignment which simulates the "Bomberman" game with C program language and Allegro library.
 
 #### Build
-Makefile contém as instruções necessárias para gerar o executável (sistema Linux).
+Generates executable file using *Makefile*.
 
-#### Instruções
-O objetivo do jogo é matar os inimigos (de vermelho) na tela usando as bombas, colocadas no jogo controlando o bomberman (de azul). Ao iniciar o jogo, as posições do bomberman e a dos três inimigos são definidas aleatoriamente, tendo como critérios: Nenhum elemento (inimigo ou bomberman) estar na mesma localização, ou em uma distância menor que 100 de outro elemento. Nos primeiros 2 segundos de todas as fases, o bomberman possui invencibilidade. 
-Ao matar todos os inimigos, os três inimigos são recriados novamente em posições aleátorias com os mesmos critérios do inicio do jogo, mas com velocidade maior (a velocidade é acrescida sempre ao passar de fase).
-Caso o bomberman seja alcançado por um inimigo ou esteja no raio de uma bomba no momento de explosão, ele morre e a tela mostra a pontuação. 
-###### Os comandos do teclado são:
-* W, S, A, D: Movem o bomberman para cima, baixo, esquerda e direita, respectivamente.
-* Espaço: Solta uma bomba na localização que o bomberman está. A bomba explode 1 segundo após ser colocada, e tem um raio igual à 64 (o dobro do “lado” do bomberman e dos inimigos, que tem tamanho 32x32). Ao explodir, são mortos todos os inimigos no raio, e o bomberman também, caso esteja no raio da bomba.
+#### Instructions
+The goal is to kill enemies (in red) using bombs, dropped while controlling bomberman (in blue). At the game start, bomberman position and the three enemies position are randomly defined following some criteries:
+* Bomberman and enemies cannot share same exact location 
+* Bomberman and enemies cannot be within less then 100px from each other.
 
-###### Critérios de pontuação:
-* Matar inimigo: 10 pontos + valor variável (cresce ao passar de fase).
-* Morrer para uma bomba: -[10 pontos + valor variável (cresce ao passar de fase)].
-* Tempo: 1 ponto por segundo * valor variável (cresce ao passar de fase). Observação: só é contado à partir da 2º fase.
+When all enemies are dead, all are recriated at new positions following the same criteria, and all gets a speed boost; at all phases start bomberman gets invecibility in 2 first seconds.
+
+Case bomberman get hit by some enemy or by a bomb, he dies and the screen show player's score.
+
+#### Game commands:
+* W, S, A, D: Moves bomberman across the map.
+* Espace: Drops a bomb. The bombs explode 1 second after being dropped, and has explosion range equals 64x64.
+
+#### Score Criteria:
+* Kill enemy: 10 points + variable value (increases through game phases).
+* Gets killed by bomb: -[10 points + variable value (increases through game phases)].
+* Time: 1 point by seconds * variable value (increases through game phases). Obs: only count after 2nd phase.

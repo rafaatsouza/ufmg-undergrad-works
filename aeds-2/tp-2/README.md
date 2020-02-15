@@ -1,15 +1,17 @@
-# TP 2 - AEDS 2
+# AEDS (Algorithms and data structure) II - 3rd Assignment
 
-Trabalho prático que consiste em um módulo para testar ordenações de vetores, escolhendo o tipo de ordenação desejado, o grau de ordenação inicial e a quantidade de elementos à serem ordenados. Ao informar o tamanho do vetor, o tipo de ordenação, e o grau de ordenação inicial,  será  gerado  um  vetor  e  ordenado  conforme  escolhido,  sendo  exibido  ao  final  o tempo  gasto  para  a  operação  de  ordenação,  quantas  movimentações  e  comparações foram feitas.
+Practical assignment that consists in a module of array sorting algorithm's. You can choose the algorithm and the element quantity to be sorted. At the end, it shows the time wasted with sorting, and the movements and comparison quantities.
 
-### Build
-Makefile contém as instruções necessárias para gerar o executável (sistema Linux)
+Assignment instruction availabe at file [**assignment-spec.pdf**](assignment-spec.pdf)
 
-### Instruções
+#### Build
+Generates executable file using *Makefile*.
 
-Ao executar o programa, devem ser passados como parâmetros:
+### Instructions
 
-**1 - Tipo de ordenação:**
+When executing, inform parameters:
+
+**1 - Sort algorithm type:**
  * bol – BubbleSort
 * sel – Seleção
 * ins – Inserção
@@ -19,23 +21,18 @@ Ao executar o programa, devem ser passados como parâmetros:
 * mer – MergeSort
 * rad – RadixSort
 
-**2 - Quantidade de elementos**
+**2 - Elements quantity**
 
-**3 - Opções de grau de ordenação inicial:**
-* asc –  Vetor já totalmente ordenado
-* desc – Vetor inversamente ordenado
-* ale – Vetor com valores totalmente aleatorios
-* qasc – Vetor com 90% dos valores crescentes, e 10% aleatórios
+**3 - Initial array sort:**
+* asc – Already ordered
+* desc – Inversed ordered
+* ale –  Randomly
+* qasc – 90% ordered, 10% randomly
 
-**4 - "-P" caso queira queira que os vetores sejam exibidos na tela**
+**4 - "-P" flag in order to show arrays**
 
-Exemplo: "./tp2.out she 10 ale -P"
-Onde "tp2.out" é o nome do executável, 
-
-"she" é o identificador para o tipo de ordenação ShellSort, 
-
-"10" é o número de elementos no vetor. 
-
-"ale" informa que a ordenação inicial do vetor será totalmente aleatória,
-
-"-P" informa que os vetores devem ser exibidos na tela.
+Example: 
+```
+./tp2.out she 10 ale -P
+```
+Reorders random array containing 10 elements using *ShellSort*, and showing array at screen.
