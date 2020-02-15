@@ -1,0 +1,1 @@
+void exibeResultados(filaElementos *fn);
